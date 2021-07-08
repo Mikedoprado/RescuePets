@@ -18,9 +18,9 @@ struct SignInView: View {
     var body: some View {
         VStack{
             VStack(spacing: 20){
-                TextFieldCustom(placeholder: "Write your email", kind: $email, isSecureField: false )
+                TextFieldCustom(placeholder: "Write your email", title: "Email", kind: $email, isSecureField: false)
                 
-                TextFieldCustom(placeholder: "Write your password", kind: $password, isSecureField: true)
+                TextFieldCustom(placeholder: "Write your password",title: "Password", kind: $password, isSecureField: true)
                 
                 NormalButton(textButton: "Sign In") {
                     if email != "" && password != "" {

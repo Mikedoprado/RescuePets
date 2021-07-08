@@ -102,7 +102,7 @@ struct ActiveDetailView: View {
                             .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
                     }
                     HStack{
-                        Text("Neighborhood")
+                        Text("Address")
                             .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                         Spacer()
                         Text("Manila")

@@ -14,6 +14,10 @@ class AuthenticationModel: ObservableObject {
     let db = Firestore.firestore()
     let auth = Auth.auth()
     
+    var userId: String {
+        return isSignedIn ? auth.currentUser!.uid : ""
+    }
+    
     @Published var signedIn = false
     
     var isSignedIn: Bool {
@@ -45,9 +49,7 @@ class AuthenticationModel: ObservableObject {
     }
     
     func signOut(){
- 
         try? auth.signOut()
         self.signedIn = false
-
     }
 }

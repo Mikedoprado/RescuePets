@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 class AlertViewModel: ObservableObject {
+    
     @Published var alertRepository = AlertRepository()
     @Published var alertCellViewModels = [AlertCellViewModel]()
-    var test = [AlertCellViewModel]()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -25,7 +25,7 @@ class AlertViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
-    func addAlert(alert: Alert){
-        alertRepository.addAlert(alert)
-    }
+//    func addAlert(alert: Alert){
+//        alertRepository.addAlert(alert)
+//    }
 }

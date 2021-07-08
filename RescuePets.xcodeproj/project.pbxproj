@@ -23,6 +23,8 @@
 		D34BA82C2680C5860084097F /* CreateAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34BA82B2680C5860084097F /* CreateAlertView.swift */; };
 		D34BA8302680DE330084097F /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34BA82F2680DE330084097F /* TextView.swift */; };
 		D359F7A3267CD267008C9933 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D359F7A2267CD267008C9933 /* ProfileView.swift */; };
+		D38796072695E763000B19FF /* DropDownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38796062695E763000B19FF /* DropDownView.swift */; };
+		D387960926961520000B19FF /* LocationInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D387960826961520000B19FF /* LocationInfoView.swift */; };
 		D3918F78267D36ED00DC4BA8 /* BackShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3918F77267D36ED00DC4BA8 /* BackShapeView.swift */; };
 		D39B5EFC268A0251003F097E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D39B5EFB268A0251003F097E /* GoogleService-Info.plist */; };
 		D39B5EFF268A0516003F097E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D39B5EFE268A0516003F097E /* FirebaseFirestore */; };
@@ -55,6 +57,10 @@
 		D3C45C0C2686812C00DFA358 /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C45C0B2686812C00DFA358 /* MessageViewModel.swift */; };
 		D3D3CE87268F93DF00E1FE84 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D3CE86268F93DF00E1FE84 /* SignInView.swift */; };
 		D3D3CE89268F93F100E1FE84 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D3CE88268F93F100E1FE84 /* RegisterView.swift */; };
+		D3DF76CA2690C09300B53128 /* UserCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DF76C92690C09300B53128 /* UserCellViewModel.swift */; };
+		D3DF76CC2690C35A00B53128 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DF76CB2690C35A00B53128 /* UserRepository.swift */; };
+		D3DF76CE2690C66A00B53128 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DF76CD2690C66A00B53128 /* UserViewModel.swift */; };
+		D3F8E87C2695D02E00C3DB7F /* PickerAnimal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F8E87B2695D02E00C3DB7F /* PickerAnimal.swift */; };
 		D3FFF232267A2F6C00F4A278 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FFF231267A2F6C00F4A278 /* Authentication.swift */; };
 		D3FFF236267A58CF00F4A278 /* DesignColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FFF235267A58CF00F4A278 /* DesignColors.swift */; };
 		D3FFF238267A5F2100F4A278 /* TextFieldCustom.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FFF237267A5F2100F4A278 /* TextFieldCustom.swift */; };
@@ -94,6 +100,8 @@
 		D34BA82B2680C5860084097F /* CreateAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAlertView.swift; sourceTree = "<group>"; };
 		D34BA82F2680DE330084097F /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		D359F7A2267CD267008C9933 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		D38796062695E763000B19FF /* DropDownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownView.swift; sourceTree = "<group>"; };
+		D387960826961520000B19FF /* LocationInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInfoView.swift; sourceTree = "<group>"; };
 		D3918F77267D36ED00DC4BA8 /* BackShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackShapeView.swift; sourceTree = "<group>"; };
 		D39B5EFB268A0251003F097E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D39B5F0D268A1173003F097E /* AlertRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertRepository.swift; sourceTree = "<group>"; };
@@ -125,6 +133,10 @@
 		D3C45C0B2686812C00DFA358 /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
 		D3D3CE86268F93DF00E1FE84 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		D3D3CE88268F93F100E1FE84 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
+		D3DF76C92690C09300B53128 /* UserCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCellViewModel.swift; sourceTree = "<group>"; };
+		D3DF76CB2690C35A00B53128 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
+		D3DF76CD2690C66A00B53128 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
+		D3F8E87B2695D02E00C3DB7F /* PickerAnimal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerAnimal.swift; sourceTree = "<group>"; };
 		D3FFF231267A2F6C00F4A278 /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		D3FFF235267A58CF00F4A278 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
 		D3FFF237267A5F2100F4A278 /* TextFieldCustom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldCustom.swift; sourceTree = "<group>"; };
@@ -189,6 +201,9 @@
 				D3FFF237267A5F2100F4A278 /* TextFieldCustom.swift */,
 				D34BA82F2680DE330084097F /* TextView.swift */,
 				D3C45C02268526D300DFA358 /* KeyboardHandler.swift */,
+				D3F8E87B2695D02E00C3DB7F /* PickerAnimal.swift */,
+				D38796062695E763000B19FF /* DropDownView.swift */,
+				D387960826961520000B19FF /* LocationInfoView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -232,6 +247,7 @@
 			children = (
 				D39B5F0D268A1173003F097E /* AlertRepository.swift */,
 				D3A6EF31268BA725000D3636 /* MessageRepository.swift */,
+				D3DF76CB2690C35A00B53128 /* UserRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -304,6 +320,8 @@
 		D3C45C042686784000DFA358 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D3DF76C92690C09300B53128 /* UserCellViewModel.swift */,
+				D3DF76CD2690C66A00B53128 /* UserViewModel.swift */,
 				D3C45C052686786000DFA358 /* AlertCellViewModel.swift */,
 				D3C45C0726867BE500DFA358 /* AlertViewModel.swift */,
 				D3C45C0926867FD300DFA358 /* MessageCellViewModel.swift */,
@@ -464,6 +482,7 @@
 				D32B53F126822996001C66F8 /* MessageCellView.swift in Sources */,
 				D3A6EF38268D0866000D3636 /* SignViewModel.swift in Sources */,
 				D32B53EF26822986001C66F8 /* AlertCellView.swift in Sources */,
+				D3F8E87C2695D02E00C3DB7F /* PickerAnimal.swift in Sources */,
 				D3918F78267D36ED00DC4BA8 /* BackShapeView.swift in Sources */,
 				D3C45BFD2684EA1E00DFA358 /* MessagesView.swift in Sources */,
 				D3D3CE87268F93DF00E1FE84 /* SignInView.swift in Sources */,
@@ -475,8 +494,10 @@
 				D3C45BFF2684ED1200DFA358 /* ActiveDetailView.swift in Sources */,
 				D332C780267AA66000F22655 /* HomeMapView.swift in Sources */,
 				D32B53F426825B32001C66F8 /* DesignTypo.swift in Sources */,
+				D3DF76CE2690C66A00B53128 /* UserViewModel.swift in Sources */,
 				D32B53F926827BC8001C66F8 /* User.swift in Sources */,
 				D3C45C0A26867FD300DFA358 /* MessageCellViewModel.swift in Sources */,
+				D3DF76CA2690C09300B53128 /* UserCellViewModel.swift in Sources */,
 				D34BA82C2680C5860084097F /* CreateAlertView.swift in Sources */,
 				D3FFF236267A58CF00F4A278 /* DesignColors.swift in Sources */,
 				D3C45BFB2684C8ED00DFA358 /* ChangePasswordView.swift in Sources */,
@@ -485,6 +506,8 @@
 				D32B53F62682615B001C66F8 /* DesignButtons.swift in Sources */,
 				D3C45C0126850C6900DFA358 /* ChatCellOwner.swift in Sources */,
 				D332C77E267AA12200F22655 /* DesignImages.swift in Sources */,
+				D3DF76CC2690C35A00B53128 /* UserRepository.swift in Sources */,
+				D38796072695E763000B19FF /* DropDownView.swift in Sources */,
 				D34BA8302680DE330084097F /* TextView.swift in Sources */,
 				D332C789267AAA0600F22655 /* LocationManager.swift in Sources */,
 				D332C783267AA6E500F22655 /* MapView.swift in Sources */,
@@ -493,6 +516,7 @@
 				D3C45C062686786000DFA358 /* AlertCellViewModel.swift in Sources */,
 				D3A6EF34268C9701000D3636 /* AuthenticationModel.swift in Sources */,
 				D359F7A3267CD267008C9933 /* ProfileView.swift in Sources */,
+				D387960926961520000B19FF /* LocationInfoView.swift in Sources */,
 				D39C88A6267942DA0087FEA8 /* RescuePetsApp.swift in Sources */,
 				D3C45C03268526D300DFA358 /* KeyboardHandler.swift in Sources */,
 			);
@@ -581,7 +605,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -637,7 +661,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -658,7 +682,7 @@
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RescuePets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -666,7 +690,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.MichaelConchado.RescuePets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -680,7 +704,7 @@
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RescuePets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -688,7 +712,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.MichaelConchado.RescuePets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -700,7 +724,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				INFOPLIST_FILE = RescuePetsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -722,7 +746,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				INFOPLIST_FILE = RescuePetsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -751,7 +775,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.MichaelConchado.RescuePetsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = RescuePets;
 			};
 			name = Debug;
@@ -771,7 +795,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.MichaelConchado.RescuePetsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = RescuePets;
 			};
 			name = Release;

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    @ObservedObject var user : UserCellViewModel
+    
     var body: some View {
         ScrollView (.vertical, showsIndicators: true) {
             VStack {
@@ -24,7 +27,7 @@ struct ProfileView: View {
                             .frame(width: 25, height: 25, alignment: .center)
                     }
                 }
-                .padding(.top, 25)
+                .padding(.top, 55)
                 .padding(.horizontal, 30)
                 HStack{
                     DesignImage.profileImageRed.image
@@ -33,7 +36,7 @@ struct ProfileView: View {
                         .frame(width: 60, height: 60)
                     VStack (spacing: 0){
                         HStack{
-                            Text("Username")
+                            Text(user.username)
                                 .modifier(FontModifier(weight: .bold, size: .subheadline, color: .gray))
                             Spacer()
                         }
@@ -41,11 +44,6 @@ struct ProfileView: View {
                             Text("Kind of user")
                                 .modifier(FontModifier(weight: .regular, size: .subtitle, color: .redSalsa))
                             Spacer()
-                            Image(systemName: "arrowtriangle.down.fill")
-                                .resizable()
-                                .frame(width: 15, height: 10, alignment: .center)
-                                .foregroundColor(ThemeColors.redSalsa.color)
-                                .padding(.trailing, 5)
                         }
                         
                     }
@@ -110,12 +108,13 @@ struct ProfileView: View {
         }
         .background(ThemeColors.white.color)
         .cornerRadius(20)
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
+        ProfileView(user: UserCellViewModel(user: User(username: "", email: "")))
     }
 }
 

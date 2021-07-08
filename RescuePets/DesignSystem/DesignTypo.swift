@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum FontSize {
-    case title, headline, subheadline, paragraph, caption, smallButtonText, subtitle, largeButtonText
+    case title, headline, subheadline, paragraph, titleCaption, caption, smallButtonText, subtitle, largeButtonText
     
     var size: CGFloat {
         switch self {
@@ -18,16 +18,19 @@ enum FontSize {
             return 22
         case .subheadline:
             return 20
-        case .paragraph:
-            return 16
-        case .caption:
-            return 12
-        case .smallButtonText:
-            return 12
         case .subtitle:
             return 18
         case .largeButtonText:
             return 18
+        case .paragraph:
+            return 16
+        case .titleCaption:
+            return 14
+        case .caption:
+            return 12
+        case .smallButtonText:
+            return 12
+
         }
     }
 }

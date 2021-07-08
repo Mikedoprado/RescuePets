@@ -41,13 +41,13 @@ class MessageCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $message.map{ message in
-            message.from.name
+            message.from.username
         }
         .assign(to: \.from, on: self)
         .store(in: &cancellables)
         
         $message.map{ message in
-            message.to.name
+            message.to.username
         }
         .assign(to: \.to, on: self)
         .store(in: &cancellables)

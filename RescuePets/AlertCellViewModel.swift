@@ -57,14 +57,8 @@ class AlertCellViewModel: ObservableObject, Identifiable {
         .assign(to: \.username, on: self)
         .store(in: &cancellables)
         
-        $alert.compactMap{alert in
-            if let aDate = alert.timestamp?.dateValue() {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy-MM-dd"
-                let formattedTimeZoneStr = formatter.string(from: aDate)
-                    return formattedTimeZoneStr
-            }
-            return nil
+        $alert.compactMap{ [weak self] alert in
+            return self?.setupTimeStamp(time: alert.timestamp!)
         }
         .assign(to: \.timestamp, on: self)
         .store(in: &cancellables)
@@ -74,5 +68,37 @@ class AlertCellViewModel: ObservableObject, Identifiable {
                 self.alertRepository.acceptOrRemoveAlert(alert)
             }
             .store(in: &cancellables)
+    }
+    
+    func setupTimeStamp(time: Int) -> String {
+
+        let timestampDate = Date(timeIntervalSince1970: Double(time))
+        let now = Date()
+        let components = Set<Calendar.Component>([.second, .minute, .hour, .day, .weekOfMonth])
+        let diff = Calendar.current.dateComponents(components, from: timestampDate, to: now)
+        
+        var timeText = ""
+        
+        if diff.second! <= 0 {
+            timeText = "Now"
+        }
+        if diff.second! > 0 && diff.minute! == 0 {
+            timeText = (diff.second == 1) ? "\(diff.second!) second ago" : "\(diff.second!) seconds ago"
+        }
+        if diff.minute! > 0 && diff.hour! == 0 {
+            timeText = (diff.second == 1) ? "\(diff.minute!) minute ago" : "\(diff.minute!) minutes ago"
+        }
+        if diff.hour! > 0 && diff.day! == 0 {
+            timeText = (diff.hour == 1) ? "\(diff.hour!) hour ago" : "\(diff.hour!) hours ago"
+        }
+        if diff.day! > 0 && diff.weekOfMonth! == 0 {
+            timeText = (diff.day == 1) ? "\(diff.day!) day ago" : "\(diff.day!) days ago"
+        }
+        if diff.weekOfMonth! > 0 {
+            timeText = (diff.weekOfMonth == 1) ? "\(diff.weekOfMonth!) week ago" : "\(diff.weekOfMonth!) weeks ago"
+        }
+        
+        return timeText
+        
     }
 }

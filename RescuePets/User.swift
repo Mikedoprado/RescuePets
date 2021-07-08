@@ -13,11 +13,12 @@ import FirebaseFirestoreSwift
 struct User : Codable, Identifiable{
 
     @DocumentID var id: String?
-    var name: String
-    var kindOfUser: TypeOfUser?
+    var username: String
     var email: String
     var badges: [Badges]?
     var location: String?
+    var kindOfUser: TypeOfUser?
+    var profilePicture: String?
 }
 
 struct Badges: Codable {

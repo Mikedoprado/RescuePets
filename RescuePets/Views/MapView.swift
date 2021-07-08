@@ -11,6 +11,8 @@ import SwiftUI
 
 struct MapView: UIViewRepresentable {
     
+//    @Binding var thumbImage : Image
+    
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
@@ -47,6 +49,18 @@ struct MapView: UIViewRepresentable {
                     }
                 }
             }
+        }
+        
+        func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
+            
+             let render = UIGraphicsImageRenderer(size: mapView.bounds.size)
+             let ratio = mapView.bounds.size.height / mapView.bounds.size.width
+             let img = render.image { (ctx) in
+                 mapView.drawHierarchy(in: CGRect(x: 100, y: 100, width: 300, height: 300 * ratio), afterScreenUpdates: true)
+             }
+             DispatchQueue.main.async {
+//                self.control.thumbImage = Image(uiImage: img)
+             }
         }
         
     }

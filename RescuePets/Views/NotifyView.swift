@@ -84,6 +84,7 @@ struct NotifyView_Previews: PreviewProvider {
 struct SelectorSection: View {
     
     @Binding var changeView : Bool
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)

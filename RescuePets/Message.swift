@@ -23,11 +23,8 @@ struct Message: Codable, Identifiable {
 
 
 #if DEBUG
-var user2 = User(name: "Manuel", kindOfUser: .casual, email: "manuel@gmail.com", badges: [], location: "Medellin")
+var user2 = User(username: "Manuel", email: "manuel@gmail.com")
 var messages = [
-    Message(from: user1, to: user2, message: "hi how are you today", timestamp: 1),
-    Message(from: user2, to: user1, message: "Everything great thanks for asking and you?", timestamp: 2),
-    Message(from: user1, to: user2, message: "I´m ok too", timestamp: 3),
-    Message(from: user1, to: user2, message: "well, shall we", timestamp: 5),
+    Message(from: user1, to: user2, message: "hello", timestamp: 1)
 ]
 #endif
