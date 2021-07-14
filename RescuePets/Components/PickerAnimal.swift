@@ -27,16 +27,17 @@ struct PickerAnimal: View {
                         self.selectedIndex = index
                         switch index {
                         case 0:
-                            self.kindOfAnimal = KindOfAnimal.dog.animal
+                            self.kindOfAnimal = KindOfAnimal.Dog.animal
                         case 1:
-                            self.kindOfAnimal = KindOfAnimal.cat.animal
+                            self.kindOfAnimal = KindOfAnimal.Cat.animal
                         case 2:
-                            self.kindOfAnimal = KindOfAnimal.bird.animal
+                            self.kindOfAnimal = KindOfAnimal.Bird.animal
                         case 3:
-                            self.kindOfAnimal = KindOfAnimal.other.animal
+                            self.kindOfAnimal = KindOfAnimal.Other.animal
                         default:
                             break
                         }
+                        print(kindOfAnimal)
                     }, label: {
                         Image((self.selectedIndex == index) ? "\(animal[index])Active" : "\(animal[index])Inactive")
                             .resizable()

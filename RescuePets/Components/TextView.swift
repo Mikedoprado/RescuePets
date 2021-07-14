@@ -101,3 +101,27 @@ struct TextView: UIViewRepresentable {
 
 }
 
+struct TextViewForAlert: View {
+    
+    @Binding var text : String
+    @ObservedObject var remainingText : RemaininInt
+    
+    var body: some View {
+        ZStack {
+            TextView(text: $text, remain: remainingText)
+                .frame(height: 150)
+            VStack {
+                Spacer()
+                HStack{
+                    Spacer()
+                    Text("\(remainingText.remain)/250")
+                        .font(.system(size: 12))
+                        .fontWeight(.bold)
+                        .foregroundColor(ThemeColors.halfGray.color)
+                }
+            }
+            .padding(.bottom, 10)
+            .padding(.trailing, 10)
+        }.frame(height: 150)
+    }
+}

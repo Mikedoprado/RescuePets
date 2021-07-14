@@ -12,6 +12,7 @@ struct CreateAlertView: View {
     
     var imageSelected : Image
     var imageData : Data
+    var imageMapData: Data
     
     @State var text = ""
     @State var showPlaceHolder  = true
@@ -24,14 +25,13 @@ struct CreateAlertView: View {
     @State var kindOfAlert = ""
     
     @Binding var isShowing : Bool
-    @Binding var city: String
-    @Binding var address: String
-    
+
     @StateObject private var keyboardHandler = KeyboardHandler()
     @StateObject var remaining = RemaininInt(remain: 250)
     
     @ObservedObject var alert = AlertRepository()
     @ObservedObject var currentUser = UserViewModel()
+    @ObservedObject private var locationManager = LocationManager()
     
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -42,9 +42,19 @@ struct CreateAlertView: View {
         let timestamp = Int(Date().timeIntervalSince1970)
         
         if kindOfAlert != "" && animal != "" && text != ""{
-            let alert = Alert(userID: currentUser.userCellViewModel.id, kindOfAlert: TypeOfThreat.init(rawValue: kindOfAlert)!, timestamp: timestamp, animal: KindOfAnimal.init(rawValue: animal)!, image: "", city: city, address: address, description: text, isActive: false)
+            let alert = Alert(
+                username: currentUser.userCellViewModel.username,
+                userId: currentUser.userCellViewModel.id,
+                kindOfAlert: TypeOfThreat.init(rawValue: kindOfAlert)!,
+                timestamp: timestamp,
+                animal: KindOfAnimal.init(rawValue: animal)!,
+                city: locationManager.city,
+                address: locationManager.address,
+                description: text,
+                isActive: true
+            )
             
-            self.alert.addAlert(alert, imageData: imageData)
+            self.alert.addAlert(alert, imageData: imageData, mapImageData: imageMapData)
         }
     }
     
@@ -67,7 +77,11 @@ struct CreateAlertView: View {
                 
                 Spacer()
                 Button {
-                    isShowing = false
+                    self.hideKeyboard()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.isShowing = false
+                        self.isFocused = false
+                    }
                 } label: {
                     DesignImage.closeBlack.image
                         .resizable()
@@ -76,7 +90,7 @@ struct CreateAlertView: View {
                 }
             }
             .background(ThemeColors.white.color)
-            .padding(.top, 80)
+            .padding(.top, 50)
             .padding(.horizontal, 20)
             
             ScrollView(.vertical, showsIndicators: true) {
@@ -85,32 +99,31 @@ struct CreateAlertView: View {
                         PickerAnimal(kindOfAnimal: self.$animal)
                     }
                     .padding(.top, 10)
-                    DropDownView(title: $dropDownTitle, items: $items , showOptions: $showKindAlert, kindOfAlert: $kindOfAlert, action: {
-                        DispatchQueue.main.async {
-                            self.showKindAlert.toggle()
-                        }
+                    DropDownView(
+                        title: $dropDownTitle,
+                        items: $items ,
+                        showOptions: $showKindAlert,
+                        kindOfAlert: $kindOfAlert,
+                        action: {
+                            DispatchQueue.main.async {
+                                self.showKindAlert.toggle()
+                            }
                     })
                     .padding(.vertical, 10)
                     
                     VStack(spacing: 20){
-                        ZStack{
-                            imageSelected
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: UIScreen.main.bounds.width - 40)
-                                .cornerRadius(10)
-                        }
-                        
+                        imageSelected
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: UIScreen.main.bounds.width - 40)
+                            .cornerRadius(10)
                         TextViewForAlert(text: $text, remainingText: remaining)
-                        
-                        LocationInfoView(city: $city, address: $address)
+                        LocationInfoView(city: $locationManager.city, address: $locationManager.address)
                         SwithShare(shareInFb: $shareInFb)
-                        
                         NormalButton(textButton: "Publish alert"){
                             self.createAlert()
                             self.isShowing = false
                             self.reinitValues()
-                            
                         }
                         .padding(.bottom, 20)
                     }
@@ -136,37 +149,13 @@ struct CreateAlertView: View {
 
 struct CreateAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateAlertView(imageSelected: Image(""), imageData: Data(), isShowing: .constant(true), city: .constant(""), address: .constant(""))
+        CreateAlertView(
+            imageSelected: Image(""),
+            imageData: Data(), imageMapData: Data(),
+            isShowing: .constant(true)
+        )
     }
 }
-
-struct TextViewForAlert: View {
-    
-    @Binding var text : String
-    @ObservedObject var remainingText : RemaininInt
-    
-    var body: some View {
-        ZStack {
-            TextView(text: $text, remain: remainingText)
-                .frame(height: 150)
-            VStack {
-                Spacer()
-                HStack{
-                    Spacer()
-                    Text("\(remainingText.remain)/250")
-                        .font(.system(size: 12))
-                        .fontWeight(.bold)
-                        .foregroundColor(ThemeColors.halfGray.color)
-                }
-            }
-            .padding(.bottom, 10)
-            .padding(.trailing, 10)
-            
-        }.frame(height: 150)
-    }
-}
-
-
 
 struct SwithShare: View {
     

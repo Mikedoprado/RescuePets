@@ -11,19 +11,19 @@ import SwiftUI
 
 struct MapView: UIViewRepresentable {
     
-//    @Binding var thumbImage : Image
+    
+    @Binding var thumbImage : Image
+    @Binding var mapData : Data?
+    let map = MKMapView()
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
     func makeUIView(context: Context) -> MKMapView {
-        
-        let map = MKMapView()
         map.showsUserLocation = true
         map.delegate = context.coordinator
         return map
-        
     }
     
     func updateUIView(_ uiView: MKMapView, context: UIViewRepresentableContext<MapView>) {
@@ -52,17 +52,49 @@ struct MapView: UIViewRepresentable {
         }
         
         func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
-            
-             let render = UIGraphicsImageRenderer(size: mapView.bounds.size)
-             let ratio = mapView.bounds.size.height / mapView.bounds.size.width
-             let img = render.image { (ctx) in
-                 mapView.drawHierarchy(in: CGRect(x: 100, y: 100, width: 300, height: 300 * ratio), afterScreenUpdates: true)
-             }
-             DispatchQueue.main.async {
-//                self.control.thumbImage = Image(uiImage: img)
-             }
+            if fullyRendered {
+                takePicture()
+            }
         }
         
+        func takePicture(){
+            
+            let options = MKMapSnapshotter.Options()
+            options.region = control.map.region
+            options.size = CGSize(width: control.map.frame.width, height: control.map.frame.width)
+            options.scale = 2
+
+            let snapshotter = MKMapSnapshotter(options: options)
+            snapshotter.start { [weak self] (snapshot, error) in
+                guard let snapshot = snapshot else {
+                    print("Snapshot error: \(String(describing: error))")
+                    return
+                }
+                guard let strongSelf = self else {return}
+                let pin = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
+                let image = snapshot.image
+                UIGraphicsBeginImageContextWithOptions(image.size, true, image.scale)
+                image.draw(at: CGPoint.zero)
+                
+                let visibleRect = CGRect(origin: CGPoint.zero, size: image.size)
+                for annotation in strongSelf.control.map.annotations {
+                    var point = snapshot.point(for: annotation.coordinate)
+                    if visibleRect.contains(point) {
+                        point.x = point.x + pin.centerOffset.x - (pin.bounds.size.width / 2)
+                        point.y = point.y + pin.centerOffset.y - (pin.bounds.size.height / 2)
+                        pin.image?.draw(at: point)
+                    }
+                }
+                
+                let compositeImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                if let imagePointer = compositeImage, let data = imagePointer.jpegData(compressionQuality: 0.8){
+                    self?.control.thumbImage = Image(uiImage: imagePointer)
+                    self?.control.mapData = data
+                    
+                }
+            }
+        }
     }
     
 }

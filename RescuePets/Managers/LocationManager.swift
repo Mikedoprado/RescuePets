@@ -64,6 +64,7 @@ extension LocationManager: CLLocationManagerDelegate {
                     {
                         print("reverse geodcode fail: \(error!.localizedDescription)")
                     }
+                    
                     let pm = placemarks! as [CLPlacemark]
 
                     if pm.count > 0 {

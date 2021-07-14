@@ -10,23 +10,25 @@ import SwiftUI
 struct LocationInfoView: View {
     @Binding var city : String
     @Binding var address : String
+    
     var body: some View {
         HStack{
             VStack{
+                Spacer()
                 HStack{
                     DesignImage.pinLocationWhite.image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 30, height: 30)
-                    
                 }
                 Spacer()
             }
+            .frame(width: 30)
             .padding()
             .background(ThemeColors.redSalsa.color)
-            
+
             VStack (alignment: .leading, spacing: 10){
-                Text("Your Current location")
+                Text("Alert location")
                     .modifier(FontModifier(weight: .bold, size: .subheadline, color: .darkGray))
                 HStack{
                     Text("City")

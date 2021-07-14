@@ -16,6 +16,7 @@ struct DropDownView: View {
     @Binding var kindOfAlert : String
     var action: () -> Void
     
+    
     var body: some View {
         VStack (spacing: 0){
             Button(action: self.action, label: {
@@ -31,11 +32,10 @@ struct DropDownView: View {
                             .multilineTextAlignment(.trailing)
                             .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .white))
                         ((!self.showOptions && self.selectedIndex != -1) ? DesignImage.alertAcept.image :  DesignImage.dropDownWhite.image)
-                        
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-                            .rotationEffect(.degrees( self.showOptions ? 180 : 0))
+                            .rotationEffect(.degrees(self.selectedIndex == -1 && !self.showOptions ? 180 : 0))
                             .animation(.default)
                     }.padding(.horizontal, 30)
                 }

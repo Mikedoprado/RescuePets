@@ -13,7 +13,7 @@ struct AlertCellView: View {
     
     var body: some View {
         HStack {
-            Image(alert.kindOfAnimal)
+            Image("pin\(alert.kindOfAnimal)Active" )
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
@@ -22,7 +22,6 @@ struct AlertCellView: View {
                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
                 Text(alert.username)
                     .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
-                
                 Text(alert.timestamp ?? "")
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
 
@@ -51,5 +50,5 @@ struct AlertCellView_Previews: PreviewProvider {
         }
         .previewLayout(.sizeThatFits)
     }
-    
+
 }

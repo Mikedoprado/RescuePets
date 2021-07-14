@@ -12,112 +12,101 @@ var screen = UIScreen.main.bounds
 struct NotifyView: View {
     
     @ObservedObject var alertListVM = AlertViewModel()
-    @ObservedObject var messagesListVM = MessageViewModel()
-    
+    @Binding var showNotify : Bool
+    @Binding var isAnimating : Bool
     @State var changeView = false
-    var message = messages
+    @State var showDetailsAlert = false
+    @State var isAnimatingActiveView = false
+    @State var alert = alertList[0]
+    @State var categories = ["General", "Acepted", "Created"]
+    @State var selectedCategory = "General"
+    @Namespace private var ns
+    
+    func getColor(alert: Alert) -> Color{
+        switch alert.animal.rawValue {
+        case "Dog":
+            return ThemeColors.blueCuracao.color
+        case "Cat":
+            return ThemeColors.redSalsa.color
+        case "Bird":
+            return ThemeColors.goldenFlow.color
+        case "Other":
+            return ThemeColors.darkGray.color
+        default:
+            return ThemeColors.whiteSmashed.color
+        }
+    }
     
     var body: some View {
-        VStack(spacing: 0) {
-            VStack {
-                HStack {
-                    Text("Notifications")
-                        .modifier(FontModifier(weight: .bold, size: .title, color: .white))
-                    Spacer()
-                    Button {
-
-                    } label: {
-                        DesignImage.closeWhite.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                }
-                .padding(.top, 30)
-                .padding(.horizontal, 30)
-                
-                SelectorSection(changeView: $changeView)
-                
-            }
-            .background(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
-            .animation(.default)
-            
-            
-            HStack(spacing: 0){
+        ZStack{
+            VStack(spacing: 0) {
                 VStack {
+                    HStack {
+                        Text(selectedCategory)
+                            .modifier(FontModifier(weight: .bold, size: .title, color: .white))
+                        Spacer()
+                        Button {
+                            self.isAnimating.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                self.showNotify.toggle()
+                            }
+                        } label: {
+                            DesignImage.closeWhite.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25, alignment: .center)
+                        }
+                    }
+                    .padding(.top, 50)
+                    .padding(.horizontal, 30)
+                    
+                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory)
+                    
+                }
+                .background(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
+                .animation(.default)
+                
+                
+                
+                ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(alertListVM.alertCellViewModels) { alertCellVM in
-                            AlertCellView(alert: alertCellVM)
-                                .padding(.horizontal, 30)
+                            Button(action: {
+                                self.alert = alertCellVM.alert
+                                self.showDetailsAlert.toggle()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.isAnimatingActiveView = true
+                                }
+                            }, label: {
+                                AlertCellView(alert: alertCellVM)
+                                    .padding(.horizontal, 30)
+                            })
+                            
                         }
-                    }.frame(width: screen.width)
-                    Spacer()
+                    }
                 }
                 
-                VStack {
-                    LazyVStack{
-                        ForEach(messagesListVM.messageCellVM) { inbox in
-                            MessageCellView(message: inbox)
-                                .padding(.horizontal, 30)
-                        }
-                    }.frame(width: screen.width)
-                    Spacer()
-                }
             }
-            .padding(!self.changeView ? .leading : .trailing, screen.width)
+            .frame(width: screen.width)
+            .background(ThemeColors.white.color)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
             .animation(.default)
-            Spacer()
+            
+            if showDetailsAlert {
+                ActiveDetailView(alert: $alert, showAlert: $showDetailsAlert, isAnimating: $isAnimatingActiveView)
+                    
+            }
+            
         }
-        .frame(width: screen.width)
-        .background(ThemeColors.white.color)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
         
     }
 }
 
 struct NotifyView_Previews: PreviewProvider {
     static var previews: some View {
-        NotifyView()
+        NotifyView(showNotify: .constant(false), isAnimating: .constant(true))
     }
 }
 
-struct SelectorSection: View {
-    
-    @Binding var changeView : Bool
-    
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(ThemeColors.white.color)
-                .frame(width: 200, height: 40)
-            
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
-                .frame(width: !self.changeView ? CGFloat(80) : CGFloat(100), height: 30)
-                .padding(self.changeView ? .leading : .trailing, self.changeView ? CGFloat(70) : CGFloat(100))
-                .animation(.default)
-            HStack{
-                Button {
-                    self.changeView = false
-                }label: {
-                    Text("Alerts")
-                        .modifier(FontModifier(weight: .regular, size: .paragraph, color: !self.changeView ?  .white : .blueCuracao))
-                        .animation(.default)
-                }
-                
-                Spacer()
-                Button {
-                    self.changeView = true
-                } label: {
-                    Text("Messages")
-                        .modifier(FontModifier(weight: .regular, size: .paragraph, color: !self.changeView ?  .redSalsa : .white))
-                        .animation(.default)
-                }
-                
-            }
-            .padding(.horizontal, 25)
-        }
-        .frame(width: 200, height: 40)
-        .padding(.bottom, 20)
-    }
-}
+

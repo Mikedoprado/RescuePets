@@ -13,8 +13,9 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
+//            TestingThings()
             if auth.isSignedIn{
-                HomeMapView(imageData: Data())
+                HomeMapView(imageData: Data(), mapData: Data())
             }else{
                 Authentication()
             }

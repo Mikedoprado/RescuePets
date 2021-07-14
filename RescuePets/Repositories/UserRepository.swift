@@ -14,6 +14,7 @@ import SwiftUI
 class UserRepository: ObservableObject {
     
     let db = Firestore.firestore()
+//    let userId = Auth.auth().currentUser?.uid
     @Published var user = User(username: "", email: "")
     
     
@@ -22,7 +23,6 @@ class UserRepository: ObservableObject {
     }
     
     func loadDataCurrentUser() {
-        let db = Firestore.firestore()
         guard let userId = Auth.auth().currentUser?.uid else {return}
         db.collection("users").document(userId).addSnapshotListener { snapshot, Error in
             do{
@@ -30,7 +30,6 @@ class UserRepository: ObservableObject {
             }catch{
                 fatalError("jodido \(error.localizedDescription)")
             }
-            
         }
     }
 }

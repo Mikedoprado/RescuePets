@@ -39,6 +39,8 @@ enum DesignImage {
     case dropDownRed
     case dropDownWhite
     case logo
+    case textLogo
+    case emptyStateHelp
     
     var image: Image {
         switch self {
@@ -102,6 +104,10 @@ enum DesignImage {
             return Image(uiImage: UIImage(named: "dropDownRed")!)
         case .dropDownWhite:
             return Image(uiImage: UIImage(named: "dropDownWhite")!)
+        case .emptyStateHelp:
+            return Image(uiImage: UIImage(named: "emptyStateHelp")!)
+        case .textLogo:
+            return Image(uiImage: UIImage(named: "textLogo")!)
         }
     }
 }

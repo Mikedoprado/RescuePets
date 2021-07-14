@@ -25,7 +25,8 @@ class AlertViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
-//    func addAlert(alert: Alert){
-//        alertRepository.addAlert(alert)
-//    }
+    func addAlert(alert: Alert, imageData: Data, mapImageData: Data){
+        alertRepository.addAlert(alert, imageData: imageData, mapImageData: mapImageData)
+    }
+    
 }

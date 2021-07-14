@@ -9,18 +9,24 @@ import Foundation
 import SwiftUI
 import Combine
 import Firebase
+import FirebaseFirestore
 
 class AlertCellViewModel: ObservableObject, Identifiable {
     
     @Published var alert: Alert
     @Published var alertRepository = AlertRepository()
-    var id : String = ""
-    
+    @Published var timestamp : String?
     @Published var acceptedAlert = ""
+    
+    var id : String = ""
     var kindOfAnimal = ""
     var kindOfAlert = ""
     var username = ""
-    @Published var timestamp : String?
+    var userId = ""
+    var mapImage = ""
+    var city = ""
+    var address = ""
+    
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -52,9 +58,33 @@ class AlertCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $alert.map{alert in
-            alert.userID
+            alert.username
         }
         .assign(to: \.username, on: self)
+        .store(in: &cancellables)
+        
+        $alert.map{alert in
+            alert.userId
+        }
+        .assign(to: \.userId, on: self)
+        .store(in: &cancellables)
+        
+        $alert.map{alert in
+            alert.city
+        }
+        .assign(to: \.city, on: self)
+        .store(in: &cancellables)
+        
+        $alert.map{alert in
+            alert.address
+        }
+        .assign(to: \.address, on: self)
+        .store(in: &cancellables)
+        
+        $alert.compactMap{ alert in
+            alert.mapImage
+        }
+        .assign(to: \.mapImage , on: self)
         .store(in: &cancellables)
         
         $alert.compactMap{ [weak self] alert in
@@ -101,4 +131,5 @@ class AlertCellViewModel: ObservableObject, Identifiable {
         return timeText
         
     }
+    
 }

@@ -10,6 +10,8 @@ import SwiftUI
 struct ProfileView: View {
     
     @ObservedObject var user : UserCellViewModel
+    @Binding var isShowing : Bool
+    @Binding var isAnimating : Bool
     
     var body: some View {
         ScrollView (.vertical, showsIndicators: true) {
@@ -19,7 +21,10 @@ struct ProfileView: View {
                         .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
                     Spacer()
                     Button {
-                        
+                        self.isAnimating = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.isShowing = false
+                        }
                     } label: {
                         DesignImage.closeBlack.image
                             .resizable()
@@ -27,7 +32,7 @@ struct ProfileView: View {
                             .frame(width: 25, height: 25, alignment: .center)
                     }
                 }
-                .padding(.top, 55)
+                .padding(.top, 50)
                 .padding(.horizontal, 30)
                 HStack{
                     DesignImage.profileImageRed.image
@@ -88,15 +93,11 @@ struct ProfileView: View {
                     }
                     
                     HStack{
-                        Badge()
-                        Spacer()
-                        Badge()
-                        Spacer()
-                        Badge()
-                        Spacer()
-                        Badge()
-                        Spacer()
-                        Badge()
+                        ForEach(0..<4){ _ in
+                            Spacer()
+                            Badge()
+                            Spacer()
+                        }
                     }.padding(.bottom, 40)
                     
                     
@@ -108,13 +109,17 @@ struct ProfileView: View {
         }
         .background(ThemeColors.white.color)
         .cornerRadius(20)
+        .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
         .ignoresSafeArea(edges: .bottom)
+        .animation(.default)
+        
     }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(user: UserCellViewModel(user: User(username: "", email: "")))
+        let user = UserCellViewModel(user: User(username: "", email: ""))
+        ProfileView(user: user, isShowing: .constant(true), isAnimating: .constant(true))
     }
 }
 

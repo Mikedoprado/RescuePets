@@ -6,125 +6,158 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ActiveDetailView: View {
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Active")
-                    .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                Spacer()
-                HStack(spacing: 30) {
-                    Button {
-                        
-                    } label: {
-                        DesignImage.accept.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                    Button {
-                        
-                    } label: {
-                        DesignImage.trash.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                    Button {
-                        
-                    } label: {
-                        DesignImage.closeBlack.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                }
-            }
-            .padding(.top, 25)
-            HStack {
-                Image("pinCatActive")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50)
-                VStack (alignment: .leading){
-                    Text("Kind of alert")
-                        .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
-                    
-                    HStack {
-                        Text("Username")
-                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
-                        Spacer()
-                    }
-                }
-                Button{
-                    
-                }label:{
-                    DesignImage.message.image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
-                }
-            }
-            .padding(.top, 10)
-            ZStack{
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(ThemeColors.lightGray.color)
-                    .frame(height: UIScreen.main.bounds.width - 40)
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40 , height: 40)
-                    .foregroundColor(ThemeColors.white.color)
-            }
-            Text("The owner of a missing cat is asking for help. My baby has been missing for over a month now, and I want him back so badly, said Mrs. Brown, a 56-year-old woman. Mrs. Brown lives by herself in a trailer park near Clovis. She said that Clyde, her 7-year-old cat, didn't come home for dinner more than a month ago. The next morning he didn't appear for breakfast either. After Clyde missed an extra-special lunch, she called the police.")
-                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
-                .padding(.vertical, 10)
-            HStack{
-                VStack{
-                    DesignImage.pinLocationWhite.image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                    Spacer()
-                }
-                .padding()
-                .background(ThemeColors.redSalsa.color)
-                
-                VStack (alignment: .leading, spacing: 10){
-                    Text("Your Current location")
-                        .modifier(FontModifier(weight: .bold, size: .subheadline, color: .darkGray))
-                    HStack{
-                        Text("City")
-                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
-                        Spacer()
-                        Text("Medellín")
-                            .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
-                    }
-                    HStack{
-                        Text("Address")
-                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
-                        Spacer()
-                        Text("Manila")
-                            .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
-                    }
-                }
-                
-                Spacer()
-            }
-            .frame(height: 120)
-            .background(ThemeColors.whiteGray.color)
-            .cornerRadius(10)
-            Spacer()
+    
+    @Binding var alert : Alert
+    @Binding var showAlert : Bool
+    @Binding var isAnimating : Bool
+//    let namespace : Namespace.ID
+    
+    var imageAlert : String  {
+        switch alert.animal{
+        case .Dog:
+            return KindOfAnimal.Dog.animal
+        case .Cat:
+            return KindOfAnimal.Cat.animal
+        case .Bird:
+            return KindOfAnimal.Bird.animal
+        case .Other:
+            return KindOfAnimal.Other.animal
         }
-        .padding(.horizontal, 30)
+    }
+    
+    var typeOfThreat : String {
+        switch alert.kindOfAlert {
+        case .Rescue:
+            return TypeOfThreat.Rescue.rawValue
+        case .Adoption:
+            return TypeOfThreat.Adoption.rawValue
+        case .Wounded:
+            return TypeOfThreat.Wounded.rawValue
+        case .Maltreatment:
+            return TypeOfThreat.Maltreatment.rawValue
+        case .Desnutrition:
+            return TypeOfThreat.Desnutrition.rawValue
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 0){
+            VStack{
+                HStack {
+                    Text("Alert")
+                        .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
+                    Spacer()
+                    HStack(spacing: 30) {
+                        Button {
+                            
+                        } label: {
+                            DesignImage.accept.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25, alignment: .center)
+                        }
+                        Button {
+                            
+                        } label: {
+                            DesignImage.trash.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25, alignment: .center)
+                        }
+                        Button {
+                            self.isAnimating = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                self.showAlert = false
+                            }
+                        } label: {
+                            DesignImage.closeBlack.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25, alignment: .center)
+                        }
+                    }
+                }
+                .padding(.horizontal, 30)
+                .padding(.top, 50)
+                HStack {
+                    Image("pin\(imageAlert)Active")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                        
+                    
+                    VStack (alignment: .leading){
+                        Text(alert.kindOfAlert.rawValue)
+                            .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
+                        
+                        HStack {
+                            Text(alert.username)
+                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
+                            Spacer()
+                        }
+                    }
+                    Button{
+                        
+                    }label:{
+                        DesignImage.message.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+                .padding(.horizontal, 30)
+                .padding(.top, 10)
+                .padding(.bottom, 20)
+            }
+            ScrollView(.vertical) {
+                VStack(alignment: .leading, spacing: 20){
+                    AnimatedImage(url: URL(string:alert.mapImage!))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 120)
+                        .background(ThemeColors.whiteGray.color)
+                        .cornerRadius(20)
+
+                    AnimatedImage(url: URL(string:alert.image!))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: UIScreen.main.bounds.width - 100)
+                        .background(ThemeColors.whiteGray.color)
+                        .cornerRadius(20)
+
+                    Text(alert.description!)
+                        .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.vertical, 10)
+                    LocationInfoView(city: $alert.city, address: $alert.address)
+                    .frame(height: 120)
+                    .background(ThemeColors.whiteGray.color)
+                    .cornerRadius(10)
+
+                }
+                .padding(.vertical, 20)
+                .padding(.horizontal, 30)
+                Spacer()
+            }
+//            .ignoresSafeArea(edges: .bottom)
+        }
         .background(ThemeColors.white.color)
         .cornerRadius(20)
+//        .padding(.vertical, 30)
+//        .padding(.horizontal, 30)
+        .scaleEffect(self.isAnimating ? 1 :  0)
+        .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
+        .animation(.default)
+        
     }
 }
 
 struct ActiveDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        ActiveDetailView()
+        ActiveDetailView(alert: .constant(alertList[0]), showAlert: .constant(true), isAnimating: .constant(true))
     }
 }
