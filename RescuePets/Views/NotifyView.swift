@@ -12,17 +12,17 @@ var screen = UIScreen.main.bounds
 struct NotifyView: View {
     
     @ObservedObject var alertListVM = AlertViewModel()
+    @State var alert : AlertCellViewModel?
     @Binding var showNotify : Bool
     @Binding var isAnimating : Bool
     @State var changeView = false
     @State var showDetailsAlert = false
     @State var isAnimatingActiveView = false
-    @State var alert = alertList[0]
     @State var categories = ["General", "Acepted", "Created"]
     @State var selectedCategory = "General"
     @Namespace private var ns
     
-    func getColor(alert: Alert) -> Color{
+    func getColor(alert: Alert) -> Color {
         switch alert.animal.rawValue {
         case "Dog":
             return ThemeColors.blueCuracao.color
@@ -72,7 +72,7 @@ struct NotifyView: View {
                     LazyVStack {
                         ForEach(alertListVM.alertCellViewModels) { alertCellVM in
                             Button(action: {
-                                self.alert = alertCellVM.alert
+                                self.alert = alertCellVM
                                 self.showDetailsAlert.toggle()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     self.isAnimatingActiveView = true
@@ -94,7 +94,7 @@ struct NotifyView: View {
             .animation(.default)
             
             if showDetailsAlert {
-                ActiveDetailView(alert: $alert, showAlert: $showDetailsAlert, isAnimating: $isAnimatingActiveView)
+                ActiveDetailView(alert: alert!, showAlert: $showDetailsAlert, isAnimating: $isAnimatingActiveView)
                     
             }
             
@@ -105,7 +105,7 @@ struct NotifyView: View {
 
 struct NotifyView_Previews: PreviewProvider {
     static var previews: some View {
-        NotifyView(showNotify: .constant(false), isAnimating: .constant(true))
+        NotifyView(showNotify: .constant(false), isAnimating: .constant(false))
     }
 }
 

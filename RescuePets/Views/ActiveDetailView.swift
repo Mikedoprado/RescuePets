@@ -10,36 +10,40 @@ import SDWebImageSwiftUI
 
 struct ActiveDetailView: View {
     
-    @Binding var alert : Alert
+    @ObservedObject var alert : AlertCellViewModel
     @Binding var showAlert : Bool
     @Binding var isAnimating : Bool
 //    let namespace : Namespace.ID
     
     var imageAlert : String  {
-        switch alert.animal{
-        case .Dog:
+        switch alert.kindOfAnimal{
+        case "Dog":
             return KindOfAnimal.Dog.animal
-        case .Cat:
+        case "Cat":
             return KindOfAnimal.Cat.animal
-        case .Bird:
+        case "Bird":
             return KindOfAnimal.Bird.animal
-        case .Other:
+        case "Other":
+            return KindOfAnimal.Other.animal
+        default:
             return KindOfAnimal.Other.animal
         }
     }
     
     var typeOfThreat : String {
         switch alert.kindOfAlert {
-        case .Rescue:
+        case "Rescue":
             return TypeOfThreat.Rescue.rawValue
-        case .Adoption:
+        case "Adoption":
             return TypeOfThreat.Adoption.rawValue
-        case .Wounded:
+        case "Wounded":
             return TypeOfThreat.Wounded.rawValue
-        case .Maltreatment:
+        case "Maltreatment":
             return TypeOfThreat.Maltreatment.rawValue
-        case .Desnutrition:
+        case "Desnutrition":
             return TypeOfThreat.Desnutrition.rawValue
+        default:
+            return TypeOfThreat.Rescue.rawValue
         }
     }
     
@@ -52,9 +56,9 @@ struct ActiveDetailView: View {
                     Spacer()
                     HStack(spacing: 30) {
                         Button {
-                            
+                            self.alert.alert.isActive.toggle()
                         } label: {
-                            DesignImage.accept.image
+                            Image(alert.acceptedAlert)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 25, height: 25, alignment: .center)
@@ -90,7 +94,7 @@ struct ActiveDetailView: View {
                         
                     
                     VStack (alignment: .leading){
-                        Text(alert.kindOfAlert.rawValue)
+                        Text(alert.kindOfAlert)
                             .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
                         
                         HStack {
@@ -114,21 +118,21 @@ struct ActiveDetailView: View {
             }
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 20){
-                    AnimatedImage(url: URL(string:alert.mapImage!))
+                    AnimatedImage(url: URL(string:alert.mapImage))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(height: 120)
                         .background(ThemeColors.whiteGray.color)
                         .cornerRadius(20)
 
-                    AnimatedImage(url: URL(string:alert.image!))
+                    AnimatedImage(url: URL(string:alert.image))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(height: UIScreen.main.bounds.width - 100)
                         .background(ThemeColors.whiteGray.color)
                         .cornerRadius(20)
 
-                    Text(alert.description!)
+                    Text(alert.description)
                         .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -143,12 +147,9 @@ struct ActiveDetailView: View {
                 .padding(.horizontal, 30)
                 Spacer()
             }
-//            .ignoresSafeArea(edges: .bottom)
         }
         .background(ThemeColors.white.color)
         .cornerRadius(20)
-//        .padding(.vertical, 30)
-//        .padding(.horizontal, 30)
         .scaleEffect(self.isAnimating ? 1 :  0)
         .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
         .animation(.default)
@@ -158,6 +159,6 @@ struct ActiveDetailView: View {
 
 struct ActiveDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        ActiveDetailView(alert: .constant(alertList[0]), showAlert: .constant(true), isAnimating: .constant(true))
+        ActiveDetailView(alert: AlertCellViewModel(alert: alertList[0]), showAlert: .constant(true), isAnimating: .constant(true))
     }
 }

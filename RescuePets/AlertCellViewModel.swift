@@ -15,7 +15,7 @@ class AlertCellViewModel: ObservableObject, Identifiable {
     
     @Published var alert: Alert
     @Published var alertRepository = AlertRepository()
-    @Published var timestamp : String?
+    @Published var timestamp : String = ""
     @Published var acceptedAlert = ""
     
     var id : String = ""
@@ -26,11 +26,14 @@ class AlertCellViewModel: ObservableObject, Identifiable {
     var mapImage = ""
     var city = ""
     var address = ""
+    var description = ""
+    var image = ""
     
     
     private var cancellables = Set<AnyCancellable>()
     
     init(alert: Alert){
+        
         self.alert = alert
         
         $alert.map { alert in
@@ -39,8 +42,8 @@ class AlertCellViewModel: ObservableObject, Identifiable {
         .assign(to: \.acceptedAlert, on: self)
         .store(in: &cancellables)
         
-        $alert.compactMap { alert in
-            alert.id
+        $alert.map { alert in
+            alert.id!
         }
         .assign(to: \.id, on: self)
         .store(in: &cancellables)
@@ -55,6 +58,12 @@ class AlertCellViewModel: ObservableObject, Identifiable {
             alert.kindOfAlert.rawValue
         }
         .assign(to: \.kindOfAlert, on: self)
+        .store(in: &cancellables)
+        
+        $alert.compactMap{alert in
+            alert.description
+        }
+        .assign(to: \.description, on: self)
         .store(in: &cancellables)
         
         $alert.map{alert in
@@ -87,8 +96,14 @@ class AlertCellViewModel: ObservableObject, Identifiable {
         .assign(to: \.mapImage , on: self)
         .store(in: &cancellables)
         
+        $alert.compactMap{ alert in
+            alert.image
+        }
+        .assign(to: \.image , on: self)
+        .store(in: &cancellables)
+        
         $alert.compactMap{ [weak self] alert in
-            return self?.setupTimeStamp(time: alert.timestamp!)
+            self?.setupTimeStamp(time:alert.timestamp)
         }
         .assign(to: \.timestamp, on: self)
         .store(in: &cancellables)

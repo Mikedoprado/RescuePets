@@ -22,7 +22,7 @@ struct AlertCellView: View {
                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
                 Text(alert.username)
                     .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
-                Text(alert.timestamp ?? "")
+                Text(alert.timestamp)
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
 
                 }
