@@ -11,27 +11,21 @@ import SwiftUI
 
 struct HomeMapView: View {
     
-    
-    @ObservedObject private var userViewModel = UserViewModel()
-    @ObservedObject var alertListVM = AlertViewModel()
     @EnvironmentObject var auth: AuthenticationModel
     
     @State private var isShowPhotoLibrary = false
     @State private var showProfileUser = false
-    @State private var showCreateAlert : Bool = false
+    @State private var showCreateStory : Bool = false
     @State private var showNotifcationsView = false
     @State var changeViewInNotifyView = false
-    @State private var image = Image("")
     @State private var inputImage: UIImage?
     @State var selectedIndex = -1
-    @State var animCreateAlert = false
+    @State var animCreateStory = false
     @State var animProfileUser = false
     @State var animNotify = false
-    @State var imageData : Data
-    @State var mapImage = Image("")
-    @State var mapData : Data?
     @State var city = ""
     @State var address = ""
+    @State var imageSelected : ImageSelected = ImageSelected(imageData: Data(), image: Image(""))
 
     var tabBarItemActive = [
         "iconNotify:",
@@ -51,9 +45,8 @@ struct HomeMapView: View {
                 .onTapGesture {
                     self.hideKeyboard()
                 }
-            
             if isShowPhotoLibrary {
-                MapView(thumbImage: $mapImage, mapData: $mapData)
+                MapView()
                     .ignoresSafeArea(.all)
                 ThemeColors.black.color
                     .opacity(0.4)
@@ -76,6 +69,8 @@ struct HomeMapView: View {
                                 }
                                 if index == 1 {
                                     isShowPhotoLibrary.toggle()
+                                    self.showProfileUser = false
+                                    self.showNotifcationsView = false
                                 }
                                 if index == 2 {
                                     self.auth.signOut()
@@ -107,43 +102,35 @@ struct HomeMapView: View {
             .ignoresSafeArea(edges: .bottom)
             
             if showProfileUser {
-                ProfileView(user: userViewModel.userCellViewModel, isShowing: $showProfileUser, isAnimating: $animProfileUser)
+                ProfileView(isShowing: $showProfileUser, isAnimating: $animProfileUser)
                     .ignoresSafeArea(edges: .all)
             }
             
-            if showCreateAlert {
-                CreateAlertView(
-                    imageSelected: image,
-                    imageData: imageData,
-                    imageMapData: mapData!,
-                    isShowing: $animCreateAlert
-                )
+            if showCreateStory {
+                CreateStoryView(imageSelected:$imageSelected,isShowing: $animCreateStory)
                     .ignoresSafeArea(edges: .all)
             }
             
             if showNotifcationsView {
-                NotifyView(alertListVM: alertListVM, showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView)
+                NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView)
                     .ignoresSafeArea()
             }
         }
         .background(ThemeColors.redSalsa.color)
         .ignoresSafeArea(edges: .all)
-        .onAppear{
-            self.selectedIndex = -1
-        }
     }
     
     func loadImage() {
         if let inputImage = inputImage {
             if let imageData = inputImage.jpegData(compressionQuality: 0.8){
-                self.imageData = imageData
+                let imageData = imageData
+                let image = Image(uiImage: inputImage)
+                self.imageSelected = ImageSelected(imageData: imageData, image: image)
             }
-            
-            image = Image(uiImage: inputImage)
             self.isShowPhotoLibrary = false
-            showCreateAlert = true
+            showCreateStory = true
             DispatchQueue.main.asyncAfter(deadline: .now()) {
-                self.animCreateAlert = showCreateAlert
+                self.animCreateStory = showCreateStory
             }
         }
     }
@@ -151,33 +138,7 @@ struct HomeMapView: View {
 
 struct HomeMapView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeMapView(imageData: Data(), mapData: Data())
+        HomeMapView()
     }
 }
 
-struct EmptyStateHome: View {
-    var body: some View {
-        ScrollView(.vertical) {
-            VStack{
-                DesignImage.textLogo.image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 80)
-                    .padding(.top, 100)
-                DesignImage.emptyStateHelp.image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding(.vertical, 20)
-                Text("Do you wanna \n start to help?")
-                    .multilineTextAlignment(.center)
-                    .modifier(FontModifier(weight: .bold, size: .title, color: .white))
-                Text("Now you can receive an alert in your city and help some animal in your area if you are a foundation, animalist, or passionate about helping animals this is your app.")
-                    .multilineTextAlignment(.center)
-                    .padding(.top)
-                    .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
-                Spacer()
-            }
-            .padding(.horizontal, 30)
-        }
-    }
-}

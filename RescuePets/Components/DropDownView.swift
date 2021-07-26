@@ -13,7 +13,8 @@ struct DropDownView: View {
     @Binding var items : [String]
     @State var selectedIndex = -1
     @Binding var showOptions : Bool
-    @Binding var kindOfAlert : String
+    @Binding var kindOfStory : String
+    @Binding var initialValue : Bool
     var action: () -> Void
     
     
@@ -26,12 +27,12 @@ struct DropDownView: View {
                         .foregroundColor(ThemeColors.redSalsa.color)
                     HStack {
                         Text(title)
-                            .modifier(FontModifier(weight: .bold, size: .subheadline, color: .white))
+                            .modifier(FontModifier(weight: .regular, size: .subheadline, color: .white))
                         Spacer()
                         Text(self.selectedIndex != -1 ? items[selectedIndex] : "")
                             .multilineTextAlignment(.trailing)
                             .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .white))
-                        ((!self.showOptions && self.selectedIndex != -1) ? DesignImage.alertAcept.image :  DesignImage.dropDownWhite.image)
+                        ((!self.showOptions && self.selectedIndex != -1) ? DesignImage.storyAcept.image :  DesignImage.dropDownWhite.image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
@@ -45,7 +46,7 @@ struct DropDownView: View {
                 ForEach(0..<items.count) { index in
                     Button(action: {
                         self.selectedIndex = index
-                        self.kindOfAlert = items[index]
+                        self.kindOfStory = items[index]
                     }, label: {
                         HStack {
                             Text(items[index])
@@ -54,7 +55,7 @@ struct DropDownView: View {
                                 .animation(.default)
                             Spacer()
                             ((self.selectedIndex == index) ?
-                                DesignImage.alertAcept.image : DesignImage.alertAdd.image)
+                                DesignImage.storyAcept.image : DesignImage.storyAdd.image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
@@ -72,13 +73,16 @@ struct DropDownView: View {
         }
         .background(Color.white)
         .cornerRadius(20)
+        .onChange(of: initialValue, perform: { value in
+            self.selectedIndex = -1
+        })
     }
 }
 
 struct DropDownView_Previews: PreviewProvider {
     static var previews: some View {
         Group{
-            DropDownView(title: .constant("Title"), items: .constant([]), showOptions: .constant(true), kindOfAlert: .constant(""), action: {} )
+            DropDownView(title: .constant("Title"), items: .constant([]), showOptions: .constant(true), kindOfStory: .constant(""), initialValue: .constant(false), action: {} )
         }.previewLayout(.sizeThatFits)
     }
 }

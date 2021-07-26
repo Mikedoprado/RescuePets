@@ -9,8 +9,10 @@ import Foundation
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 class AuthenticationModel: ObservableObject {
+    
     
     let db = Firestore.firestore()
     let auth = Auth.auth()

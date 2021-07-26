@@ -19,6 +19,7 @@ enum ThemeColors {
     case lightGray
     case halfGray
     case whiteGray
+    case whiteClear
     case black
 
     var color : Color {
@@ -45,6 +46,8 @@ enum ThemeColors {
             return Color(#colorLiteral(red: 0.9176470588, green: 0.9176470588, blue: 0.9176470588, alpha: 1))
         case .black:
             return Color(#colorLiteral(red: 0.1007985225, green: 0.1010723503, blue: 0.09869561228, alpha: 1))
+        case .whiteClear:
+            return Color(#colorLiteral(red: 0.9803921569, green: 0.9803921569, blue: 0.9803921569, alpha: 1))
         }
     }
 }

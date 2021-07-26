@@ -22,9 +22,9 @@ struct Message: Codable, Identifiable {
 }
 
 
-#if DEBUG
-var user2 = User(username: "Manuel", email: "manuel@gmail.com")
-var messages = [
-    Message(from: user1, to: user2, message: "hello", timestamp: 1)
-]
-#endif
+//#if DEBUG
+//var user2 = User(username: "Manuel", email: "manuel@gmail.com")
+//var messages = [
+//    Message(from: user1, to: user2, message: "hello", timestamp: 1)
+//]
+//#endif

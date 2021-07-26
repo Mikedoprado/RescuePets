@@ -33,8 +33,8 @@ enum DesignImage {
     case pinOtherActive
     case pinOtherInactive
     case pinLocationWhite
-    case alertAcept
-    case alertAdd
+    case storyAcept
+    case storyAdd
     case dropDown
     case dropDownRed
     case dropDownWhite
@@ -47,7 +47,7 @@ enum DesignImage {
         case .close:
             return Image(uiImage: UIImage(named: "btnClose")!)
         case .accept:
-            return Image(uiImage: UIImage(named: "acceptAlert")!)
+            return Image(uiImage: UIImage(named: "acceptstory")!)
         case .message:
             return Image(uiImage: UIImage(named: "sendMessage")!)
         case .location:
@@ -92,10 +92,10 @@ enum DesignImage {
             return Image(uiImage: UIImage(named: "pinDogActive")!)
         case .pinOtherInactive:
             return Image(uiImage: UIImage(named: "pinDogInactive")!)
-        case .alertAcept:
-            return Image(uiImage: UIImage(named: "alertAcept")!)
-        case .alertAdd:
-            return Image(uiImage: UIImage(named: "alertAdd")!)
+        case .storyAcept:
+            return Image(uiImage: UIImage(named: "storyAcept")!)
+        case .storyAdd:
+            return Image(uiImage: UIImage(named: "storyAdd")!)
         case .dropDown:
             return Image(uiImage: UIImage(named: "dropDown")!)
         case .logo:

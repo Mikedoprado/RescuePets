@@ -11,11 +11,11 @@ struct ContentView: View {
     
     @EnvironmentObject var auth : AuthenticationModel
     
+    
     var body: some View {
         ZStack {
-//            TestingThings()
             if auth.isSignedIn{
-                HomeMapView(imageData: Data(), mapData: Data())
+                HomeMapView()
             }else{
                 Authentication()
             }

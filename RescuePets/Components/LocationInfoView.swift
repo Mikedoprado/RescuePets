@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct LocationInfoView: View {
+    
     @Binding var city : String
     @Binding var address : String
     
     var body: some View {
         HStack{
             VStack{
-                Spacer()
+                
                 HStack{
                     DesignImage.pinLocationWhite.image
                         .resizable()
@@ -28,7 +29,7 @@ struct LocationInfoView: View {
             .background(ThemeColors.redSalsa.color)
 
             VStack (alignment: .leading, spacing: 10){
-                Text("Alert location")
+                Text("Story location")
                     .modifier(FontModifier(weight: .bold, size: .subheadline, color: .darkGray))
                 HStack{
                     Text("City")
@@ -45,6 +46,7 @@ struct LocationInfoView: View {
                         .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
                 }
             }
+            .padding(.horizontal, 10)
             Spacer()
         }
         .frame(height: 120)

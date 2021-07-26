@@ -12,11 +12,12 @@ struct PickerAnimal: View {
     @State var selectedIndex = -1
     var animal = ["pinDog", "pinCat", "pinBird", "pinOther"]
     @Binding var kindOfAnimal : String
+    @Binding var initialValue : Bool
     
     var body: some View {
         VStack(alignment: .leading) {
             Text("Choose the kind of animal")
-                .modifier(FontModifier(weight: .bold, size: .subheadline, color: .blueCuracao))
+                .modifier(FontModifier(weight: .regular, size: .subheadline, color: .darkGray))
                 .padding(.bottom, 20)
             HStack {
                 ForEach(0..<4) { index in
@@ -37,7 +38,6 @@ struct PickerAnimal: View {
                         default:
                             break
                         }
-                        print(kindOfAnimal)
                     }, label: {
                         Image((self.selectedIndex == index) ? "\(animal[index])Active" : "\(animal[index])Inactive")
                             .resizable()
@@ -47,15 +47,18 @@ struct PickerAnimal: View {
                     
                 }
             }
-        }
+        }.onChange(of: initialValue, perform: { value in
+            self.selectedIndex = -1
+        })
     }
 }
 
 struct PickerAnimal_Previews: PreviewProvider {
     static var previews: some View {
         Group{
-            PickerAnimal(kindOfAnimal: .constant(""))
-        }.previewLayout(.sizeThatFits)
+            PickerAnimal(kindOfAnimal: .constant(""), initialValue: .constant(false))
+        }
+        .previewLayout(.sizeThatFits)
         
     }
 }

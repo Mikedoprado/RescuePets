@@ -10,15 +10,16 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct User : Codable, Identifiable{
+struct User : Codable, Identifiable {
 
     @DocumentID var id: String?
-    var username: String
-    var email: String
+    var username: String?
+    var email: String?
     var badges: [Badges]?
     var location: String?
     var kindOfUser: TypeOfUser?
     var profilePicture: String?
+    
 }
 
 struct Badges: Codable {

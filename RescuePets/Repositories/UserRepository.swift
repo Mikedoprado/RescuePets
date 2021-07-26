@@ -2,34 +2,41 @@
 //  UserRepository.swift
 //  RescuePets
 //
-//  Created by Michael do Prado on 7/3/21.
+//  Created by Michael do Prado on 7/23/21.
 //
 
-import Foundation
+import Combine
 import FirebaseAuth
 import FirebaseFirestore
-import FirebaseFirestoreSwift
-import SwiftUI
+import FirebaseStorage
 
-class UserRepository: ObservableObject {
+final class UserRepository: ObservableObject {
     
-    let db = Firestore.firestore()
-//    let userId = Auth.auth().currentUser?.uid
-    @Published var user = User(username: "", email: "")
+    let path = "users"
+    private let store = Firestore.firestore()
+    private let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
+    let auth = Auth.auth()
     
+    @Published var user : User = User()
     
     init() {
-        loadDataCurrentUser()
+        loadUser()
     }
     
-    func loadDataCurrentUser() {
-        guard let userId = Auth.auth().currentUser?.uid else {return}
-        db.collection("users").document(userId).addSnapshotListener { snapshot, Error in
+    func loadUser(){
+        guard let currentUserId = auth.currentUser?.uid else {return}
+        store.collection(path).document(currentUserId).addSnapshotListener{ [weak self] (snapshot, err) in
+            if err != nil {
+                print("problems loading user",err?.localizedDescription as Any)
+                return
+            }
             do{
-                self.user = (try snapshot?.data(as: User.self))!
+                self?.user = try (snapshot?.data(as: User.self))!
             }catch{
-                fatalError("jodido \(error.localizedDescription)")
+                fatalError("imposible to load the user")
+                
             }
         }
     }
+    
 }

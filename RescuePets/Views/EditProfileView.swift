@@ -46,7 +46,7 @@ struct EditProfileView: View {
                     TextFieldCustom(placeholder: "Write your email", kind: $email, isSecureField: false)
                     
                     HStack{
-                        Text("Kind of alert")
+                        Text("Kind of story")
                             .modifier(FontModifier(weight: .regular, size: .paragraph, color: .darkGray))
                         Spacer()
                         Image(systemName: "arrowtriangle.down.fill")

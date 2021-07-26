@@ -101,7 +101,7 @@ struct TextView: UIViewRepresentable {
 
 }
 
-struct TextViewForAlert: View {
+struct TextViewForstory: View {
     
     @Binding var text : String
     @ObservedObject var remainingText : RemaininInt

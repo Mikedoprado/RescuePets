@@ -76,7 +76,6 @@ extension LocationManager: CLLocationManagerDelegate {
                         if pm.subThoroughfare != nil {
                             addressString = addressString + pm.subThoroughfare!
                         }
-                        print(addressString)
                         self.address = addressString
                         if pm.locality != nil {
                             self.city = pm.locality!
