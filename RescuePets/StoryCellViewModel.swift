@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-final class StoryCellViewModel: ObservableObject {
+final class StoryCellViewModel: ObservableObject, Identifiable {
     
     @Published var story: Story
     @Published var storyRepository = StoryDataRepository()
@@ -26,7 +26,7 @@ final class StoryCellViewModel: ObservableObject {
     var images = [String]()
     var latitude = 0.0
     var longitude = 0.0
-    var userAcceptedstoryID = ""
+    var userAcceptedStoryID = ""
     
     private var cancellables = Set<AnyCancellable>()
 
@@ -102,7 +102,7 @@ final class StoryCellViewModel: ObservableObject {
         $story.compactMap{ story in
             story.userAcceptedStoryID
         }
-        .assign(to: \.userAcceptedstoryID, on: self)
+        .assign(to: \.userAcceptedStoryID, on: self)
         .store(in: &cancellables)
         
         $story.map{ story in

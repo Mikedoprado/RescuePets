@@ -36,6 +36,12 @@ struct CreateStoryView: View {
     @ObservedObject private var storyViewModel = StoryViewModel()
     @ObservedObject private var userViewModel = UserViewModel()
     
+    @State var x : CGFloat = 0
+    @State var count : CGFloat = 0
+    @State var screen = UIScreen.main.bounds.width
+    @State var op : CGFloat = 0
+    @State var dataCount : Int = 0
+    
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
@@ -123,16 +129,23 @@ struct CreateStoryView: View {
                             .padding(.horizontal, 30)
                         
                         VStack(spacing: 20){
-                            ScrollView(.horizontal, showsIndicators: false) {
+                            VStack{
                                 HStack(spacing: 0) {
                                     ForEach(images, id: \.id) { image in
                                         image.image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(maxWidth:UIScreen.main.bounds.width ,maxHeight: UIScreen.main.bounds.width)
+                                            .frame(width:self.screen ,height: self.screen)
+                                            .frame(maxWidth:self.screen ,maxHeight: self.screen)
+                                            .clipShape(RoundedRectangle(cornerRadius: 0))
+                                            .offset(x: self.x)
+                                            .modifier(DraggableView(x: self.$x, count: self.$count, screen: self.$screen, dataCount: self.$dataCount))
                                     }
-                                }
+                                }.frame(width: screen)
+                                .offset(x: self.op)
                             }
+                            .animation(.spring())
+                            
                             VStack(spacing: 20){
                                 if images.count < 4{
                                     HStack{
@@ -178,9 +191,15 @@ struct CreateStoryView: View {
         }
         .onAppear{
             self.images.append(imageSelected)
+            self.op = ((self.screen * CGFloat(images.count)) / 2) - (self.screen / 2)
+            self.dataCount = images.count
         }
         .onChange(of: imageSelected){ newImage in
             self.images.append(newImage)
+        }
+        .onChange(of: images.count){ value in
+            self.op = ((self.screen * CGFloat(images.count)) / 2) - (self.screen / 2)
+            self.dataCount = images.count
         }
         .offset(y: self.isShowing ? 0 :  UIScreen.main.bounds.height)
         .animation(.default)

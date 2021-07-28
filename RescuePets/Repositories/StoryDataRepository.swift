@@ -10,30 +10,31 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 
-class BaseStoryRepository {
-    @Published var stories : [Story] = []
-}
+
 
 protocol RepositoryStoryHelper {
     func load()
     func add(_ story: Story, imageData: [Data])
     func remove(_ story: Story)
-    func update(_ story: Story)
+    func update(_ story: Story, user: User)
 }
 
-final class StoryDataRepository: BaseStoryRepository, RepositoryStoryHelper, ObservableObject {
-
+final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
+    
+    @Published var stories : [Story] = []
     let pathUser = "users"
     let pathStories = "stories"
+    let pathCreatedStories = "createdStories"
+    let pathAcceptedStories = "acceptedStories"
     let store = Firestore.firestore()
     let auth = Auth.auth()
     let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
     
-    override init(){
-        super.init()
+    init(){
         load()
+        
     }
-    
+    // MARK: load stories of the one location general stories in your city
     func load(){
         
         guard let currentUserId = auth.currentUser?.uid else {return}
@@ -42,25 +43,27 @@ final class StoryDataRepository: BaseStoryRepository, RepositoryStoryHelper, Obs
             if error != nil {
                 print(error?.localizedDescription as Any)
             }
-            let user =  try! snapshotUser?.data(as: User.self)
+            let user = try! snapshotUser?.data(as: User.self)
             guard let userLocation = user?.location else {return}
-            let ref = self?.store.collection(self!.pathStories).order(by: "timestamp", descending: true).whereField("location", isEqualTo: userLocation)
+            
+            let ref = self?.store.collection(self!.pathStories).order(by: "timestamp", descending: true).whereField("city", isEqualTo: userLocation)
             
             ref!.addSnapshotListener { snapshotStories, err in
                 if err != nil {
                     print(err?.localizedDescription as Any)
                 }
-                do {
-                    self?.stories =  try snapshotStories?.documents.map({ stories in
-                        _ = try stories.data(as: Story.self)
-                    }) as! [Story]
-                }catch{
-                    fatalError("something happen loading stories")
+                if let snapshot = snapshotStories {
+                    
+                    if !snapshot.isEmpty{
+                        self?.stories = snapshot.documents.compactMap({ document in
+                                try? document.data(as: Story.self)
+                        })
+                    }
                 }
             }
         }
     }
-    
+    // MARK: creating a new story
     func add(_ story: Story, imageData: [Data]){
         
         guard let currentUserId = auth.currentUser?.uid else {return}
@@ -68,7 +71,7 @@ final class StoryDataRepository: BaseStoryRepository, RepositoryStoryHelper, Obs
         
         do {
             try store.collection(pathStories).document(storyId).setData(from: story)
-            let userstories = store.collection(pathUser).document(currentUserId).collection("createdStories").document(storyId)
+            let userstories = store.collection(pathUser).document(currentUserId).collection(pathCreatedStories).document(storyId)
             userstories.setData(["timestamp":story.timestamp])
             self.sendImageToDatabase(currentUserId: currentUserId, storyId: storyId, imageData: imageData)
             
@@ -76,13 +79,56 @@ final class StoryDataRepository: BaseStoryRepository, RepositoryStoryHelper, Obs
             fatalError("the story couldn´t be saved")
         }
     }
-    
+    // MARK: deleting story in general and in the user
     func remove(_ story: Story) {
         
+        guard let currentUserId = auth.currentUser?.uid, let storyId = story.id else {return}
+        
+        store.collection(pathStories).document(storyId).delete { [weak self] error in
+            if error != nil {
+                print(error?.localizedDescription as Any)
+                return
+            }
+            self?.store.collection(self!.pathUser).document(currentUserId).collection(self!.pathCreatedStories).document(storyId).delete { error in
+                if error != nil {
+                    print(error?.localizedDescription as Any)
+                }
+            }
+            
+            if story.userAcceptedStoryID != nil {
+                self?.store.collection(self!.pathUser).document(story.userAcceptedStoryID!).collection(self!.pathAcceptedStories).document(storyId).delete { error in
+                    if error != nil {
+                        print(error?.localizedDescription as Any)
+                    }
+                }
+            }
+        }
+//             delete element from the storage to
     }
     
-    func update(_ story: Story) {
+    func update(_ story: Story, user: User) {
+        let isActive = story.isActive
         
+        switch isActive {
+        case true:
+            store.collection(pathStories).document(story.id!).updateData(["isActive":true, "userAcceptedStoryID": user.id as Any])
+            do{
+                try store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).setData(from: story)
+                store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).updateData(["userAcceptedStoryID": user.id as Any])
+            }catch{
+                fatalError("something have happened")
+            }
+        case false:
+            store.collection(pathStories).document(story.id!).updateData(["isActive":false])
+            if story.userAcceptedStoryID != nil{
+                store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).delete(completion: { error in
+                    if error != nil{
+                        print(error?.localizedDescription as Any)
+                        return
+                    }
+                })
+            }
+        }
     }
     
     func sendImageToDatabase(currentUserId: String ,storyId: String, imageData:[Data]){

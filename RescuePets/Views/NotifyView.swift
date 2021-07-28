@@ -11,6 +11,7 @@ var screen = UIScreen.main.bounds
 
 struct NotifyView: View {
     
+    @ObservedObject var storyViewModel = StoryViewModel()
     @Binding var showNotify : Bool
     @Binding var isAnimating : Bool
     @State var changeView = false
@@ -18,7 +19,9 @@ struct NotifyView: View {
     @State var isAnimatingActiveView = false
     @State var categories = ["General", "Accepted", "Created"]
     @State var selectedCategory = "General"
+    @State var story : Story?
     @Namespace private var ns
+    @Binding var user : User
     
     func getColor(story: Story) -> Color {
         switch story.animal.rawValue {
@@ -61,13 +64,26 @@ struct NotifyView: View {
                     .padding(.horizontal, 30)
                     
                     SelectorSection(categories: $categories, selectedCategory: $selectedCategory)
-                    
+
                 }
                 .background(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
                 .animation(.default)
 
                 ScrollView(.vertical) {
-//                    GeneralStory(showDetailsStory: $showDetailsStory,isAnimatingActiveView: $isAnimatingActiveView)
+                    LazyVStack {
+                        ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
+                            Button(action: {
+                                self.story = storyCellVM.story
+                                self.showDetailsStory.toggle()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.isAnimatingActiveView = true
+                                }
+                            }, label: {
+                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
+                            })
+                            
+                        }
+                    }
                 }
             }
             .frame(width: screen.width)
@@ -76,17 +92,17 @@ struct NotifyView: View {
             .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
             .animation(.default)
             if showDetailsStory {
-                ActiveDetailView(showstory: $showDetailsStory, isAnimating: $isAnimatingActiveView)
+                ActiveDetailView(storyCellViewModel: StoryCellViewModel(story: story!), storyViewModel: storyViewModel, showstory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: $user)
             }
         }
     }
 }
 
-struct NotifyView_Previews: PreviewProvider {
-    static var previews: some View {
-        NotifyView(showNotify: .constant(true), isAnimating: .constant(true))
-    }
-}
+//struct NotifyView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NotifyView(showNotify: .constant(true), isAnimating: .constant(true))
+//    }
+//}
 
 
 

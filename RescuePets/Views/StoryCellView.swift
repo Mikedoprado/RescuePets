@@ -9,46 +9,49 @@ import SwiftUI
 
 struct StoryCellView: View {
     
+    @ObservedObject var storyCellViewModel : StoryCellViewModel
+    @ObservedObject var storyViewModel : StoryViewModel
+    @Binding var user : User
     var body: some View {
         HStack {
-            DesignImage.pinCatActive.image
+            Image("pin\(storyCellViewModel.kindOfAnimal)Active" )
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 50, height: 50)
             VStack (alignment: .leading){
-                Text("Maltreatment")
+                Text(storyCellViewModel.kindOfStory)
                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
-                Text("username")
+                Text(storyCellViewModel.username)
                     .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
-                Text("1 week ago")
+                Text(storyCellViewModel.timestamp)
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
                 }
             Spacer()
-            
+            if user.id != storyCellViewModel.story.userId{
                 HStack {
                     Button{
-
+                        storyCellViewModel.story.isActive.toggle()
+                        storyViewModel.update(storyCellViewModel.story, user: user)
                     }label: {
-                        DesignImage.storyAcept.image
+                        Image(storyCellViewModel.acceptedStory)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 30, height: 30)
                     }
-                    
                 }
-            
+            }
         }
         .padding(.top, 10)
         .padding(.horizontal, 30)
     }
 }
 
-struct storyCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group{
-            StoryCellView()
-        }
-        .previewLayout(.sizeThatFits)
-    }
-
-}
+//struct storyCellView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group{
+//            StoryCellView()
+//        }
+//        .previewLayout(.sizeThatFits)
+//    }
+//
+//}

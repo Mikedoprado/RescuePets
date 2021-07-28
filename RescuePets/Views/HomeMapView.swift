@@ -12,7 +12,7 @@ import SwiftUI
 struct HomeMapView: View {
     
     @EnvironmentObject var auth: AuthenticationModel
-    
+    @ObservedObject private var userViewModel = UserViewModel()
     @State private var isShowPhotoLibrary = false
     @State private var showProfileUser = false
     @State private var showCreateStory : Bool = false
@@ -112,7 +112,7 @@ struct HomeMapView: View {
             }
             
             if showNotifcationsView {
-                NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView)
+                NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, user: $userViewModel.userCellViewModel.user)
                     .ignoresSafeArea()
             }
         }
