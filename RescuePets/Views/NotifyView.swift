@@ -70,20 +70,52 @@ struct NotifyView: View {
                 .animation(.default)
 
                 ScrollView(.vertical) {
-                    LazyVStack {
-                        ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
-                            Button(action: {
-                                self.story = storyCellVM.story
-                                self.showDetailsStory.toggle()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    self.isAnimatingActiveView = true
-                                }
-                            }, label: {
-                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
-                            })
-                            
+                    if selectedCategory == "General"{
+                        LazyVStack {
+                            ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
+                                Button(action: {
+                                    self.story = storyCellVM.story
+                                    self.showDetailsStory.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        self.isAnimatingActiveView = true
+                                    }
+                                }, label: {
+                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
+                                })
+                            }
                         }
                     }
+                    if selectedCategory == "Accepted"{
+                        LazyVStack {
+                            ForEach(storyViewModel.storyCellViewModelsAccepted) { storyCellVM in
+                                Button(action: {
+                                    self.story = storyCellVM.story
+                                    self.showDetailsStory.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        self.isAnimatingActiveView = true
+                                    }
+                                }, label: {
+                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
+                                })
+                            }
+                        }
+                    }
+                    if selectedCategory == "Created"{
+                        LazyVStack {
+                            ForEach(storyViewModel.storyCellViewModelsCreated) { storyCellVM in
+                                Button(action: {
+                                    self.story = storyCellVM.story
+                                    self.showDetailsStory.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        self.isAnimatingActiveView = true
+                                    }
+                                }, label: {
+                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
+                                })
+                            }
+                        }
+                    }
+                    
                 }
             }
             .frame(width: screen.width)

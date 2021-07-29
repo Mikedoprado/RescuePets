@@ -12,9 +12,17 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     
     @Published var storyRepository =  StoryDataRepository()
     @Published var storyCellViewModels : [StoryCellViewModel] = []
+    @Published var storyCellViewModelsCreated : [StoryCellViewModel] = []
+    @Published var storyCellViewModelsAccepted : [StoryCellViewModel] = []
     private var cancellables = Set<AnyCancellable>()
     
     init(){
+        load()
+        loadCreated()
+        loadAccepted()
+    }
+    
+    func load() {
         storyRepository.$stories.map { stories in
             stories.map { story in
                 StoryCellViewModel(story: story)
@@ -24,8 +32,23 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         .store(in: &cancellables)
     }
     
-    func load() {
-       
+    func loadCreated() {
+        storyRepository.$storiesCreated.map { stories in
+            stories.map { story in
+                StoryCellViewModel(story: story)
+            }
+        }
+        .assign(to: \.storyCellViewModelsCreated, on: self)
+        .store(in: &cancellables)
+    }
+    func loadAccepted() {
+        storyRepository.$storiesAccepted.map { stories in
+            stories.map { story in
+                StoryCellViewModel(story: story)
+            }
+        }
+        .assign(to: \.storyCellViewModelsAccepted, on: self)
+        .store(in: &cancellables)
     }
     
     func add(_ story: Story, imageData: [Data]) {

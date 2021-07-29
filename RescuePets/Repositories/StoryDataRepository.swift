@@ -22,6 +22,8 @@ protocol RepositoryStoryHelper {
 final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     
     @Published var stories : [Story] = []
+    @Published var storiesCreated : [Story] = []
+    @Published var storiesAccepted : [Story] = []
     let pathUser = "users"
     let pathStories = "stories"
     let pathCreatedStories = "createdStories"
@@ -32,7 +34,8 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     
     init(){
         load()
-        
+        loadCreatedStories()
+        loadAcceptedStories()
     }
     // MARK: load stories of the one location general stories in your city
     func load(){
@@ -63,6 +66,52 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
             }
         }
     }
+    // MARK: load stories created by the currentUser
+    func loadCreatedStories(){
+        
+        guard let currentUserId = auth.currentUser?.uid else {return}
+        
+        let ref = store.collection(pathStories).order(by: "timestamp", descending: true).whereField("userId", isEqualTo: currentUserId)
+        
+        ref.addSnapshotListener { snapshotStories, error in
+            if error != nil {
+                print(error?.localizedDescription as Any)
+            }
+            if let snapshot = snapshotStories {
+                
+                if !snapshot.isEmpty{
+                    self.storiesCreated = snapshot.documents.compactMap({ document in
+                            try? document.data(as: Story.self)
+                    })
+                }
+            }
+        }
+    }
+    // MARK: load stories accepted by the currentUser
+    func loadAcceptedStories(){
+        
+        guard let currentUserId = auth.currentUser?.uid else {return}
+        
+        let ref = store.collection(pathUser).document(currentUserId).collection(pathAcceptedStories).order(by: "timestamp", descending: true)
+        
+        ref.addSnapshotListener { snapshotStories, error in
+            if error != nil {
+                print(error?.localizedDescription as Any)
+            }
+            if let snapshot = snapshotStories {
+                
+                if !snapshot.isEmpty{
+                    self.storiesAccepted = snapshot.documents.compactMap({ document in
+                            try? document.data(as: Story.self)
+                    })
+                }
+            }
+        }
+        
+        
+        
+    }
+    
     // MARK: creating a new story
     func add(_ story: Story, imageData: [Data]){
         
