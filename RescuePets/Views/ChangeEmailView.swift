@@ -14,14 +14,19 @@ struct ChangeEmailView: View {
     
     @ObservedObject var userViewModel : UserViewModel
     @EnvironmentObject var auth: AuthenticationModel
+    @ObservedObject var signupVM = SignViewModel()
     @Binding var isAnimatingEditEmail : Bool
     @Binding var showChangeEmail : Bool
     
     @State var titleAlert = ""
     @State var messageAlert = ""
     @State var email: String = ""
+    @State var oldEmail = ""
+    @State var password = ""
     @State var showingAlertEmail = false
     @State var showingSameEmail = false
+    @State var showSign = false
+    @State var isLoading = false
     
     func dismissView(){
         self.isAnimatingEditEmail = false
@@ -45,6 +50,27 @@ struct ChangeEmailView: View {
         }
     }
     
+    fileprivate func signInToChangeEmail() {
+        auth.signIn(email: oldEmail.lowercased(), password: password) { error, value in
+            switch value {
+            case true:
+                self.showSign = false
+                self.titleAlert = "Login"
+                self.messageAlert = "Now you can change the email"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.showingSameEmail = true
+                }
+            case false:
+                self.showSign = false
+                self.titleAlert = "Login"
+                if let  err = error { self.messageAlert = err }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.showingSameEmail = true
+                }
+            }
+        }
+    }
+    
     var body: some View {
         ZStack {
             VStack(spacing: 20){
@@ -64,13 +90,20 @@ struct ChangeEmailView: View {
                     }
                 }
                 .padding(.top, 50)
-
-                HStack{
-                    Text("If you want to change the email you need to log in again before to make this change")
-                        .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
-                    Spacer()
-                }
                 VStack(spacing: 20){
+                    HStack(alignment: .top){
+                        Text("If you want to change the email you need to log in again before to make this change.")
+                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
+                            .lineLimit(3)
+                        Spacer()
+                        Button(action: {self.showSign = true}, label: {
+                            Text("Log In")
+                                .modifier(FontModifier(weight: .bold, size: .largeButtonText, color: .lightGray))
+                        })
+                        .frame(width: 100, height: 50)
+                        .background(ThemeColors.whiteGray.color)
+                        .cornerRadius(10)
+                    }
                     
                     TextFieldCustom(placeholder: userViewModel.userCellViewModel.email,title: "Email", kind: $email, isSecureField: false)
                         .alert(isPresented:$showingSameEmail) {
@@ -81,17 +114,19 @@ struct ChangeEmailView: View {
                                 })
                             )
                         }
-                    
                     NormalButton(textButton: "Done") {
                         if email != userViewModel.userCellViewModel.email {
-                            
                             auth.updateEmail(email: email) { error, value in
                                 chooseKindOfAlert(value, error)
                             }
+                            self.showSign = false
                         }else {
-                            self.showingSameEmail = true
+                            self.showSign = false
                             self.titleAlert = "Email repeated"
                             self.messageAlert = "The email that you write is the same that we have in the database"
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                self.showingSameEmail = true
+                            }
                         }
                     }
                     .alert(isPresented:$showingAlertEmail) {
@@ -107,10 +142,16 @@ struct ChangeEmailView: View {
                 }
                 Spacer()
             }
-            .padding(.horizontal, 30)
             .padding(.bottom, 20)
+            .padding(.horizontal, 30)
             .background(ThemeColors.white.color)
             .cornerRadius(20)
+            
+            if showSign {
+                CustomAlertView(email: $oldEmail, password: $password, showAlert: $showSign) {
+                    signInToChangeEmail()
+                }
+            }
         }
         .offset(y: self.isAnimatingEditEmail ? 0 : UIScreen.main.bounds.height)
         .animation(.spring())
@@ -121,6 +162,6 @@ struct ChangeEmailView: View {
 
 struct ChangeEmailView_Previews: PreviewProvider {
     static var previews: some View {
-        ChangeEmailView(userViewModel: UserViewModel(), isAnimatingEditEmail: .constant(false), showChangeEmail: .constant(false))
+        ChangeEmailView(userViewModel: UserViewModel(), isAnimatingEditEmail: .constant(true), showChangeEmail: .constant(true))
     }
 }

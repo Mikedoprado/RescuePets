@@ -49,6 +49,7 @@
 		D39C88B8267942DB0087FEA8 /* RescuePetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39C88B7267942DB0087FEA8 /* RescuePetsTests.swift */; };
 		D39C88C3267942DC0087FEA8 /* RescuePetsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39C88C2267942DC0087FEA8 /* RescuePetsUITests.swift */; };
 		D3A4F20426B04EF30082D01E /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A4F20326B04EF30082D01E /* DraggableView.swift */; };
+		D3A5830826C315950041E2E3 /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A5830726C315950041E2E3 /* CustomAlertView.swift */; };
 		D3A6EF34268C9701000D3636 /* AuthenticationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6EF33268C9701000D3636 /* AuthenticationModel.swift */; };
 		D3A6EF36268CFF03000D3636 /* ChatCellInvited.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6EF35268CFF03000D3636 /* ChatCellInvited.swift */; };
 		D3A6EF38268D0866000D3636 /* SignViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6EF37268D0866000D3636 /* SignViewModel.swift */; };
@@ -130,6 +131,7 @@
 		D39C88C2267942DC0087FEA8 /* RescuePetsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RescuePetsUITests.swift; sourceTree = "<group>"; };
 		D39C88C4267942DC0087FEA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D3A4F20326B04EF30082D01E /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableView.swift; sourceTree = "<group>"; };
+		D3A5830726C315950041E2E3 /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		D3A6EF33268C9701000D3636 /* AuthenticationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationModel.swift; sourceTree = "<group>"; };
 		D3A6EF35268CFF03000D3636 /* ChatCellInvited.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellInvited.swift; sourceTree = "<group>"; };
 		D3A6EF37268D0866000D3636 /* SignViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignViewModel.swift; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				D38796062695E763000B19FF /* DropDownView.swift */,
 				D387960826961520000B19FF /* LocationInfoView.swift */,
 				D3A4F20326B04EF30082D01E /* DraggableView.swift */,
+				D3A5830726C315950041E2E3 /* CustomAlertView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -490,6 +493,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3A5830826C315950041E2E3 /* CustomAlertView.swift in Sources */,
 				D34EC19F26BD97AE002A9D20 /* ChangeEmailView.swift in Sources */,
 				D30BCACA267BF28600D10BEE /* ImagePicker.swift in Sources */,
 				D3FFF238267A5F2100F4A278 /* TextFieldCustom.swift in Sources */,

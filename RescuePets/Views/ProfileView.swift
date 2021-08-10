@@ -78,7 +78,7 @@ struct ProfileView: View {
                     HStack(spacing:20){
                         VStack(alignment: .center, spacing: 0) {
                             Text(textCreated)
-                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                                .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
                             Text("\(storyViewModel.amountCreatedStories)")
                                 .modifier(FontModifier(weight: .bold, size: .caption, color: .whiteGray))
                         }
@@ -87,7 +87,7 @@ struct ProfileView: View {
                             .foregroundColor(ThemeColors.white.color)
                         VStack(alignment: .center, spacing: 0) {
                             Text(textAccepted)
-                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                                .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
                             Text("\(storyViewModel.amountAcceptedStories)")
                                 .modifier(FontModifier(weight: .bold, size: .caption, color: .whiteGray))
                         }

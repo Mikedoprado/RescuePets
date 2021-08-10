@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NormalButton: View {
+    
     var textButton: String
     var action: () -> Void
     var body: some View {

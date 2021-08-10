@@ -138,7 +138,7 @@ struct EditProfileView: View {
                                 withAnimation {
                                     self.showChangePassword = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        self.animChangePassword = true 
+                                        self.animChangePassword = true
                                     }
                                 }
                             }label: {
@@ -193,14 +193,11 @@ struct EditProfileView: View {
                     .ignoresSafeArea(edges: .all)
             })
             if showChangeEmail {
-                VStack {
-                    ChangeEmailView(userViewModel: userViewModel, isAnimatingEditEmail: $animChangeEmail, showChangeEmail: $showChangeEmail)
-                }
+                ChangeEmailView(userViewModel: userViewModel, isAnimatingEditEmail: $animChangeEmail, showChangeEmail: $showChangeEmail)
+                
             }
             if showChangePassword{
-                VStack {
-                    ChangePasswordView(userViewModel: userViewModel, isAnimatingEditChangePassword: $animChangePassword, showChangePassword: $showChangePassword)
-                }
+                ChangePasswordView(userViewModel: userViewModel, isAnimatingEditChangePassword: $animChangePassword, showChangePassword: $showChangePassword)
             }
         }
     }

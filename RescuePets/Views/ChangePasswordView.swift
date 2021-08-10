@@ -68,8 +68,8 @@ struct ChangePasswordView: View {
             }
             .padding(.top, 50)
             HStack{
-                Text("If you want to change the password you need to log in again before to make this change")
-                    .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
+                Text("If you want to change the password you need to log in again before to make this change.")
+                    .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                     .multilineTextAlignment(.leading)
                 Spacer()
             }
