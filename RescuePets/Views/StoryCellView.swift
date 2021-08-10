@@ -27,16 +27,18 @@ struct StoryCellView: View {
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
                 }
             Spacer()
-            if user.id != storyCellViewModel.story.userId{
-                HStack {
-                    Button{
-                        storyCellViewModel.story.isActive.toggle()
-                        storyViewModel.update(storyCellViewModel.story, user: user)
-                    }label: {
-                        Image(storyCellViewModel.acceptedStory)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
+            if user.id != storyCellViewModel.story.userId {
+                if storyCellViewModel.userAcceptedStoryID == "" || user.id == storyCellViewModel.userAcceptedStoryID{
+                    HStack {
+                        Button{
+                            storyCellViewModel.story.isActive.toggle()
+                            storyViewModel.update(storyCellViewModel.story, user: user)
+                        }label: {
+                            Image(storyCellViewModel.acceptedStory)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 30, height: 30)
+                        }
                     }
                 }
             }

@@ -118,7 +118,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $story.map{ story in
-            story.kindOfStory.rawValue
+            story.kindOfStory
         }
         .assign(to: \.kindOfStory, on: self)
         .store(in: &cancellables)

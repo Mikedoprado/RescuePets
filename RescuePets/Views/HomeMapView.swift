@@ -40,69 +40,81 @@ struct HomeMapView: View {
     
     var body: some View {
         ZStack{
-
-            EmptyStateHome()
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-            if isShowPhotoLibrary {
-                MapView()
+            ZStack {
+                ThemeColors.redSalsa.color
+                    .cornerRadius(20)
                     .ignoresSafeArea(.all)
-                ThemeColors.black.color
-                    .opacity(0.4)
-                    .blendMode(.multiply)
-                    .ignoresSafeArea(.all)
-            }
-            
-            VStack {
-                Spacer()
-                VStack {
-                    HStack(alignment: .center){
-                        ForEach(0..<4) { index in
-                            Button(action: {
-                                selectedIndex = index
-                                if index == 0 {
-                                    self.showNotifcationsView.toggle()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        self.animNotify = true
-                                    }
-                                }
-                                if index == 1 {
-                                    isShowPhotoLibrary.toggle()
-                                    self.showProfileUser = false
-                                    self.showNotifcationsView = false
-                                }
-                                if index == 2 {
-                                    self.auth.signOut()
-                                }
-                                if index == 3 {
-                                    self.showProfileUser.toggle()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        self.animProfileUser = showProfileUser
-                                    }
-                                }
-                            }, label: {
-                                Spacer()
-                                Image( selectedIndex == index ? "\(tabBarItemActive[index])Active" : "\(tabBarItemActive[index])Inactive")
-                                Spacer()
-                            })
-                        }
+                EmptyStateHome()
+                    .onTapGesture {
+                        self.hideKeyboard()
                     }
-                    .padding(.bottom, 20)
+                if isShowPhotoLibrary {
+                    MapView()
+                        .ignoresSafeArea(.all)
+                    ThemeColors.black.color
+                        .opacity(0.4)
+                        .blendMode(.multiply)
+                        .ignoresSafeArea(.all)
                 }
-                .frame(height: 100)
-                .background(ThemeColors.white.color)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .sheet(isPresented: $isShowPhotoLibrary, onDismiss: loadImage, content: {
-                    ImagePicker(selectedImage: $inputImage)
-                        .ignoresSafeArea(edges: .all)
-                })
-
+                VStack {
+                    Spacer()
+                    VStack {
+                        HStack(alignment: .center){
+                            ForEach(0..<4) { index in
+                                Button(action: {
+                                    selectedIndex = index
+                                    if index == 0 {
+                                        self.showNotifcationsView.toggle()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            self.animNotify = true
+                                        }
+                                    }
+                                    if index == 1 {
+                                        isShowPhotoLibrary.toggle()
+                                        self.showProfileUser = false
+                                        self.showNotifcationsView = false
+                                    }
+                                    if index == 2 {
+                                        self.auth.signOut()
+                                    }
+                                    if index == 3 {
+                                        self.showProfileUser.toggle()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            self.animProfileUser = showProfileUser
+                                        }
+                                    }
+                                }, label: {
+                                    Spacer()
+                                    Image( selectedIndex == index ? "\(tabBarItemActive[index])Active" : "\(tabBarItemActive[index])Inactive")
+                                    Spacer()
+                                })
+                            }
+                        }
+                        .padding(.bottom, 20)
+                    }
+                    .frame(height: 100)
+                    .background(ThemeColors.white.color)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .sheet(isPresented: $isShowPhotoLibrary, onDismiss: loadImage, content: {
+                        ImagePicker(selectedImage: $inputImage)
+                            .ignoresSafeArea(edges: .all)
+                    })
+                }
             }
+            .blur(radius: showProfileUser ? 5 : 0)
+            .scaleEffect(CGSize(width: showProfileUser ? 0.95 : 1.0, height: showProfileUser ? 0.95 : 1.0))
             .ignoresSafeArea(edges: .bottom)
+            .animation(.spring())
             
             if showProfileUser {
+                
+                ThemeColors.darkGray.color
+                    .opacity(1)
+                    .blendMode(.multiply)
+                    .ignoresSafeArea( edges: .all)
+                
                 ProfileView(isShowing: $showProfileUser, isAnimating: $animProfileUser)
+//                    .padding(.horizontal, 10)
                     .ignoresSafeArea(edges: .all)
             }
             
@@ -116,7 +128,7 @@ struct HomeMapView: View {
                     .ignoresSafeArea()
             }
         }
-        .background(ThemeColors.redSalsa.color)
+        .background(ThemeColors.darkGray.color)
         .ignoresSafeArea(edges: .all)
     }
     

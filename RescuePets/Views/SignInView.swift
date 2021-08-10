@@ -14,7 +14,12 @@ struct SignInView: View {
     var isSigned : Bool
     @Binding var show : Bool
     @EnvironmentObject var auth : AuthenticationModel
+    @Binding var isLoading : Bool
     
+    @State var titleAlert = ""
+    @State var messageAlert = ""
+    @State var showingAlertSign = false
+
     var body: some View {
         VStack{
             VStack(spacing: 20){
@@ -24,18 +29,35 @@ struct SignInView: View {
                 
                 NormalButton(textButton: "Sign In") {
                     if email != "" && password != "" {
-                        self.auth.signIn(email: email, password: password)
+                        self.auth.signIn(email: email, password: password) {  error, value in
+                            if !value {
+                                if let message = error {
+                                    showingAlertSign = true
+                                    titleAlert = "Incorrect information"
+                                    messageAlert = message
+                                }
+                            }else{
+                                self.isLoading = true
+                            }
+                        }
                     }
                 }
                 .opacity(!isSigned ? 1 : 0.8)
                 .disabled(isSigned)
+                .alert(isPresented:$showingAlertSign) {
+                    Alert(
+                        title: Text(titleAlert),
+                        message: Text(messageAlert),dismissButton: .default(Text("Ok"), action: {
+                            showingAlertSign = false
+                        })
+                    )
+                }
             }
         }
         .padding(.top, 50)
         .padding(.all, 20)
         .background(ThemeColors.white.color)
         .cornerRadius(20)
-
     }
 }
 

@@ -27,7 +27,7 @@ struct DropDownView: View {
                         .foregroundColor(ThemeColors.redSalsa.color)
                     HStack {
                         Text(title)
-                            .modifier(FontModifier(weight: .regular, size: .subheadline, color: .white))
+                            .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .white))
                         Spacer()
                         Text(self.selectedIndex != -1 ? items[selectedIndex] : "")
                             .multilineTextAlignment(.trailing)
@@ -38,7 +38,8 @@ struct DropDownView: View {
                             .frame(width: 24, height: 24)
                             .rotationEffect(.degrees(self.selectedIndex == -1 && !self.showOptions ? 180 : 0))
                             .animation(.default)
-                    }.padding(.horizontal, 30)
+                    }
+                    .padding(.horizontal, 20)
                 }
             })
             
@@ -47,11 +48,12 @@ struct DropDownView: View {
                     Button(action: {
                         self.selectedIndex = index
                         self.kindOfStory = items[index]
+                        self.showOptions = false
                     }, label: {
                         HStack {
                             Text(items[index])
                                 .modifier(FontModifier(weight: .bold, size: .paragraph, color: (self.selectedIndex == index) ? .white : .halfGray))
-                                .padding(.leading, 30)
+                                .padding(.leading, 20)
                                 .animation(.default)
                             Spacer()
                             ((self.selectedIndex == index) ?
@@ -59,7 +61,7 @@ struct DropDownView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
-                                .padding(.trailing, 30)
+                                .padding(.trailing, 20)
                                 .animation(.default)
                         }
                         .frame(height: 60)
@@ -72,7 +74,7 @@ struct DropDownView: View {
             
         }
         .background(Color.white)
-        .cornerRadius(20)
+        .cornerRadius(10)
         .onChange(of: initialValue, perform: { value in
             self.selectedIndex = -1
         })

@@ -24,7 +24,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     @Published var stories : [Story] = []
     @Published var storiesCreated : [Story] = []
     @Published var storiesAccepted : [Story] = []
-    let pathUser = "users"
+    let pathUser = "helpers"
     let pathStories = "stories"
     let pathCreatedStories = "createdStories"
     let pathAcceptedStories = "acceptedStories"
@@ -120,8 +120,8 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         
         do {
             try store.collection(pathStories).document(storyId).setData(from: story)
-            let userstories = store.collection(pathUser).document(currentUserId).collection(pathCreatedStories).document(storyId)
-            userstories.setData(["timestamp":story.timestamp])
+            let helpersStories = store.collection(pathUser).document(currentUserId).collection(pathCreatedStories).document(storyId)
+            helpersStories.setData(["timestamp":story.timestamp])
             self.sendImageToDatabase(currentUserId: currentUserId, storyId: storyId, imageData: imageData)
             
         }catch{
@@ -168,13 +168,15 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 fatalError("something have happened")
             }
         case false:
-            store.collection(pathStories).document(story.id!).updateData(["isActive":false])
+            
             if story.userAcceptedStoryID != nil{
-                store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).delete(completion: { error in
+                store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).delete(completion: { [weak self] error in
                     if error != nil{
                         print(error?.localizedDescription as Any)
                         return
                     }
+                    self?.store.collection(self!.pathStories).document(story.id!).updateData(["isActive":false])
+                    self?.store.collection(self!.pathStories).document(story.id!).updateData(["userAcceptedStoryID":""])
                 })
             }
         }
@@ -203,7 +205,6 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 }
             })
         }
-        
     }
     
     func setupTimeStamp(time: Int) -> String {

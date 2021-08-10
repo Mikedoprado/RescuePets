@@ -16,7 +16,7 @@ struct Story : Codable, Identifiable {
     @DocumentID var id: String?
     var username: String
     var userId: String
-    var kindOfStory: TypeOfThreat
+    var kindOfStory: String
     var timestamp: Int
     var animal: KindOfAnimal
     var images: [String]?

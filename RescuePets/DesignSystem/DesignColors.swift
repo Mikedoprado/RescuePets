@@ -35,7 +35,7 @@ enum ThemeColors {
         case .whiteSmashed:
             return Color(#colorLiteral(red: 0.9803921569, green: 0.9529411765, blue: 0.8901960784, alpha: 1))
         case .darkGray:
-            return Color(#colorLiteral(red: 0.3450980392, green: 0.3450980392, blue: 0.3450980392, alpha: 1))
+            return Color(#colorLiteral(red: 0.2274509804, green: 0.2274509804, blue: 0.2274509804, alpha: 1))
         case .gray:
             return Color(#colorLiteral(red: 0.4588235294, green: 0.4470588235, blue: 0.4470588235, alpha: 1))
         case .lightGray:

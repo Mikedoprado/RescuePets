@@ -14,20 +14,68 @@ struct RegisterView: View {
     @Binding var username : String
     var isSigned : Bool
     @Binding var show : Bool
+    @Binding var showImagePicker : Bool
     @EnvironmentObject var auth : AuthenticationModel
+    @ObservedObject private var locationManager = LocationManager()
+    
+    @State var dropDownTitle = "Kind of user"
+    @State var items = ["Casual", "Foundation", "Animalist", "Adopter"]
+    @State var showKindUser = false
+    @State var kindOfUser = ""
+    @State var initialValueDropDown = false
+    
+    @Binding var imageSelected : ImageSelected?
+    @Binding var isLoading : Bool
     
     var body: some View {
         VStack{
             VStack(spacing: 20){
+                
+                HStack {
+                    Spacer()
+                    VStack {
+                        if imageSelected != nil{
+                            imageSelected?.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        }else{
+                            DesignImage.profileImageRed.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 80, height: 80)
+                        }
+                        
+                        Text("Add your profile picture")
+                            .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .redSalsa))
+                    }
+                    .onTapGesture {
+                        self.showImagePicker = true
+                    }
+                    Spacer()
+                }
+                
                 TextFieldCustom(placeholder: "Write your username",title: "Username", kind: $username, isSecureField: false )
                 
                 TextFieldCustom(placeholder: "Write your email", title: "Email", kind: $email, isSecureField: false)
                 
                 TextFieldCustom(placeholder: "Write your password",title: "Password", kind: $password, isSecureField: true)
                 
+                DropDownView(
+                    title: $dropDownTitle,
+                    items: $items,
+                    showOptions: $showKindUser,
+                    kindOfStory: $kindOfUser,
+                    initialValue: $initialValueDropDown) { 
+                    DispatchQueue.main.async {
+                        self.showKindUser.toggle()
+                    }
+                }
                 NormalButton(textButton: "Register") {
-                    if email != "" && password != "" && username != "" {
-                        self.auth.createUser(username, email, password)
+                    if email != "" && password != "" && username != "" && imageSelected != nil && kindOfUser != ""{
+                        self.isLoading = true
+                        self.auth.createUser(username, email, password, location: locationManager.city.lowercased(), imageSelected: imageSelected!, kindOfUser : kindOfUser.lowercased())
                     }
                 }
                 .opacity(!isSigned ? 1 : 0.8)
@@ -38,7 +86,6 @@ struct RegisterView: View {
         .padding(.all, 20)
         .background(ThemeColors.white.color)
         .cornerRadius(20)
-
     }
 }
 

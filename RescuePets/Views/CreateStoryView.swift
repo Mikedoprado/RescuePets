@@ -20,7 +20,7 @@ struct CreateStoryView: View {
     @State var animal = ""
     @State var shareInFb = false
     @State var dropDownTitle = "Kind of story"
-    @State var items = ["Adoption", "Desnutrition", "Maltreatment", "Rescue", "Wounded"]
+    @State var items = ["Adoption", "Malnourished", "Maltreatment", "Rescue", "Wounded"]
     @State var showKindstory = false
     @State var kindOfStory = ""
     @State var initialValuePickerAnimal = false
@@ -55,7 +55,7 @@ struct CreateStoryView: View {
             let story = Story(
                 username: userViewModel.userCellViewModel.username,
                 userId: userViewModel.userCellViewModel.id,
-                kindOfStory: TypeOfThreat.init(rawValue: kindOfStory)!,
+                kindOfStory: kindOfStory,
                 timestamp: timestamp,
                 animal: KindOfAnimal.init(rawValue: animal)!,
                 city: locationManager.city.lowercased(),
@@ -63,7 +63,8 @@ struct CreateStoryView: View {
                 description: text,
                 isActive: false,
                 latitude: (locationManager.location?.coordinate.latitude)!,
-                longitude:(locationManager.location?.coordinate.longitude)!)
+                longitude:(locationManager.location?.coordinate.longitude)!,
+                userAcceptedStoryID: "")
             
             self.storyViewModel.add(story, imageData: images)
             

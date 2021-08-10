@@ -6,55 +6,140 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ProfileView: View {
     
     @ObservedObject var userViewModel = UserViewModel()
+    @ObservedObject var storyViewModel = StoryViewModel()
     @Binding var isShowing : Bool
     @Binding var isAnimating : Bool
+    var textCreated = "Created"
+    var textAccepted = "Accepted"
+    var textLocation = "Location"
+    var textBadges = "Your Badges"
+    @State var showEditProfile = false
+    @State var animEditProfile = false
     
     var body: some View {
+        ZStack {
             VStack {
-                HStack {
-                    Text("Profile")
-                        .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                    Spacer()
-                    Button {
-                        self.isAnimating = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            self.isShowing = false
+                VStack{
+                    HStack {
+                        Button {
+                            self.isAnimating = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                self.isShowing = false
+                            }
+                            
+                        } label: {
+                            DesignImage.closeWhite.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25, alignment: .center)
                         }
-                    } label: {
-                        DesignImage.closeBlack.image
+                        Spacer()
+                        Button(action: {
+                            self.showEditProfile = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                self.animEditProfile = showEditProfile
+                            }
+                        }, label: {
+                            HStack(spacing: 5){
+                                ForEach(0..<3){ _ in
+                                    Circle()
+                                        .foregroundColor(ThemeColors.white.color)
+                                        .frame(width: 6, height: 6)
+                                }
+
+                            }
+                        })
+                    }
+                    .padding(.top, 20)
+                    .padding(.horizontal, 30)
+                    VStack{
+                        AnimatedImage(url: URL(string: userViewModel.userCellViewModel.profileImage))
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
+                            .frame(width: 80, height: 80)
+                            .background(ThemeColors.whiteGray.color)
+                            .clipShape(Circle())
+                        
+                        VStack(alignment: .center, spacing: 0){
+                            Text("\(userViewModel.userCellViewModel.username.capitalized)")
+                                .modifier(FontModifier(weight: .bold, size: .subheadline, color: .white))
+                            
+                            Text("\(userViewModel.userCellViewModel.kindOfUser.capitalized)")
+                                .modifier(FontModifier(weight: .regular, size: .subtitle, color: .whiteGray))
+                        }
                     }
+                    .padding(.horizontal, 30)
+
+                    HStack(spacing:20){
+                        VStack(alignment: .center, spacing: 0) {
+                            Text(textCreated)
+                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                            Text("\(storyViewModel.amountCreatedStories)")
+                                .modifier(FontModifier(weight: .bold, size: .caption, color: .whiteGray))
+                        }
+                        RoundedRectangle(cornerRadius: 0)
+                            .frame(width: 1, height: 20)
+                            .foregroundColor(ThemeColors.white.color)
+                        VStack(alignment: .center, spacing: 0) {
+                            Text(textAccepted)
+                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                            Text("\(storyViewModel.amountAcceptedStories)")
+                                .modifier(FontModifier(weight: .bold, size: .caption, color: .whiteGray))
+                        }
+                    }
+                    .padding(.horizontal, 30)
+                    .padding(.top, 20)
+                    
+                    HStack {
+                        Text(textLocation)
+                            .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
+                        Spacer()
+                        DesignImage.locationWorldWhite.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                        Text("\(userViewModel.userCellViewModel.location.capitalized)")
+                            .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .white))
+                    }
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 20)
                 }
-                .padding(.top, 50)
+                .background(ThemeColors.redSalsa.color)
+                HStack {
+                    Spacer()
+                    Text(textBadges)
+                        .modifier(FontModifier(weight: .bold, size: .subtitle, color: .redSalsa))
+                    Spacer()
+                }
                 .padding(.horizontal, 30)
+                .padding(.vertical, 20)
+                
                 VStack{
-                    DesignImage.profileImageRed.image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
- 
-                    Text(userViewModel.userCellViewModel.username)
-                        .modifier(FontModifier(weight: .bold, size: .subheadline, color: .gray))
-                    
-                    
-                    Text("Kind of user")
-                        .modifier(FontModifier(weight: .regular, size: .subtitle, color: .redSalsa))
-                    
+                    BadgesView(userViewModel: userViewModel)
                 }
-                .padding(.horizontal, 30)
-                .padding(.bottom, 50)
+                .padding(.bottom, 30)
+                
             }
             .background(ThemeColors.white.color)
             .cornerRadius(20)
-            .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
+            .offset(y: self.isAnimating ? 0 : UIScreen.main.bounds.height)
             .ignoresSafeArea(edges: .bottom)
-            .animation(.default)
+            .animation(.spring())
+            
+            if showEditProfile {
+                
+                VStack {
+                    
+                    EditProfileView(userViewModel: userViewModel, show: $showEditProfile, animateEdit: $animEditProfile)
+                    
+                }
+            }
+        }
     }
 }
 
@@ -66,10 +151,30 @@ struct ProfileView_Previews: PreviewProvider {
     }
 }
 
-struct Badge: View {
+
+struct BadgesView: View {
+    
+    @ObservedObject var userViewModel : UserViewModel
+    
+    let layout =  [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
-        Circle()
-            .frame(width: 60, height: 60)
-            .foregroundColor(ThemeColors.white.color)
+        LazyVGrid(columns: layout, spacing: 20){
+            ForEach( userViewModel.userCellViewModel.badges, id: \.self){ item in
+                item.image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 60, height: 60)
+                    .onTapGesture {
+                        print(item.achievement)
+                    }
+            }
+        }
+        .padding(.horizontal, 30)
     }
 }

@@ -12,7 +12,7 @@ import FirebaseStorage
 
 final class UserRepository: ObservableObject {
     
-    let path = "users"
+    let path = "helpers"
     private let store = Firestore.firestore()
     private let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
     let auth = Auth.auth()
@@ -30,13 +30,10 @@ final class UserRepository: ObservableObject {
                 print("problems loading user",err?.localizedDescription as Any)
                 return
             }
-            do{
-                self?.user = try (snapshot?.data(as: User.self))!
-            }catch{
-                fatalError("imposible to load the user")
-                
-            }
+            self?.user = try! (snapshot?.data(as: User.self))!
         }
     }
+    
+
     
 }

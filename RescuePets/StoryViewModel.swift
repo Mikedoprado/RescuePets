@@ -14,12 +14,26 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     @Published var storyCellViewModels : [StoryCellViewModel] = []
     @Published var storyCellViewModelsCreated : [StoryCellViewModel] = []
     @Published var storyCellViewModelsAccepted : [StoryCellViewModel] = []
+    @Published var amountCreatedStories : Int = 0
+    @Published var amountAcceptedStories : Int = 0
     private var cancellables = Set<AnyCancellable>()
     
     init(){
         load()
         loadCreated()
         loadAccepted()
+        
+        $storyCellViewModelsCreated.map{ stories in
+            stories.count
+        }
+        .assign(to: \.amountCreatedStories, on: self)
+        .store(in: &cancellables)
+        
+        $storyCellViewModelsAccepted.map{ stories in
+            stories.count
+        }
+        .assign(to: \.amountAcceptedStories, on: self)
+        .store(in: &cancellables)
     }
     
     func load() {
@@ -63,6 +77,9 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     }
     
     func update(_ story: Story, user: User) {
+        if let index = storyCellViewModelsAccepted.firstIndex(where: {$0.id == story.id}){
+            storyCellViewModelsAccepted.remove(at: index)
+        }
         self.storyRepository.update(story, user: user)
     }
     

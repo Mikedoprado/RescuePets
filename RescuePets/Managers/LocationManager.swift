@@ -60,7 +60,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
             ceo.reverseGeocodeLocation(loc, completionHandler:
                 {(placemarks, error) in
-                    if (error != nil)
+                    if (error != nil) || placemarks == nil 
                     {
                         print("reverse geodcode fail: \(error!.localizedDescription)")
                     }
