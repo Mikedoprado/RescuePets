@@ -21,7 +21,7 @@ struct StoryCellView: View {
             VStack (alignment: .leading){
                 Text(storyCellViewModel.kindOfStory)
                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
-                Text(storyCellViewModel.username)
+                Text(storyCellViewModel.username.capitalized)
                     .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
                 Text(storyCellViewModel.timestamp)
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))

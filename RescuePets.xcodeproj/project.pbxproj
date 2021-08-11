@@ -31,6 +31,7 @@
 		D362674526AEF14100865E74 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D362674426AEF14100865E74 /* StoryViewModel.swift */; };
 		D362674726AEF1D700865E74 /* StoryCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D362674626AEF1D700865E74 /* StoryCellViewModel.swift */; };
 		D371B01F26A082F80097F8F2 /* MapActiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D371B01E26A082F80097F8F2 /* MapActiveView.swift */; };
+		D37FB40426C439C100499E93 /* HelpersExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37FB40326C439C100499E93 /* HelpersExtensions.swift */; };
 		D38796072695E763000B19FF /* DropDownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38796062695E763000B19FF /* DropDownView.swift */; };
 		D387960926961520000B19FF /* LocationInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D387960826961520000B19FF /* LocationInfoView.swift */; };
 		D3918F78267D36ED00DC4BA8 /* BackShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3918F77267D36ED00DC4BA8 /* BackShapeView.swift */; };
@@ -114,6 +115,7 @@
 		D362674426AEF14100865E74 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		D362674626AEF1D700865E74 /* StoryCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCellViewModel.swift; sourceTree = "<group>"; };
 		D371B01E26A082F80097F8F2 /* MapActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapActiveView.swift; sourceTree = "<group>"; };
+		D37FB40326C439C100499E93 /* HelpersExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpersExtensions.swift; sourceTree = "<group>"; };
 		D38796062695E763000B19FF /* DropDownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownView.swift; sourceTree = "<group>"; };
 		D387960826961520000B19FF /* LocationInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInfoView.swift; sourceTree = "<group>"; };
 		D3918F77267D36ED00DC4BA8 /* BackShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackShapeView.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				D387960826961520000B19FF /* LocationInfoView.swift */,
 				D3A4F20326B04EF30082D01E /* DraggableView.swift */,
 				D3A5830726C315950041E2E3 /* CustomAlertView.swift */,
+				D37FB40326C439C100499E93 /* HelpersExtensions.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -520,6 +523,7 @@
 				D3FFF236267A58CF00F4A278 /* DesignColors.swift in Sources */,
 				D3C45BFB2684C8ED00DFA358 /* ChangePasswordView.swift in Sources */,
 				D3A6EF36268CFF03000D3636 /* ChatCellInvited.swift in Sources */,
+				D37FB40426C439C100499E93 /* HelpersExtensions.swift in Sources */,
 				D320DB7B26AB77560003BEE1 /* UserCellViewModel.swift in Sources */,
 				D30945532683D79D00353B20 /* NotifyView.swift in Sources */,
 				D32B53F62682615B001C66F8 /* DesignButtons.swift in Sources */,

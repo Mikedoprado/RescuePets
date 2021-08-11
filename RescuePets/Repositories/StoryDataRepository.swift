@@ -28,9 +28,10 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     let pathStories = "stories"
     let pathCreatedStories = "createdStories"
     let pathAcceptedStories = "acceptedStories"
-    let store = Firestore.firestore()
-    let auth = Auth.auth()
+    private let store = Firestore.firestore()
+    var auth = AuthenticationModel()
     let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
+    private var cancellables: Set<AnyCancellable> = []
     
     init(){
         load()
@@ -40,7 +41,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: load stories of the one location general stories in your city
     func load(){
         
-        guard let currentUserId = auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid else {return}
         
         store.collection(pathUser).document(currentUserId).getDocument { [weak self] (snapshotUser, error) in
             if error != nil {
@@ -59,7 +60,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                     
                     if !snapshot.isEmpty{
                         self?.stories = snapshot.documents.compactMap({ document in
-                                try? document.data(as: Story.self)
+                            try? document.data(as: Story.self)
                         })
                     }
                 }
@@ -69,7 +70,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: load stories created by the currentUser
     func loadCreatedStories(){
         
-        guard let currentUserId = auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid else {return}
         
         let ref = store.collection(pathStories).order(by: "timestamp", descending: true).whereField("userId", isEqualTo: currentUserId)
         
@@ -90,7 +91,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: load stories accepted by the currentUser
     func loadAcceptedStories(){
         
-        guard let currentUserId = auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid else {return}
         
         let ref = store.collection(pathUser).document(currentUserId).collection(pathAcceptedStories).order(by: "timestamp", descending: true)
         
@@ -115,7 +116,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: creating a new story
     func add(_ story: Story, imageData: [Data]){
         
-        guard let currentUserId = auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid else {return}
         let storyId = store.collection("stories").document().documentID
         
         do {
@@ -131,7 +132,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: deleting story in general and in the user
     func remove(_ story: Story) {
         
-        guard let currentUserId = auth.currentUser?.uid, let storyId = story.id else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid, let storyId = story.id else {return}
         
         store.collection(pathStories).document(storyId).delete { [weak self] error in
             if error != nil {
@@ -168,7 +169,6 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 fatalError("something have happened")
             }
         case false:
-            
             if story.userAcceptedStoryID != nil{
                 store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).delete(completion: { [weak self] error in
                     if error != nil{

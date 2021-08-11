@@ -18,22 +18,13 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     @Published var amountAcceptedStories : Int = 0
     private var cancellables = Set<AnyCancellable>()
     
+    
+    
     init(){
         load()
         loadCreated()
         loadAccepted()
-        
-        $storyCellViewModelsCreated.map{ stories in
-            stories.count
-        }
-        .assign(to: \.amountCreatedStories, on: self)
-        .store(in: &cancellables)
-        
-        $storyCellViewModelsAccepted.map{ stories in
-            stories.count
-        }
-        .assign(to: \.amountAcceptedStories, on: self)
-        .store(in: &cancellables)
+        amountStories()
     }
     
     func load() {
@@ -42,7 +33,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .assign(to: \.storyCellViewModels, on: self)
+        .weakAssign(to: \.storyCellViewModels, on: self)
         .store(in: &cancellables)
     }
     
@@ -52,7 +43,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .assign(to: \.storyCellViewModelsCreated, on: self)
+        .weakAssign(to: \.storyCellViewModelsCreated, on: self)
         .store(in: &cancellables)
     }
     func loadAccepted() {
@@ -61,7 +52,21 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .assign(to: \.storyCellViewModelsAccepted, on: self)
+        .weakAssign(to: \.storyCellViewModelsAccepted, on: self)
+        .store(in: &cancellables)
+    }
+    
+    fileprivate func amountStories() {
+        $storyCellViewModelsCreated.map{ stories in
+            stories.count
+        }
+        .weakAssign(to: \.amountCreatedStories, on: self)
+        .store(in: &cancellables)
+        
+        $storyCellViewModelsAccepted.map{ stories in
+            stories.count
+        }
+        .weakAssign(to: \.amountAcceptedStories, on: self)
         .store(in: &cancellables)
     }
     
@@ -82,6 +87,4 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         }
         self.storyRepository.update(story, user: user)
     }
-    
-    
 }

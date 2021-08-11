@@ -87,13 +87,15 @@ struct ActiveDetailView: View {
                                 .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
                             Spacer()
                             HStack(spacing: 30) {
-                                Button {
-                                    
-                                } label: {
-                                    Image(storyCellViewModel.acceptedStory)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 25, height: 25, alignment: .center)
+                                if user.id != storyCellViewModel.userId {
+                                    Button {
+                                        
+                                    } label: {
+                                        Image(storyCellViewModel.acceptedStory)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 25, height: 25, alignment: .center)
+                                    }
                                 }
                                 if user.id == storyCellViewModel.userId {
                                     Button {
@@ -143,7 +145,7 @@ struct ActiveDetailView: View {
                                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
                                 
                                 HStack {
-                                    Text(storyCellViewModel.username)
+                                    Text(storyCellViewModel.username.capitalized)
                                         .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                                     Spacer()
                                 }
@@ -232,13 +234,6 @@ struct ActiveDetailView: View {
 //        ActiveDetailView(storyCellViewModel: StoryCellViewModel(story: Story()), showstory: .constant(true), isAnimating: .constant(true))
 //    }
 //}
-
-//#if DEBUG
-//var user1 = User(username: "Michael",email: "mike@gmail.com")
-//var storyList = [
-//    Story(id: "jsjdnakkw", username: user1.username!, userId: "ishdlae" , kindOfStory: .Rescue, timestamp: 0, animal: .Cat, image: ["helloImage"], city: "Medellin", address: "Calle 13 # 43D - 79", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget diam elementum, dictum leo quis, maximus velit. Donec tristique facilisis ipsum vitae lobortis.", isActive: false, latitude: 1.0, longitude: 1.0)
-//]
-//#endif
 
 struct ImagePet: View {
     var url : String

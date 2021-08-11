@@ -36,93 +36,94 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.compactMap { story in
             story.id
         }
-        .assign(to: \.id, on: self)
+        .weakAssign(to: \.id, on: self)
         .store(in: &cancellables)
         
-        $story.compactMap{ [weak self] story in
+        $story.compactMap { [weak self] story in
             self?.storyRepository.setupTimeStamp(time: story.timestamp)
         }
-        .assign(to: \.timestamp, on: self)
+        .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
-        $story.map{ story in
+        $story.compactMap { story in
             story.isActive ? "storyAcept" : "storyAdd"
         }
-        .assign(to: \.acceptedStory, on: self)
+        .weakAssign(to: \.acceptedStory, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.animal.animal
         }
-        .assign(to: \.kindOfAnimal, on: self)
+        .weakAssign(to: \.kindOfAnimal, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.userId
         }
-        .assign(to: \.userId, on: self)
+        .weakAssign(to: \.userId, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.username
         }
-        .assign(to: \.username, on: self)
+        .weakAssign(to: \.username, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.city
         }
-        .assign(to: \.city, on: self)
+        .weakAssign(to: \.city, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.address
         }
-        .assign(to: \.address, on: self)
+        .weakAssign(to: \.address, on: self)
         .store(in: &cancellables)
-        
+
         $story.compactMap{ story in
             story.description
         }
-        .assign(to: \.description, on: self)
+        .weakAssign(to: \.description, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.address
         }
-        .assign(to: \.address, on: self)
+        .weakAssign(to: \.address, on: self)
         .store(in: &cancellables)
-        
+
         $story.compactMap{ story in
             story.images
         }
-        .assign(to: \.images, on: self)
+        .weakAssign(to: \.images, on: self)
         .store(in: &cancellables)
-        
+
         $story.compactMap{ story in
             story.userAcceptedStoryID
         }
-        .assign(to: \.userAcceptedStoryID, on: self)
+        .weakAssign(to: \.userAcceptedStoryID, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.longitude
         }
-        .assign(to: \.longitude, on: self)
+        .weakAssign(to: \.longitude, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.latitude
         }
-        .assign(to: \.latitude, on: self)
+        .weakAssign(to: \.latitude, on: self)
         .store(in: &cancellables)
-        
+
         $story.map{ story in
             story.kindOfStory
         }
-        .assign(to: \.kindOfStory, on: self)
+        .weakAssign(to: \.kindOfStory, on: self)
         .store(in: &cancellables)
         
     }
-    
 }
+
+

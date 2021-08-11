@@ -5,17 +5,14 @@
 //  Created by Michael do Prado on 6/30/21.
 //
 
-import Foundation
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 import SwiftUI
 
 class AuthenticationModel: ObservableObject {
-    
-    
-    let db = Firestore.firestore()
+
+    private let store = Firestore.firestore()
     let auth = Auth.auth()
     let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
     let pathUser = "helpers"
@@ -44,17 +41,7 @@ class AuthenticationModel: ObservableObject {
         }
     }
     
-//    func checkUsernameExist(username: String){
-//        db.collection(pathUser).whereField("username", isEqualTo: username).getDocuments { snapshot, error in
-//            if let snap = snapshot   {
-//                if snap.isEmpty {
-//                    print("this username doesn't exist")
-//                }else {
-//                    print("exist")
-//                }
-//            }
-//        }
-//    }
+
     
     func createUser(_ username: String, _ email: String, _ password: String, location: String, imageSelected : ImageSelected, kindOfUser: String){
         
@@ -86,7 +73,7 @@ class AuthenticationModel: ObservableObject {
                         ]
                     ] as [String : Any]
                     
-                    self?.db.collection(self!.pathUser).document(userId).setData(dict)
+                    self?.store.collection(self!.pathUser).document(userId).setData(dict)
                     
                     DispatchQueue.main.async{
                         self?.signedIn = true
@@ -117,7 +104,7 @@ class AuthenticationModel: ObservableObject {
     func updateUserInfo(username: String, kindOfUser: String, imageData: Data?, userViewModel: UserViewModel, complete: @escaping (String?, Bool) -> Void){
         
         guard let currentUserId = auth.currentUser?.uid else {return}
-        let ref = self.db.collection(pathUser).document(currentUserId)
+        let ref = self.store.collection(pathUser).document(currentUserId)
         
         if imageData != nil {
             self.sendProfilePictureToDB(userId: currentUserId, imageData: imageData!) { imageUrl in
@@ -134,22 +121,27 @@ class AuthenticationModel: ObservableObject {
             }
         }else {
             ref.updateData([ "username": username != "" ?  username : userViewModel.userCellViewModel.username,
-                             "kindOfUser": kindOfUser != "" ? kindOfUser : userViewModel.userCellViewModel.kindOfUser,
+                             "kindOfUser": kindOfUser != "" ? kindOfUser : userViewModel.userCellViewModel.kindOfUser
             ]){ error in
                 if error != nil {
                     complete(error!.localizedDescription as String, false)
                 }else{
+                    self.store.collection(self.pathUser).document(currentUserId).collection("createdStories").getDocuments { [weak self] snapshot, error in
+                        guard let documents = snapshot?.documents else {return}
+                        for document in documents{
+                            self?.store.collection("stories").document(document.documentID).updateData(["username":username])
+                        }
+                    }
                     complete(nil, true)
                 }
             }
         }
-        
     }
     
     func updateEmail(email: String, complete: @escaping (String?, Bool) -> Void ){
         
         guard let currentUserId = auth.currentUser?.uid else {return}
-        let ref = self.db.collection(pathUser).document(currentUserId)
+        let ref = self.store.collection(pathUser).document(currentUserId)
         
         auth.currentUser?.updateEmail(to: email, completion: { error in
             if error != nil {

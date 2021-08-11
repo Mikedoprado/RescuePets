@@ -31,49 +31,49 @@ final class UserCellViewModel: ObservableObject, Identifiable {
         $user.compactMap { user in
             user.id
         }
-        .assign(to: \.id, on: self)
+        .weakAssign(to: \.id, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
             user.username
         }
-        .assign(to: \.username, on: self)
+        .weakAssign(to: \.username, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
             user.kindOfUser
         }
-        .assign(to: \.kindOfUser, on: self)
+        .weakAssign(to: \.kindOfUser, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
             user.email
         }
-        .assign(to: \.email, on: self)
+        .weakAssign(to: \.email, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
             user.location
         }
-        .assign(to: \.location, on: self)
+        .weakAssign(to: \.location, on: self)
         .store(in: &cancellables)
         
         $user.compactMap{ user in
             user.amountStoriesCreated
         }
-        .assign(to: \.amountStoriesCreated, on: self)
+        .weakAssign(to: \.amountStoriesCreated, on: self)
         .store(in: &cancellables)
         
         $user.compactMap{ user in
             user.amountStoriesAccepted
         }
-        .assign(to: \.amountStoriesAccepted, on: self)
+        .weakAssign(to: \.amountStoriesAccepted, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
             user.profileImage
         }
-        .assign(to: \.profileImage, on: self)
+        .weakAssign(to: \.profileImage, on: self)
         .store(in: &cancellables)
         
         $user.compactMap { user in
@@ -83,7 +83,7 @@ final class UserCellViewModel: ObservableObject, Identifiable {
                 }
             }
         }
-        .assign(to: \.badges, on: self)
+        .weakAssign(to: \.badges, on: self)
         .store(in: &cancellables)
         
     }

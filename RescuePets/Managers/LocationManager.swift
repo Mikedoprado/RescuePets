@@ -59,33 +59,32 @@ extension LocationManager: CLLocationManagerDelegate {
 
 
             ceo.reverseGeocodeLocation(loc, completionHandler:
-                {(placemarks, error) in
+                {[weak self](placemarks, error) in
                     if (error != nil) || placemarks == nil 
                     {
                         print("reverse geodcode fail: \(error!.localizedDescription)")
+                    }else{
+                        let pm = placemarks! as [CLPlacemark]
+
+                        if pm.count > 0 {
+                            let pm = placemarks![0]
+                            var addressString : String = ""
+                            if pm.thoroughfare != nil {
+                                addressString = addressString + pm.thoroughfare! + ", "
+                            }
+                            if pm.subThoroughfare != nil {
+                                addressString = addressString + pm.subThoroughfare!
+                            }
+                            self?.address = addressString
+                            if pm.locality != nil {
+                                self?.city = pm.locality!
+                            }
+                            if pm.country != nil {
+                                self?.country = pm.country!
+                            }
+                      }
                     }
-                    
-                    let pm = placemarks! as [CLPlacemark]
-
-                    if pm.count > 0 {
-                        let pm = placemarks![0]
-                        var addressString : String = ""
-                        if pm.thoroughfare != nil {
-                            addressString = addressString + pm.thoroughfare! + ", "
-                        }
-                        if pm.subThoroughfare != nil {
-                            addressString = addressString + pm.subThoroughfare!
-                        }
-                        self.address = addressString
-                        if pm.locality != nil {
-                            self.city = pm.locality!
-                        }
-                        if pm.country != nil {
-                            self.country = pm.country!
-                        }
-                  }
             })
-
         }
     
 }

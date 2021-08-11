@@ -15,7 +15,7 @@ final class UserRepository: ObservableObject {
     let path = "helpers"
     private let store = Firestore.firestore()
     private let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
-    let auth = Auth.auth()
+    let auth = AuthenticationModel()
     
     @Published var user : User = User()
     
@@ -24,7 +24,7 @@ final class UserRepository: ObservableObject {
     }
     
     func loadUser(){
-        guard let currentUserId = auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.auth.currentUser?.uid else {return}
         store.collection(path).document(currentUserId).addSnapshotListener{ [weak self] (snapshot, err) in
             if err != nil {
                 print("problems loading user",err?.localizedDescription as Any)
@@ -34,6 +34,34 @@ final class UserRepository: ObservableObject {
         }
     }
     
-
+    func loadUserById(userID: String, complete: @escaping (User)-> Void){
+        store.collection(path).document(userID).getDocument{ (snapshot, err) in
+            if err != nil {
+                print("problems loading user",err?.localizedDescription as Any)
+                return
+            }
+            let user = try! (snapshot?.data(as: User.self))!
+            complete(user)
+        }
+    }
     
+    func checkUsernameExist(username: String, completion: @escaping (Bool)->())  {
+        let ref = store.collection(path).whereField("username", isEqualTo: username)
+        ref.getDocuments { snapshot, err in
+            if let err = err {
+                print("Error getting document: \(err)")
+            } else if (snapshot?.isEmpty)! {
+                print("02")
+                completion(false)
+            } else {
+                for document in (snapshot?.documents)! {
+                    print("01")
+                    if document.data()["username"] != nil {
+                        print("01")
+                        completion(true)
+                    }
+                }
+            }
+        }
+    }
 }

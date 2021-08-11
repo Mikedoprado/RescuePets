@@ -164,7 +164,7 @@ struct CreateStoryView: View {
                                 }
                                 TextViewForstory(text: $text, remainingText: remaining)
                                 LocationInfoView(city: $locationManager.city, address: $locationManager.address)
-                                SwithShare(shareInFb: $shareInFb)
+                                SwitchShare(shareInFb: $shareInFb)
                                 NormalButton(textButton: "Publish story"){
                                     self.createstory()
                                     self.isShowing = false
@@ -230,7 +230,7 @@ struct CreatestoryView_Previews: PreviewProvider {
     }
 }
 
-struct SwithShare: View {
+struct SwitchShare: View {
     
     @Binding var shareInFb : Bool
     

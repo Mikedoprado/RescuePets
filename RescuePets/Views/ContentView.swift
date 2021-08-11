@@ -10,8 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @EnvironmentObject var auth : AuthenticationModel
-    
-    
+
     var body: some View {
         ZStack {
             if auth.isSignedIn{

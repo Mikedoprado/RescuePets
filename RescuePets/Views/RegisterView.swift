@@ -17,6 +17,7 @@ struct RegisterView: View {
     @Binding var showImagePicker : Bool
     @EnvironmentObject var auth : AuthenticationModel
     @ObservedObject private var locationManager = LocationManager()
+    @ObservedObject private var userRepository = UserRepository()
     
     @State var dropDownTitle = "Kind of user"
     @State var items = ["Casual", "Foundation", "Animalist", "Adopter"]
@@ -26,6 +27,10 @@ struct RegisterView: View {
     
     @Binding var imageSelected : ImageSelected?
     @Binding var isLoading : Bool
+    
+    @State var titleAlert = ""
+    @State var messageAlert = ""
+    @State var showingAlertUsername = false
     
     var body: some View {
         VStack{
@@ -73,13 +78,33 @@ struct RegisterView: View {
                     }
                 }
                 NormalButton(textButton: "Register") {
-                    if email != "" && password != "" && username != "" && imageSelected != nil && kindOfUser != ""{
-                        self.isLoading = true
-                        self.auth.createUser(username, email, password, location: locationManager.city.lowercased(), imageSelected: imageSelected!, kindOfUser : kindOfUser.lowercased())
+                    if username != ""{
+                        print("hello")
+                        self.userRepository.checkUsernameExist(username: username) { value in
+                            if value{
+                                showingAlertUsername = true
+                                titleAlert = "Username was already taken"
+                                messageAlert = "This username is already used for another user"
+                            }else{
+                                if email != "" && password != "" && username != "" && imageSelected != nil && kindOfUser != ""{
+                                    self.isLoading = true
+                                    self.auth.createUser(username, email, password, location: locationManager.city.lowercased(), imageSelected: imageSelected!, kindOfUser : kindOfUser.lowercased())
+                                }
+                            }
+                        }
                     }
+
                 }
                 .opacity(!isSigned ? 1 : 0.8)
                 .disabled(isSigned)
+                .alert(isPresented:$showingAlertUsername) {
+                    Alert(
+                        title: Text(titleAlert),
+                        message: Text(messageAlert),dismissButton: .default(Text("Ok"), action: {
+                            showingAlertUsername = false
+                        })
+                    )
+                }
             }
         }
         .padding(.top, 50)

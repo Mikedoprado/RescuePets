@@ -18,7 +18,7 @@ final class UserViewModel: ObservableObject {
         userRepository.$user.compactMap({ user in
             UserCellViewModel(user: user)
         })
-        .assign(to: \.userCellViewModel, on: self)
+        .weakAssign(to: \.userCellViewModel, on: self)
         .store(in: &cancellables)
     }
 
