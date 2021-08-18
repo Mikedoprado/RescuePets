@@ -20,8 +20,10 @@ struct ActiveDetailView: View {
     @State private var showingAlert = false
     @Namespace var animation
     @Binding var user : User
+    @State var sectionTitle = "Story"
     
     @State var screen = UIScreen.main.bounds.width
+    @State var showMessage = false
     
     
     var imagestory : String  {
@@ -82,58 +84,9 @@ struct ActiveDetailView: View {
                 ZStack {
                     VStack{
                         // MARK: header
-                        HStack {
-                            Text("Story")
-                                .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                            Spacer()
-                            HStack(spacing: 30) {
-                                if user.id != storyCellViewModel.userId {
-                                    Button {
-                                        
-                                    } label: {
-                                        Image(storyCellViewModel.acceptedStory)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 25, height: 25, alignment: .center)
-                                    }
-                                }
-                                if user.id == storyCellViewModel.userId {
-                                    Button {
-                                        showingAlert = true
-                                    } label: {
-                                        DesignImage.trash.image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 25, height: 25, alignment: .center)
-                                    }
-                                    .alert(isPresented:$showingAlert) {
-                                        Alert(
-                                            title: Text("Are you sure you want to delete this?"),
-                                            message: Text("There is no undo"),
-                                            primaryButton: .destructive(Text("Delete")) {
-                                                self.storyViewModel.remove(storyCellViewModel.story)
-                                                withAnimation {
-                                                    dismissView()
-                                                }
-                                            },
-                                            secondaryButton: .cancel()
-                                        )
-                                    }
-                                }
-                                Button {
-                                    withAnimation {
-                                        dismissView()
-                                    }
-                                } label: {
-                                    DesignImage.closeBlack.image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 25, height: 25, alignment: .center)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 30)
-                        .padding(.top, 50)
+                        CustomHeader(storyViewModel: storyViewModel, storyCellViewModel: storyCellViewModel, user: $user, showingAlert: $showingAlert, action: {
+                            dismissView()
+                        }, sectionTitle: $sectionTitle)
                         HStack {
                             Image("pin\(storyCellViewModel.kindOfAnimal)Active" )
                                 .resizable()
@@ -150,13 +103,15 @@ struct ActiveDetailView: View {
                                     Spacer()
                                 }
                             }
-                            Button{
-                                
-                            }label:{
-                                DesignImage.message.image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 40, height: 40)
+                            if storyCellViewModel.userAcceptedStoryID != "" && user.id == storyCellViewModel.userAcceptedStoryID{
+                                Button{
+                                    self.showMessage = true
+                                }label:{
+                                    DesignImage.message.image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 40, height: 40)
+                                }
                             }
                         }
                         .padding(.horizontal, 30)
@@ -224,6 +179,9 @@ struct ActiveDetailView: View {
             
             if showMapFullScreen {
                 MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
+            }
+            if showMessage {
+                ChatMessagesView(showMessages: $showMessage)
             }
         }
     }

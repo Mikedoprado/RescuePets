@@ -23,6 +23,7 @@ struct ChangePasswordView: View {
     @State var messageAlert = ""
     @State var showingAlertPassWord = false
     @State var showingDifferentPass = false
+    @State var sectionTitle = "Change \n your password"
     
     func dismissView(){
         self.isAnimatingEditChangePassword = false
@@ -51,22 +52,26 @@ struct ChangePasswordView: View {
     
     var body: some View {
         VStack(spacing:20){
-            HStack(alignment: .top) {
-                Text("Change \n your password")
-                    .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                Spacer()
-                Button {
-                    withAnimation {
-                        dismissView()
-                    }
-                } label: {
-                    DesignImage.closeBlack.image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 25, height: 25, alignment: .center)
-                }
-            }
-            .padding(.top, 50)
+            HeaderView(title: $sectionTitle, actionDismiss: {
+                dismissView()
+            }, color: .black, alignment: .top)
+            .padding(.horizontal, -30)
+//            HStack(alignment: .top) {
+//                Text("Change \n your password")
+//                    .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
+//                Spacer()
+//                Button {
+//                    withAnimation {
+//                        dismissView()
+//                    }
+//                } label: {
+//                    DesignImage.closeBlack.image
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: 25, height: 25, alignment: .center)
+//                }
+//            }
+//            .padding(.top, 50)
             HStack{
                 Text("If you want to change the password you need to log in again before to make this change.")
                     .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))

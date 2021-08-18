@@ -23,6 +23,8 @@ struct NotifyView: View {
     @Namespace private var ns
     @Binding var user : User
     
+    
+    
     func getColor(story: Story) -> Color {
         switch story.animal.rawValue {
         case "Dog":
@@ -44,27 +46,14 @@ struct NotifyView: View {
             VStack(spacing: 0) {
                 
                 VStack {
-                    HStack {
-                        Text(selectedCategory)
-                            .modifier(FontModifier(weight: .bold, size: .title, color: .white))
-                        Spacer()
-                        Button {
-                            self.isAnimating.toggle()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                self.showNotify.toggle()
-                            }
-                        } label: {
-                            DesignImage.closeWhite.image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 25, height: 25, alignment: .center)
+                    HeaderView(title: $selectedCategory, actionDismiss: {
+                        self.isAnimating.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.showNotify.toggle()
+                            
                         }
-                    }
-                    .padding(.top, 50)
-                    .padding(.horizontal, 30)
-                    
+                    }, color: .white, alignment: .center)
                     SelectorSection(categories: $categories, selectedCategory: $selectedCategory)
-
                 }
                 .background(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
                 .animation(.default)

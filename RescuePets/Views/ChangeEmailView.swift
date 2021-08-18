@@ -27,6 +27,7 @@ struct ChangeEmailView: View {
     @State var showingSameEmail = false
     @State var showSign = false
     @State var isLoading = false
+    @State var sectionTitle = "Change \n your email"
     
     func dismissView(){
         self.isAnimatingEditEmail = false
@@ -74,22 +75,10 @@ struct ChangeEmailView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 20){
-                HStack(alignment: .top) {
-                    Text("Change \n your email")
-                        .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                    Spacer()
-                    Button {
-                        withAnimation {
-                            dismissView()
-                        }
-                    } label: {
-                        DesignImage.closeBlack.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                }
-                .padding(.top, 50)
+                HeaderView(title: $sectionTitle, actionDismiss: {
+                    dismissView()
+                }, color: .black, alignment: .top)
+                .padding(.horizontal, -30)
                 VStack(spacing: 20){
                     HStack(alignment: .top){
                         Text("If you want to change the email you need to log in again before to make this change.")

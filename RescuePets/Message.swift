@@ -13,11 +13,12 @@ import FirebaseFirestoreSwift
 
 struct Message: Codable, Identifiable {
 
-    var id: String = UUID().uuidString
-    var from: User
-    var to: User
-    var message: String
+    @DocumentID var id: String?
+    var from: String
+    var to: String
+    var text: String
     var timestamp: Int
+    var isWatched: Bool
     
 }
 

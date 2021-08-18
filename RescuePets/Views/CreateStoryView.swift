@@ -28,6 +28,7 @@ struct CreateStoryView: View {
     @State var isShowPhotoLibrary = false
     @Binding var isShowing : Bool
     @State private var inputImage: UIImage?
+    @State var sectionTitle = "Create a Story"
     
     @StateObject private var keyboardHandler = KeyboardHandler()
     @StateObject var remaining = RemaininInt(remain: 250)
@@ -86,28 +87,13 @@ struct CreateStoryView: View {
     var body: some View {
         VStack {
             VStack{
-                HStack(spacing: 0) {
-                    VStack {
-                        Text("Create story")
-                            .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
+                HeaderView(title: $sectionTitle ,actionDismiss: {
+                    reinitValues()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.isShowing = false
+                        self.isFocused = false
                     }
-                    Spacer()
-                    Button {
-                        reinitValues()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.isShowing = false
-                            self.isFocused = false
-                        }
-                    } label: {
-                        DesignImage.closeBlack.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
-                }
-                .background(ThemeColors.white.color)
-                .padding(.top, 50)
-                .padding(.horizontal, 30)
+                }, color: .black, alignment: .center)
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack{

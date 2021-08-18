@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct ProfileView: View {
     
+    @EnvironmentObject var auth: AuthenticationModel
     @ObservedObject var userViewModel = UserViewModel()
     @ObservedObject var storyViewModel = StoryViewModel()
     @Binding var isShowing : Bool
@@ -21,18 +22,19 @@ struct ProfileView: View {
     @State var showEditProfile = false
     @State var animEditProfile = false
     
+    func dismissView(){
+        self.isAnimating = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isShowing = false
+        }
+    }
+    
     var body: some View {
         ZStack {
             VStack {
                 VStack{
                     HStack {
-                        Button {
-                            self.isAnimating = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                self.isShowing = false
-                            }
-                            
-                        } label: {
+                        Button {dismissView() } label: {
                             DesignImage.closeWhite.image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -40,10 +42,7 @@ struct ProfileView: View {
                         }
                         Spacer()
                         Button(action: {
-                            self.showEditProfile = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                self.animEditProfile = showEditProfile
-                            }
+
                         }, label: {
                             HStack(spacing: 5){
                                 ForEach(0..<3){ _ in
@@ -51,8 +50,23 @@ struct ProfileView: View {
                                         .foregroundColor(ThemeColors.white.color)
                                         .frame(width: 6, height: 6)
                                 }
-
                             }
+                        })
+                        .contextMenu(menuItems: {
+                            Button(action: {
+                                self.showEditProfile = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.animEditProfile = showEditProfile
+                                }
+                            }, label: {
+                                Text("Edit profile")
+                            })
+                            Button(action: {
+                                self.dismissView()
+                                self.auth.signOut()
+                            }, label: {
+                                Text("Log out")
+                            })
                         })
                     }
                     .padding(.top, 20)
@@ -111,7 +125,6 @@ struct ProfileView: View {
                 }
                 .background(ThemeColors.redSalsa.color)
                 HStack {
-                    Spacer()
                     Text(textBadges)
                         .modifier(FontModifier(weight: .bold, size: .subtitle, color: .redSalsa))
                     Spacer()

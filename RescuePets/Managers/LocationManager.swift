@@ -57,7 +57,6 @@ extension LocationManager: CLLocationManagerDelegate {
 
             let loc: CLLocation = CLLocation(latitude:center.latitude, longitude: center.longitude)
 
-
             ceo.reverseGeocodeLocation(loc, completionHandler:
                 {[weak self](placemarks, error) in
                     if (error != nil) || placemarks == nil 

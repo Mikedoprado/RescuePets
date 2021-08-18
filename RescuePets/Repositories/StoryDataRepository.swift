@@ -10,8 +10,6 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 
-
-
 protocol RepositoryStoryHelper {
     func load()
     func add(_ story: Story, imageData: [Data])
@@ -38,6 +36,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         loadCreatedStories()
         loadAcceptedStories()
     }
+    
     // MARK: load stories of the one location general stories in your city
     func load(){
         

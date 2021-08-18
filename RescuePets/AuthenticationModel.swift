@@ -28,6 +28,10 @@ class AuthenticationModel: ObservableObject {
         return auth.currentUser != nil
     }
     
+    var currentUserId : String? {
+        return isSignedIn ? auth.currentUser?.uid : nil
+    }
+    
     func signIn(email: String, password: String, complete: @escaping (String?, Bool)->Void) {
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             if error != nil {
@@ -40,9 +44,7 @@ class AuthenticationModel: ObservableObject {
             }
         }
     }
-    
 
-    
     func createUser(_ username: String, _ email: String, _ password: String, location: String, imageSelected : ImageSelected, kindOfUser: String){
         
         auth.createUser(withEmail: email, password: password) { [weak self] user, error in

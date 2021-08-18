@@ -2,82 +2,49 @@
 //  MessagesView.swift
 //  RescuePets
 //
-//  Created by Michael do Prado on 6/24/21.
+//  Created by Michael do Prado on 8/13/21.
 //
 
 import SwiftUI
 
 struct MessagesView: View {
     
-    @State var message = ""
-    @StateObject private var keyboardHandler = KeyboardHandler()
-    @State var isFocused = false
-    
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
+    @State var sectionTitle =  "Messages"
+    @Binding var showMessages : Bool
+    @Binding var isAnimating : Bool
     
     var body: some View {
-        VStack {
+        ZStack {
             VStack {
-                HStack {
-                    Text("Messages")
-                        .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                    Spacer()
-                    Button {
-                        
-                    } label: {
-                        DesignImage.closeBlack.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                    }
+                VStack{
+                    HeaderView(title: $sectionTitle, actionDismiss: {
+                        withAnimation {
+                            self.isAnimating = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                self.showMessages = false
+                            }
+                        }
+                    }, color: .white, alignment: .center)
+                    .padding(.bottom, 30)
                 }
-                .padding(.vertical, 25)
-                ChatCellOwner()
-                Spacer()
-            }
-            .padding(.horizontal, 30)
-            .background(ThemeColors.white.color)
-            .cornerRadius(20)
-            
-            HStack{
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundColor(ThemeColors.white.color)
-                    TextField("Write your message", text: $message)
-                        .foregroundColor(ThemeColors.darkGray.color)
-                        .padding(.leading, 20)
-                }
-                .padding(.leading, 20)
+                .background(ThemeColors.blueCuracao.color)
                 
-                Button{
-                    
-                }label: {
-                    DesignImage.send.image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 35, height: 35)
-                }
+                MessageCellView()
+                    .padding(.horizontal, 30)
                 Spacer()
             }
-            .frame(height: 50)
-            .padding(.all, 10)
-            .background(ThemeColors.blueCuracao.color)
-            .padding(.bottom, keyboardHandler.keyboardHeight)
-            .animation(.default)
+            .background(ThemeColors.white.color)
+            .ignoresSafeArea(edges: .all)
         }
-        .edgesIgnoringSafeArea(.bottom)
-        .onTapGesture {
-            self.isFocused = false
-            self.hideKeyboard()
-        }
-        
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
+        .animation(.default)
+        .ignoresSafeArea( edges: .all)
     }
 }
 
 struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
-        MessagesView()
+        MessagesView(showMessages: .constant(true), isAnimating: .constant(true))
     }
 }

@@ -24,6 +24,7 @@ struct EditProfileView: View {
     @State var email = ""
     @State var imageSelected : ImageSelected?
     @State private var inputImage: UIImage?
+    @State var sectionTitle = "Edit profile"
     // show and imagePicker
     @State var showImagePicker = false
     @State var showingAlert = false
@@ -68,22 +69,10 @@ struct EditProfileView: View {
     var body: some View {
         ZStack {
             VStack{
+                HeaderView(title: $sectionTitle, actionDismiss: {
+                    self.dismissView()
+                }, color: .black, alignment: .center)
                 ScrollView(.vertical, showsIndicators: false){
-                    HStack {
-                        Text("Edit profile")
-                            .modifier(FontModifier(weight: .bold, size: .title, color: .darkGray))
-                        Spacer()
-                        Button {
-                            dismissView()
-                        } label: {
-                            DesignImage.closeBlack.image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 25, height: 25, alignment: .center)
-                        }
-                    }
-                    .padding(.top, 50)
-                    
                     VStack(alignment: .center, spacing: 20){
                         Button(action: {
                             self.showImagePicker = true
