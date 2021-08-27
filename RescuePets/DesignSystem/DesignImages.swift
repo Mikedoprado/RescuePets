@@ -45,6 +45,8 @@ enum DesignImage {
     case locationWorldWhite
     case badgeActive
     case badgeInactive
+    case logOut
+    case editProfile
     
     var image: Image {
         switch self {
@@ -120,6 +122,10 @@ enum DesignImage {
             return Image(uiImage: UIImage(named: "badgeInactive")!)
         case .locationWorldWhite:
             return Image(uiImage: UIImage(named: "locationWorldWhite")!)
+        case .logOut:
+            return Image(uiImage: UIImage(named: "logOut")!)
+        case .editProfile:
+            return Image(uiImage: UIImage(named: "editProfile")!)
         }
     }
 }

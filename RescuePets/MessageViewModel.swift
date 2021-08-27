@@ -6,26 +6,34 @@
 //
 
 import Combine
-import SwiftUI
+import Foundation
 
 
 final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
+
+    @Published var messageRepository : MessageRepository
+    @Published var messagesViewModels : [MessageCellViewModel] = []
     
-    @Published var messageRepository = MessageRepository()
-    @Published var messages : [MessageCellViewModel] = []
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(story: Story) {
-        load(story: story)
+    init(chatId: String) {
+        messageRepository = MessageRepository(chatId: chatId)
+        load()
+    }
+
+    func load() {
+        messageRepository.$messages.map { messages in
+            messages.map { message in
+                MessageCellViewModel(message: message)
+            }
+        }
+        .weakAssign(to: \.messagesViewModels, on: self)
+        .store(in: &cancellables)
     }
     
-    func load(story: Story) {
-        
-    }
-    
-    func add(_ message: Message, story: Story) {
-        self.messageRepository.add(message, story: story)
+    func add(_ message: Message, chatId: String, from: String, to: String) {
+        self.messageRepository.add(message, chatId: chatId, from: from, to: to)
     }
     
     func remove(_ message: Message) {

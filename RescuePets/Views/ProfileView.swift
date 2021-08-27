@@ -21,11 +21,20 @@ struct ProfileView: View {
     var textBadges = "Your Badges"
     @State var showEditProfile = false
     @State var animEditProfile = false
+    @State var showMenu = false
+    @State var animateMenu = false
     
     func dismissView(){
         self.isAnimating = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.isShowing = false
+        }
+    }
+    
+    func showMenuPopUp(){
+        self.showMenu = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.animateMenu = true
         }
     }
     
@@ -42,7 +51,7 @@ struct ProfileView: View {
                         }
                         Spacer()
                         Button(action: {
-
+                            self.showMenuPopUp()
                         }, label: {
                             HStack(spacing: 5){
                                 ForEach(0..<3){ _ in
@@ -51,22 +60,6 @@ struct ProfileView: View {
                                         .frame(width: 6, height: 6)
                                 }
                             }
-                        })
-                        .contextMenu(menuItems: {
-                            Button(action: {
-                                self.showEditProfile = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    self.animEditProfile = showEditProfile
-                                }
-                            }, label: {
-                                Text("Edit profile")
-                            })
-                            Button(action: {
-                                self.dismissView()
-                                self.auth.signOut()
-                            }, label: {
-                                Text("Log out")
-                            })
                         })
                     }
                     .padding(.top, 20)
@@ -88,7 +81,7 @@ struct ProfileView: View {
                         }
                     }
                     .padding(.horizontal, 30)
-
+                    
                     HStack(spacing:20){
                         VStack(alignment: .center, spacing: 0) {
                             Text(textCreated)
@@ -142,6 +135,7 @@ struct ProfileView: View {
             .cornerRadius(20)
             .offset(y: self.isAnimating ? 0 : UIScreen.main.bounds.height)
             .ignoresSafeArea(edges: .bottom)
+            .blur(radius: showMenu ? 5 : 0)
             .animation(.spring())
             
             if showEditProfile {
@@ -151,6 +145,37 @@ struct ProfileView: View {
                     EditProfileView(userViewModel: userViewModel, show: $showEditProfile, animateEdit: $animEditProfile)
                     
                 }
+            }
+            
+            if showMenu {
+                ZStack{
+                    ThemeColors.darkGray.color
+                        .opacity(1)
+                        .blendMode(.multiply)
+                        .ignoresSafeArea( edges: .all)
+                        .onTapGesture {
+                            self.showMenu = false
+                        }
+                    
+                    VStack {
+                        HStack {
+                            Spacer()
+                            MenuPopUp(actionEdit: {
+                                self.showEditProfile = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.animEditProfile = showEditProfile
+                                }
+                            }, actionLogOut: {
+                                self.dismissView()
+                                self.auth.signOut()
+                            }, showMenu: $showMenu, animateMenu: $animateMenu)
+                        }
+                        .padding(.top, 150)
+                        .padding(.trailing, 30)
+                        Spacer()
+                    }
+                }
+                
             }
         }
     }

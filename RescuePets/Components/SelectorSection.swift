@@ -12,15 +12,16 @@ struct SelectorSection: View {
     @Binding var categories : [String]
     @Binding var selectedCategory : String
     @Namespace private var animation
+    @Binding var color : ThemeColors
     
     var body: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 20)
                 .foregroundColor(ThemeColors.white.color)
-                .frame(width: 300, height: 40)
+                .frame(width: (color.color == ThemeColors.redSalsa.color) ? 300 : 200, height: 40)
             
             RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(ThemeColors.redSalsa.color)
+                .foregroundColor(color.color)
                 .frame(height: 30)
                 .padding(.vertical, -5)
                 .padding(.horizontal, -20)
@@ -41,7 +42,7 @@ struct SelectorSection: View {
                             }, label: {
                                 Text(category)
                                     .multilineTextAlignment(.center)
-                                    .modifier(FontModifier(weight: (self.selectedCategory == category) ?  .bold : .regular, size: .paragraph, color: (self.selectedCategory == category) ?  .white : .redSalsa))
+                                    .modifier(FontModifier(weight: (self.selectedCategory == category) ?  .bold : .regular, size: .paragraph, color: (self.selectedCategory == category) ?  .white : color))
                                     .matchedGeometryEffect(id: category, in: animation, isSource: true)
                             })
                             
@@ -54,7 +55,7 @@ struct SelectorSection: View {
                 Spacer()
             }
         }
-        .frame(width: 300, height: 40)
+        .frame(width: (color.color == ThemeColors.redSalsa.color) ? 300 : 200, height: 40)
         .padding(.bottom, 20)
     }
 }
@@ -62,7 +63,7 @@ struct SelectorSection: View {
 struct SelectorSection_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SelectorSection(categories: .constant(["General", "Acepted", "Created"]), selectedCategory: .constant("General"))
+            SelectorSection(categories: .constant(["General", "Acepted", "Created"]), selectedCategory: .constant("General"), color: .constant(ThemeColors.redSalsa))
         }.previewLayout(.sizeThatFits)
     }
 }

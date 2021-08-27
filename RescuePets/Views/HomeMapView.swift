@@ -113,6 +113,7 @@ struct HomeMapView: View {
                     .opacity(1)
                     .blendMode(.multiply)
                     .ignoresSafeArea( edges: .all)
+                    
                 
                 ProfileView(isShowing: $showProfileUser, isAnimating: $animProfileUser)
                     .ignoresSafeArea(edges: .all)

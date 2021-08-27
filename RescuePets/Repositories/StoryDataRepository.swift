@@ -116,7 +116,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     func add(_ story: Story, imageData: [Data]){
         
         guard let currentUserId = auth.auth.currentUser?.uid else {return}
-        let storyId = store.collection("stories").document().documentID
+        let storyId = store.collection(pathStories).document().documentID
         
         do {
             try store.collection(pathStories).document(storyId).setData(from: story)
@@ -204,6 +204,30 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 }
             })
         }
+    }
+    
+    // MARK: Load Story by ID
+    
+    func loadStoryById(storyId: String, complete: @escaping (Story)->()){
+        
+        let ref = store.collection(pathStories).document(storyId)
+        
+        ref.getDocument { snapshot, error in
+            if error != nil {
+                print(error?.localizedDescription as Any)
+            }
+            
+            do{
+                if let story = try snapshot?.data(as: Story.self){
+                    complete(story)
+                }else{
+                    print("problems loading the story")
+                }
+            }catch let error {
+                fatalError(error.localizedDescription)
+            }
+        }
+        
     }
     
     func setupTimeStamp(time: Int) -> String {

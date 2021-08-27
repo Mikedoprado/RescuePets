@@ -14,6 +14,7 @@ struct ActiveDetailView: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
+    @ObservedObject var chatViewModel = ChatViewModel()
     @Binding var showstory : Bool
     @Binding var isAnimating : Bool
     @State var showMapFullScreen = false
@@ -24,6 +25,7 @@ struct ActiveDetailView: View {
     
     @State var screen = UIScreen.main.bounds.width
     @State var showMessage = false
+    @State var chatId : String = ""
     
     
     var imagestory : String  {
@@ -78,6 +80,17 @@ struct ActiveDetailView: View {
         return scale
     }
     
+    fileprivate func CreateChat() {
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let newChat = Chat(storyId: storyCellViewModel.id , ownerStoryUser: storyCellViewModel.userId, acceptedStoryUser: storyCellViewModel.userAcceptedStoryID, timestamp: timestamp, isReaded: false)
+        chatViewModel.add(newChat) { chatId in
+            self.chatId = chatId
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.showMessage = true
+            }
+        }
+    }
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0){
@@ -105,7 +118,7 @@ struct ActiveDetailView: View {
                             }
                             if storyCellViewModel.userAcceptedStoryID != "" && user.id == storyCellViewModel.userAcceptedStoryID{
                                 Button{
-                                    self.showMessage = true
+                                    CreateChat()
                                 }label:{
                                     DesignImage.message.image
                                         .resizable()
@@ -181,7 +194,7 @@ struct ActiveDetailView: View {
                 MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
             }
             if showMessage {
-                ChatMessagesView(showMessages: $showMessage)
+                ChatMessagesView(userId: $storyCellViewModel.userId, userAcceptedStoryId: $storyCellViewModel.userAcceptedStoryID, storyId: $storyCellViewModel.id, messageViewModel: MessageViewModel(chatId: chatId), chatViewModel: chatViewModel, showMessages: $showMessage, chatId: $chatId)
             }
         }
     }

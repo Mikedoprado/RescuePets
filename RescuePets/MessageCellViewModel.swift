@@ -9,22 +9,21 @@ import Combine
 import SwiftUI
 
 
-final class MessageCellViewModel: ObservableObject {
+final class MessageCellViewModel: ObservableObject, Identifiable {
     
     @Published var message : Message
     @Published var timestamp: String = ""
-    @Published var messageRepository = MessageRepository()
     @Published var storyRepository = StoryDataRepository()
     
     var id : String = ""
     var from: String = ""
     var to: String = ""
     var text: String = ""
-    var isWatched: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
     
     init(message: Message) {
+        
         self.message = message
         
         $message.compactMap{ message in
@@ -51,11 +50,6 @@ final class MessageCellViewModel: ObservableObject {
         .weakAssign(to: \.text, on: self)
         .store(in: &cancellables)
         
-        $message.map { message in
-            message.isWatched
-        }
-        .weakAssign(to: \.isWatched, on: self)
-        .store(in: &cancellables)
         
         $message.compactMap{ [weak self] message in
             self?.storyRepository.setupTimeStamp(time: message.timestamp)

@@ -12,68 +12,87 @@ import FirebaseFirestore
 import FirebaseStorage
 
 protocol RepositoryMessageHelper {
-    func load(story: Story)
-    func add(_ message: Message, story: Story)
+    func load()
+    func add(_ message: Message, chatId: String, from: String, to: String)
     func remove(_ message: Message)
     func update(_ message: Message, user: User)
 }
 
 final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     
+    var pathStories = "stories"
     var pathMessages = "messages"
     var pathHelpers = "helpers"
     var store = Firestore.firestore()
     var auth = AuthenticationModel()
+    var chatId : String
     
     @Published var messages : [Message] = []
     private var cancellables: Set<AnyCancellable> = []
     
-    init(){
-        
+    init(chatId: String){
+        self.chatId = chatId
+        load()
     }
     
-    func load(story: Story) {
-        
-        guard let storyId = story.id, let currentUserId = auth.currentUserId  else {return}
-
+    func load() {
+        guard let currentUserId = auth.currentUserId else {return}
         let ref = store
-            .collection(pathMessages)
+            .collection(pathHelpers)
             .document(currentUserId)
-            .collection(storyId)
-            .order(by: "timestamp", descending: true)
-
+            .collection(pathMessages)
+            .document(chatId)
+            .collection("chat")
+            .order(by: "timestamp", descending: false)
+        
         ref.addSnapshotListener { snapshotStories, error in
             if error != nil {
                 print(error?.localizedDescription as Any)
             }
             if let snapshot = snapshotStories {
-
                 if !snapshot.isEmpty{
                     self.messages = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Message.self)
+                        try? document.data(as: Message.self)
                     })
                 }
             }
         }
     }
     
-    func add(_ message: Message, story: Story) {
+    func add(_ message: Message, chatId: String, from: String, to: String) {
         
-        guard let currentUserId = auth.currentUserId else {return}
+        let messageId = store
+            .collection(pathHelpers)
+            .document(from)
+            .collection(pathMessages)
+            .document(chatId).collection("chat")
+            .document().documentID
         
-        if story.userId == currentUserId || story.userAcceptedStoryID == currentUserId {
-            let messageId = UUID().uuidString
-            guard let storyId = story.id else {return}
-            
-            let ref = store.collection(pathMessages).document(currentUserId).collection(storyId).document(messageId)
-            
-            do{
-                try ref.setData(from: message)
-            }catch let error{
-                print(error.localizedDescription)
-            }
+        let refFrom = store
+            .collection(pathHelpers)
+            .document(from)
+            .collection(pathMessages)
+            .document(chatId)
+            .collection("chat")
+            .document(messageId)
+        
+        let refTo = store
+            .collection(pathHelpers)
+            .document(to)
+            .collection(pathMessages)
+            .document(chatId)
+            .collection("chat")
+            .document(messageId)
+        
+        do{
+            try refFrom.setData(from: message)
+            try refTo.setData(from: message)
+        }catch let error{
+            print(error.localizedDescription)
         }
+        
     }
+    
     
     func remove(_ message: Message) {
         

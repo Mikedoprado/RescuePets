@@ -6,28 +6,38 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ChatCellOwner: View {
+    
+    var text: String
+    var username: String
+    var profileImage: String
+    
     var body: some View {
-        HStack (alignment: .top, spacing: 10){
-            DesignImage.profileImageBlue.image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 40, height: 40)
-            ZStack {
-                VStack (alignment: .leading){
-                    Text("Username")
-                        .modifier(FontModifier(weight: .bold, size: .subheadline, color: .white))
-                    Text("The owner of a missing cat is asking for help. My baby has been missing for over a month now, and I want him back so badly¡.")
-                        .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+        VStack {
+            HStack{
+                VStack (alignment: .leading, spacing: 10){
+                    AnimatedImage(url: URL(string: profileImage))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
                 }
-                .padding(.all, 20)
+                ZStack {
+                    HStack{
+                        Text(text)
+                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                        
+                    }
+                    .padding(.all, 15)
+                }
+                .background(ThemeColors.blueCuracao.color)
+                .cornerRadius(20)
+               Spacer()
             }
-            .background(ThemeColors.blueCuracao.color)
-            .cornerRadius(20)
             
             
-            Spacer()
         }
     }
 }
@@ -35,7 +45,7 @@ struct ChatCellOwner: View {
 struct ChatCellOwner_Previews: PreviewProvider {
     static var previews: some View {
         Group{
-            ChatCellOwner()
+            ChatCellOwner(text: "", username: "", profileImage: "")
         }.previewLayout(.sizeThatFits)
         
     }

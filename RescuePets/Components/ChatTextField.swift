@@ -11,6 +11,7 @@ struct ChatTextField: View {
     
     
     @Binding var message: String
+    var action : () -> Void
     
     var body: some View {
         HStack{
@@ -19,18 +20,16 @@ struct ChatTextField: View {
                     .foregroundColor(ThemeColors.white.color)
                 TextField("Write your message", text: $message)
                     .foregroundColor(ThemeColors.darkGray.color)
-                    .padding(.leading, 20)
+                    .padding(.horizontal, 20)
             }
             .padding(.leading, 20)
             
-            Button{
-                
-            }label: {
+            Button(action: self.action, label: {
                 DesignImage.send.image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 35, height: 35)
-            }
+            })
             Spacer()
         }
         .frame(height: 50)
@@ -43,7 +42,7 @@ struct ChatTextField: View {
 struct ChatTextField_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ChatTextField(message: .constant(""))
+            ChatTextField(message: .constant(""), action: {})
         }.previewLayout(.sizeThatFits)
     }
 }

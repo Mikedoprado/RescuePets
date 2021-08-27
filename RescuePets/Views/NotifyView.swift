@@ -22,7 +22,7 @@ struct NotifyView: View {
     @State var story : Story?
     @Namespace private var ns
     @Binding var user : User
-    
+    @State var colorMenu = ThemeColors.redSalsa
     
     
     func getColor(story: Story) -> Color {
@@ -53,9 +53,9 @@ struct NotifyView: View {
                             
                         }
                     }, color: .white, alignment: .center)
-                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory)
+                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
                 }
-                .background(!self.changeView ? ThemeColors.redSalsa.color : ThemeColors.blueCuracao.color)
+                .background(ThemeColors.redSalsa.color)
                 .animation(.default)
 
                 ScrollView(.vertical) {

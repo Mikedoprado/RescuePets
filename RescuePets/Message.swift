@@ -18,14 +18,5 @@ struct Message: Codable, Identifiable {
     var to: String
     var text: String
     var timestamp: Int
-    var isWatched: Bool
     
 }
-
-
-//#if DEBUG
-//var user2 = User(username: "Manuel", email: "manuel@gmail.com")
-//var messages = [
-//    Message(from: user1, to: user2, message: "hello", timestamp: 1)
-//]
-//#endif

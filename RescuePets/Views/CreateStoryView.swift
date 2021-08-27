@@ -84,6 +84,19 @@ struct CreateStoryView: View {
         self.images.removeAll()
     }
     
+    private func getScale(proxy: GeometryProxy) -> CGFloat {
+        var scale: CGFloat = 1
+        
+        let x = proxy.frame(in: .global).minX
+        
+        let diff = abs(x - 30)
+        if diff < 100 {
+            scale = 1 + (100 - diff) / 500
+        }
+        
+        return scale
+    }
+    
     var body: some View {
         VStack {
             VStack{
@@ -116,20 +129,29 @@ struct CreateStoryView: View {
                             .padding(.horizontal, 30)
                         
                         VStack(spacing: 20){
-                            VStack{
+                            ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 0) {
                                     ForEach(images, id: \.id) { image in
-                                        image.image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width:self.screen ,height: self.screen)
-                                            .frame(maxWidth:self.screen ,maxHeight: self.screen)
-                                            .clipShape(RoundedRectangle(cornerRadius: 0))
-                                            .offset(x: self.x)
-                                            .modifier(DraggableView(x: self.$x, count: self.$count, screen: self.$screen, dataCount: self.$dataCount))
+                                        GeometryReader { proxy in
+                                            
+                                            let scale = getScale(proxy: proxy)
+                                            
+                                            image.image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width:UIScreen.main.bounds.width / 1.2 - 60, height: UIScreen.main.bounds.width / 1.2 - 60)
+                                                .background(ThemeColors.whiteGray.color)
+                                                .cornerRadius(10)
+                                                .padding(.top, 30)
+                                                .padding(.horizontal, 30)
+                                                .scaleEffect(CGSize(width: scale, height: scale))
+                                                .animation(.easeOut(duration: 0.5))
+                                        }
+                                        .frame(width:UIScreen.main.bounds.width / 1.2 ,height:UIScreen.main.bounds.width / 1.2)
+                                        
                                     }
-                                }.frame(width: screen)
-                                .offset(x: self.op)
+                                }
+                                .padding(.horizontal, 30)
                             }
                             .animation(.spring())
                             
