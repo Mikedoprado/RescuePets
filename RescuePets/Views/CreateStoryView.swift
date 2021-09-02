@@ -33,9 +33,9 @@ struct CreateStoryView: View {
     @StateObject private var keyboardHandler = KeyboardHandler()
     @StateObject var remaining = RemaininInt(remain: 250)
     
-    @ObservedObject private var locationManager = LocationManager()
+    @ObservedObject var locationManager = LocationManager()
     @ObservedObject private var storyViewModel = StoryViewModel()
-    @ObservedObject private var userViewModel = UserViewModel()
+    @ObservedObject var userViewModel : UserViewModel
     
     @State var x : CGFloat = 0
     @State var count : CGFloat = 0
@@ -171,7 +171,7 @@ struct CreateStoryView: View {
                                     }
                                 }
                                 TextViewForstory(text: $text, remainingText: remaining)
-                                LocationInfoView(city: $locationManager.city, address: $locationManager.address)
+                                LocationInfoView(city: locationManager.city, address: locationManager.address)
                                 SwitchShare(shareInFb: $shareInFb)
                                 NormalButton(textButton: "Publish story"){
                                     self.createstory()
@@ -233,7 +233,7 @@ struct CreatestoryView_Previews: PreviewProvider {
     static var previews: some View {
         CreateStoryView(
             imageSelected: .constant(ImageSelected(imageData: Data(), image: Image(""))),
-            isShowing: .constant(true)
+            isShowing: .constant(true), userViewModel: UserViewModel()
         )
     }
 }

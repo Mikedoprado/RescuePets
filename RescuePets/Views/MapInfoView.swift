@@ -36,7 +36,7 @@ struct MapInfoView: View {
                 }
             VStack{
                 Spacer()
-                LocationInfoView(city: $story.city, address: $story.address)
+                LocationInfoView(city: story.city, address: story.address)
                     .background(ThemeColors.whiteGray.color)
                     .cornerRadius(20)
             }

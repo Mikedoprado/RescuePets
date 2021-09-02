@@ -9,18 +9,18 @@ import Combine
 
 final class UserCellViewModel: ObservableObject, Identifiable {
     
-    @Published var userRepository = UserRepository()
+//    @Published var userRepository = UserRepository()
     @Published var user : User
     
     var id = ""
-    @Published var username : String = ""
-    @Published var kindOfUser : String = ""
-    @Published var email : String = ""
-    @Published var location: String = ""
-    @Published var amountStoriesCreated : Int = 0
-    @Published var amountStoriesAccepted : Int = 0
-    @Published var profileImage : String = ""
-    @Published var badges : [Badge] = []
+    var username : String = ""
+    var kindOfUser : String = ""
+    var email : String = ""
+    var location: String = ""
+    var amountStoriesCreated : Int = 0
+    var amountStoriesAccepted : Int = 0
+    var profileImage : String = ""
+    var badges : [Badge] = []
     
     
     private var cancellables: Set<AnyCancellable> = []

@@ -37,6 +37,7 @@
 		D362674526AEF14100865E74 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D362674426AEF14100865E74 /* StoryViewModel.swift */; };
 		D362674726AEF1D700865E74 /* StoryCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D362674626AEF1D700865E74 /* StoryCellViewModel.swift */; };
 		D371B01F26A082F80097F8F2 /* MapActiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D371B01E26A082F80097F8F2 /* MapActiveView.swift */; };
+		D37F986326D981C500FFAE14 /* SkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37F986226D981C500FFAE14 /* SkeletonView.swift */; };
 		D37FB40426C439C100499E93 /* HelpersExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37FB40326C439C100499E93 /* HelpersExtensions.swift */; };
 		D37FB40626C557F300499E93 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37FB40526C557F300499E93 /* HeaderView.swift */; };
 		D37FB40826C568FB00499E93 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37FB40726C568FB00499E93 /* CustomHeader.swift */; };
@@ -134,6 +135,7 @@
 		D362674426AEF14100865E74 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		D362674626AEF1D700865E74 /* StoryCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCellViewModel.swift; sourceTree = "<group>"; };
 		D371B01E26A082F80097F8F2 /* MapActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapActiveView.swift; sourceTree = "<group>"; };
+		D37F986226D981C500FFAE14 /* SkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonView.swift; sourceTree = "<group>"; };
 		D37FB40326C439C100499E93 /* HelpersExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpersExtensions.swift; sourceTree = "<group>"; };
 		D37FB40526C557F300499E93 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		D37FB40726C568FB00499E93 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				D34A41D926CC4EB500C8A61F /* ChatTextField.swift */,
 				D34A41DB26CC4F4300C8A61F /* StoryProgress.swift */,
 				D3299E1226D4496200E025B5 /* MenuPopUp.swift */,
+				D37F986226D981C500FFAE14 /* SkeletonView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -262,8 +265,8 @@
 		D332C781267AA6C800F22655 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D332C77F267AA66000F22655 /* HomeMapView.swift */,
 				D39C88A7267942DA0087FEA8 /* ContentView.swift */,
+				D332C77F267AA66000F22655 /* HomeMapView.swift */,
 				D3FFF231267A2F6C00F4A278 /* Authentication.swift */,
 				D332C782267AA6E500F22655 /* MapView.swift */,
 				D30BCAC9267BF28600D10BEE /* ImagePicker.swift */,
@@ -566,6 +569,7 @@
 				D371B01F26A082F80097F8F2 /* MapActiveView.swift in Sources */,
 				D34BA82C2680C5860084097F /* CreateStoryView.swift in Sources */,
 				D3FFF236267A58CF00F4A278 /* DesignColors.swift in Sources */,
+				D37F986326D981C500FFAE14 /* SkeletonView.swift in Sources */,
 				D3C45BFB2684C8ED00DFA358 /* ChangePasswordView.swift in Sources */,
 				D3A6EF36268CFF03000D3636 /* ChatCellInvited.swift in Sources */,
 				D37FB40426C439C100499E93 /* HelpersExtensions.swift in Sources */,

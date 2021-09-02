@@ -1,4 +1,3 @@
-//
 //  StoryCellViewModel.swift
 //  RescuePets
 //
@@ -11,10 +10,10 @@ import SwiftUI
 final class StoryCellViewModel: ObservableObject, Identifiable {
     
     @Published var story: Story
-    @Published var storyRepository = StoryDataRepository()
-    @Published var timestamp : String = ""
-    @Published var acceptedStory = ""
+    var storyRepository = StoryDataRepository()
+    var timestamp : String = ""
     
+    var acceptedStory = ""
     var id : String = ""
     var kindOfAnimal = ""
     var kindOfStory = ""
@@ -31,24 +30,29 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
     private var cancellables = Set<AnyCancellable>()
 
     init(story: Story) {
+        
         self.story = story
         
         $story.compactMap { story in
             story.id
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.id, on: self)
         .store(in: &cancellables)
         
         $story.compactMap { [weak self] story in
             self?.storyRepository.setupTimeStamp(time: story.timestamp)
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
         $story.compactMap { story in
             story.isActive ? "storyAcept" : "storyAdd"
         }
-        .weakAssign(to: \.acceptedStory, on: self)
+        .sink(receiveValue: { [weak self] value in
+            self?.acceptedStory = value
+        })
         .store(in: &cancellables)
 
         $story.map{ story in
@@ -60,18 +64,21 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.map{ story in
             story.userId
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.userId, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.username
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.username, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.city
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.city, on: self)
         .store(in: &cancellables)
 
@@ -84,24 +91,28 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.compactMap{ story in
             story.description
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.description, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.address
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.address, on: self)
         .store(in: &cancellables)
 
         $story.compactMap{ story in
             story.images
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.images, on: self)
         .store(in: &cancellables)
 
         $story.compactMap{ story in
             story.userAcceptedStoryID
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.userAcceptedStoryID, on: self)
         .store(in: &cancellables)
 
@@ -120,6 +131,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.map{ story in
             story.kindOfStory
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.kindOfStory, on: self)
         .store(in: &cancellables)
         

@@ -13,7 +13,7 @@ struct ChangePasswordView: View {
     @State var newPassword: String = ""
     @State var repeatPassword: String = ""
     @ObservedObject var userViewModel : UserViewModel
-    @EnvironmentObject var auth: AuthenticationModel
+    @EnvironmentObject var auth : AuthenticationModel
     @StateObject private var keyboardHandler = KeyboardHandler()
     
     @Binding var isAnimatingEditChangePassword : Bool

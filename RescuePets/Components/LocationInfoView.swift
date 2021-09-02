@@ -9,8 +9,8 @@ import SwiftUI
 
 struct LocationInfoView: View {
     
-    @Binding var city : String
-    @Binding var address : String
+    var city : String
+    var address : String 
     
     var body: some View {
         HStack{
@@ -58,7 +58,7 @@ struct LocationInfoView: View {
 struct LocationInfoView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            LocationInfoView(city: .constant("Medellín"), address: .constant("Calle 13 # 43D - 79"))
+            LocationInfoView(city: "Medellin", address: "Calle 13 # 43D - 79")
         }.previewLayout(.sizeThatFits)
     }
 }

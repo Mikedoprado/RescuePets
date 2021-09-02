@@ -12,13 +12,13 @@ import Firebase
 struct RescuePetsApp: App {
     
 //    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     init() {
         FirebaseApp.configure()
     }
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(AuthenticationModel())
         }
     }
 }

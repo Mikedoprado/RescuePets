@@ -11,7 +11,7 @@ var screen = UIScreen.main.bounds
 
 struct NotifyView: View {
     
-    @ObservedObject var storyViewModel = StoryViewModel()
+    @StateObject var storyViewModel = StoryViewModel()
     @Binding var showNotify : Bool
     @Binding var isAnimating : Bool
     @State var changeView = false
@@ -20,10 +20,9 @@ struct NotifyView: View {
     @State var categories = ["General", "Accepted", "Created"]
     @State var selectedCategory = "General"
     @State var story : Story?
-    @Namespace private var ns
     @Binding var user : User
     @State var colorMenu = ThemeColors.redSalsa
-    
+    @State var storyCellViewModel : StoryCellViewModel?
     
     func getColor(story: Story) -> Color {
         switch story.animal.rawValue {
@@ -40,11 +39,9 @@ struct NotifyView: View {
         }
     }
     
-    var body: some View {
+    @ViewBuilder var body: some View {
         ZStack{
-            
             VStack(spacing: 0) {
-                
                 VStack {
                     HeaderView(title: $selectedCategory, actionDismiss: {
                         self.isAnimating.toggle()
@@ -64,6 +61,7 @@ struct NotifyView: View {
                             ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
                                 Button(action: {
                                     self.story = storyCellVM.story
+                                    self.storyCellViewModel = storyCellVM
                                     self.showDetailsStory.toggle()
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                         self.isAnimatingActiveView = true
@@ -73,9 +71,11 @@ struct NotifyView: View {
                                 })
                             }
                         }
+                        .padding(.bottom, 20)
                     }
                     if selectedCategory == "Accepted"{
                         LazyVStack {
+                            
                             ForEach(storyViewModel.storyCellViewModelsAccepted) { storyCellVM in
                                 Button(action: {
                                     self.story = storyCellVM.story
@@ -88,6 +88,7 @@ struct NotifyView: View {
                                 })
                             }
                         }
+                        .padding(.bottom, 20)
                     }
                     if selectedCategory == "Created"{
                         LazyVStack {
@@ -103,6 +104,7 @@ struct NotifyView: View {
                                 })
                             }
                         }
+                        .padding(.bottom, 20)
                     }
                     
                 }
@@ -113,7 +115,9 @@ struct NotifyView: View {
             .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
             .animation(.default)
             if showDetailsStory {
-                ActiveDetailView(storyCellViewModel: StoryCellViewModel(story: story!), storyViewModel: storyViewModel, showstory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: $user)
+                if let story = storyCellViewModel{
+                    ActiveDetailView(storyCellViewModel: story, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: $user)
+                }
             }
         }
     }

@@ -12,13 +12,13 @@ import SwiftUI
 final class MessageCellViewModel: ObservableObject, Identifiable {
     
     @Published var message : Message
-    @Published var timestamp: String = ""
     @Published var storyRepository = StoryDataRepository()
     
     var id : String = ""
     var from: String = ""
     var to: String = ""
     var text: String = ""
+    var timestamp: String = ""
 
     private var cancellables = Set<AnyCancellable>()
     

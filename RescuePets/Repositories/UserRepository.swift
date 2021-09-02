@@ -17,25 +17,28 @@ final class UserRepository: ObservableObject {
     private let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
     let auth = AuthenticationModel()
     
-    @Published var user : User = User()
+    @Published var user : User?
+    private var cancelables = Set<AnyCancellable>()
     
     init() {
         loadUser()
     }
     
     func loadUser(){
-        guard let currentUserId = auth.auth.currentUser?.uid else {return}
+        guard let currentUserId = auth.currentUserId else {return}
         store.collection(path).document(currentUserId).addSnapshotListener{ [weak self] (snapshot, err) in
+            guard let self = self else {return}
             if err != nil {
                 print("problems loading user",err?.localizedDescription as Any)
                 return
             }
-            self?.user = try! (snapshot?.data(as: User.self))!
+            self.user = try! (snapshot?.data(as: User.self))!
         }
     }
     
     func loadUserById(userID: String, complete: @escaping (User)-> Void){
         store.collection(path).document(userID).getDocument{ (snapshot, err) in
+//            guard let self = self else {return}
             if err != nil {
                 print("problems loading user",err?.localizedDescription as Any)
                 return
@@ -51,13 +54,10 @@ final class UserRepository: ObservableObject {
             if let err = err {
                 print("Error getting document: \(err)")
             } else if (snapshot?.isEmpty)! {
-                print("02")
                 completion(false)
             } else {
                 for document in (snapshot?.documents)! {
-                    print("01")
                     if document.data()["username"] != nil {
-                        print("01")
                         completion(true)
                     }
                 }

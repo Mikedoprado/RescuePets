@@ -30,50 +30,65 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     var auth = AuthenticationModel()
     let storage = Storage.storage(url: "gs://rescue-pets-25f38.appspot.com/")
     private var cancellables: Set<AnyCancellable> = []
+
+    var userRepository = UserRepository()
+    private var listenerRegistrationStory: ListenerRegistration?
+    private var listenerRegistrationStoryAccepted: ListenerRegistration?
+    private var listenerRegistrationStoryCreated: ListenerRegistration?
+    var user = User()
     
     init(){
-        load()
-        loadCreatedStories()
-        loadAcceptedStories()
+
+        userRepository.$user.compactMap {  user in
+            user
+        }
+        .receive(on: DispatchQueue.main)
+        .sink(receiveValue: { [weak self] user in
+            self?.user = user
+            self?.load()
+            self?.loadAcceptedStories()
+            self?.loadCreatedStories()
+        })
+        .store(in: &cancellables)
+        
     }
     
     // MARK: load stories of the one location general stories in your city
+    
     func load(){
+        if listenerRegistrationStory != nil {
+            listenerRegistrationStory?.remove()
+        }
+        guard let userLocation = user.location else {return}
         
-        guard let currentUserId = auth.auth.currentUser?.uid else {return}
-        
-        store.collection(pathUser).document(currentUserId).getDocument { [weak self] (snapshotUser, error) in
-            if error != nil {
-                print(error?.localizedDescription as Any)
+        listenerRegistrationStory = store
+            .collection(self.pathStories)
+            .order(by: "timestamp", descending: true)
+            .whereField("city", isEqualTo: userLocation)
+            .addSnapshotListener { [weak self] snapshotStories, err in
+            guard let self = self else {return}
+            if err != nil, snapshotStories == nil {
+                print(err?.localizedDescription as Any)
             }
-            let user = try! snapshotUser?.data(as: User.self)
-            guard let userLocation = user?.location else {return}
-            
-            let ref = self?.store.collection(self!.pathStories).order(by: "timestamp", descending: true).whereField("city", isEqualTo: userLocation)
-            
-            ref!.addSnapshotListener { snapshotStories, err in
-                if err != nil {
-                    print(err?.localizedDescription as Any)
-                }
-                if let snapshot = snapshotStories {
-                    
-                    if !snapshot.isEmpty{
-                        self?.stories = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Story.self)
-                        })
-                    }
-                }
-            }
+            self.stories = snapshotStories!.documents.compactMap({ document in
+                    try? document.data(as: Story.self)
+            })
         }
     }
     // MARK: load stories created by the currentUser
     func loadCreatedStories(){
         
-        guard let currentUserId = auth.auth.currentUser?.uid else {return}
+        if listenerRegistrationStoryCreated != nil {
+            listenerRegistrationStoryCreated?.remove()
+        }
         
-        let ref = store.collection(pathStories).order(by: "timestamp", descending: true).whereField("userId", isEqualTo: currentUserId)
-        
-        ref.addSnapshotListener { snapshotStories, error in
+        guard let userID = user.id else {return}
+        listenerRegistrationStoryCreated = store
+            .collection(pathStories)
+            .order(by: "timestamp", descending: true)
+            .whereField("userId", isEqualTo: userID)
+            .addSnapshotListener { [weak self] snapshotStories, error in
+            guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
             }
@@ -81,7 +96,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 
                 if !snapshot.isEmpty{
                     self.storiesCreated = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Story.self)
+                        try? document.data(as: Story.self)
                     })
                 }
             }
@@ -90,11 +105,18 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: load stories accepted by the currentUser
     func loadAcceptedStories(){
         
-        guard let currentUserId = auth.auth.currentUser?.uid else {return}
+        if listenerRegistrationStoryAccepted != nil {
+            listenerRegistrationStoryAccepted?.remove()
+        }
         
-        let ref = store.collection(pathUser).document(currentUserId).collection(pathAcceptedStories).order(by: "timestamp", descending: true)
-        
-        ref.addSnapshotListener { snapshotStories, error in
+        guard let userID = user.id else {return}
+        listenerRegistrationStoryAccepted = store
+            .collection(pathUser)
+            .document(userID)
+            .collection(pathAcceptedStories)
+            .order(by: "timestamp", descending: true)
+            .addSnapshotListener { [weak self] snapshotStories, error in
+            guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
             }
@@ -102,7 +124,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
                 
                 if !snapshot.isEmpty{
                     self.storiesAccepted = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Story.self)
+                        try? document.data(as: Story.self)
                     })
                 }
             }
@@ -114,15 +136,14 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     
     // MARK: creating a new story
     func add(_ story: Story, imageData: [Data]){
-        
-        guard let currentUserId = auth.auth.currentUser?.uid else {return}
+        guard let userID = user.id else {return}
         let storyId = store.collection(pathStories).document().documentID
         
         do {
             try store.collection(pathStories).document(storyId).setData(from: story)
-            let helpersStories = store.collection(pathUser).document(currentUserId).collection(pathCreatedStories).document(storyId)
+            let helpersStories = store.collection(pathUser).document(userID).collection(pathCreatedStories).document(storyId)
             helpersStories.setData(["timestamp":story.timestamp])
-            self.sendImageToDatabase(currentUserId: currentUserId, storyId: storyId, imageData: imageData)
+            self.sendImageToDatabase(currentUserId: userID, storyId: storyId, imageData: imageData)
             
         }catch{
             fatalError("the story couldn´t be saved")
@@ -131,33 +152,33 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: deleting story in general and in the user
     func remove(_ story: Story) {
         
-        guard let currentUserId = auth.auth.currentUser?.uid, let storyId = story.id else {return}
+        guard let userID = user.id, let storyId = story.id else {return}
         
         store.collection(pathStories).document(storyId).delete { [weak self] error in
+            guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
                 return
             }
-            self?.store.collection(self!.pathUser).document(currentUserId).collection(self!.pathCreatedStories).document(storyId).delete { error in
+            self.store.collection(self.pathUser).document(userID).collection(self.pathCreatedStories).document(storyId).delete { error in
                 if error != nil {
                     print(error?.localizedDescription as Any)
                 }
             }
             
             if story.userAcceptedStoryID != nil {
-                self?.store.collection(self!.pathUser).document(story.userAcceptedStoryID!).collection(self!.pathAcceptedStories).document(storyId).delete { error in
+                self.store.collection(self.pathUser).document(story.userAcceptedStoryID!).collection(self.pathAcceptedStories).document(storyId).delete { error in
                     if error != nil {
                         print(error?.localizedDescription as Any)
                     }
                 }
             }
         }
-//             delete element from the storage to
+        //             delete element from the storage to
     }
     
     func update(_ story: Story, user: User) {
         let isActive = story.isActive
-        
         switch isActive {
         case true:
             store.collection(pathStories).document(story.id!).updateData(["isActive":true, "userAcceptedStoryID": user.id as Any])
@@ -170,12 +191,13 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         case false:
             if story.userAcceptedStoryID != nil{
                 store.collection(pathUser).document(user.id!).collection(pathAcceptedStories).document(story.id!).delete(completion: { [weak self] error in
+                    guard let self = self else {return}
                     if error != nil{
                         print(error?.localizedDescription as Any)
                         return
                     }
-                    self?.store.collection(self!.pathStories).document(story.id!).updateData(["isActive":false])
-                    self?.store.collection(self!.pathStories).document(story.id!).updateData(["userAcceptedStoryID":""])
+                    self.store.collection(self.pathStories).document(story.id!).updateData(["isActive":false])
+                    self.store.collection(self.pathStories).document(story.id!).updateData(["userAcceptedStoryID":""])
                 })
             }
         }

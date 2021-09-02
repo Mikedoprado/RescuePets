@@ -13,8 +13,7 @@ import MapKit
 
 struct MapActiveView: View {
     
-    var story : StoryCellViewModel
-    
+    @ObservedObject var story : StoryCellViewModel
     @State var region : MKCoordinateRegion
 
     init(story: StoryCellViewModel, latitude: Double, longitude: Double) {

@@ -15,20 +15,20 @@ struct ChatMessagesView: View {
     @Binding var storyId : String
     @StateObject private var keyboardHandler = KeyboardHandler()
     @EnvironmentObject var auth : AuthenticationModel
-    @ObservedObject var messageViewModel : MessageViewModel
-    @ObservedObject var userRepository = UserRepository()
-    @ObservedObject var chatViewModel : ChatViewModel
+    @StateObject var messageViewModel : MessageViewModel
+    @StateObject var userRepository = UserRepository()
+    @StateObject var chatViewModel : ChatViewModel
     @State var isFocused = false
     @State var sectionTitle = "Messages"
     @Binding var showMessages : Bool
-    @ObservedObject var storyRepository = StoryDataRepository()
+    @StateObject var storyRepository = StoryDataRepository()
     @Binding var chatId : String
     
     @State var currentUsername = ""
     @State var currentProfileImage = ""
     @State var othertUsername = ""
     @State var otherProfileImage = ""
-    @State var story : StoryCellViewModel?
+    @State var storyCellViewModel : StoryCellViewModel?
     @State var username = ""
     @State var image = ""
 
@@ -42,7 +42,7 @@ struct ChatMessagesView: View {
                 }
                 .cornerRadius(20)
                 .padding(.bottom, 10)
-                StoryProgress(storyCellViewModel: $story, username: $username, image: $image)
+                StoryProgress(storyCellViewModel: $storyCellViewModel, username: $username, image: $image)
             }
             .background(ThemeColors.white.color)
             ScrollView(.vertical, showsIndicators: false){
@@ -119,7 +119,7 @@ struct ChatMessagesView: View {
     
     func loadStory(){
         storyRepository.loadStoryById(storyId: storyId) { story in
-            self.story = StoryCellViewModel(story: story)
+            self.storyCellViewModel = StoryCellViewModel(story: story)
             self.username = story.username
             self.image = story.images![0]
         }

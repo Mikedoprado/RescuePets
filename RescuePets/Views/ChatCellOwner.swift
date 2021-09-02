@@ -36,9 +36,8 @@ struct ChatCellOwner: View {
                 .cornerRadius(20)
                Spacer()
             }
-            
-            
         }
+        
     }
 }
 

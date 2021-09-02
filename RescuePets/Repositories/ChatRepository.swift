@@ -13,7 +13,7 @@ import FirebaseStorage
 
 protocol RepositoryChatHelper {
     func load()
-    func add(_ chat: Chat, complete: @escaping (String)->())
+    func add(_ chat: Chat)
     func remove(_ chatId: String, acceptedStoryUser: String, ownerStoryUser: String)
 //    func update(_ chat: Chat, user: User)
 }
@@ -28,6 +28,8 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
     var auth = AuthenticationModel()
     
     @Published var chats : [Chat] = []
+    @Published var chatId : String = ""
+    private var listenerRegistration: ListenerRegistration?
     private var cancellables: Set<AnyCancellable> = []
     
     init() {
@@ -40,8 +42,8 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
         
         let ref = store.collection(pathHelpers).document(currentUserId).collection(pathMessages).order(by: "timestamp", descending: true)
         
-        ref.addSnapshotListener { snapshot, error in
-            
+        ref.addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
             }
@@ -54,7 +56,8 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
         }
     }
     
-    func add(_ chat: Chat, complete: @escaping (String)->()) {
+    
+    func add(_ chat: Chat) {
        
         let chatId = store.collection(pathHelpers).document(chat.acceptedStoryUser).collection(pathMessages).document().documentID
         let refUserAccepted = store.collection(pathHelpers).document(chat.acceptedStoryUser).collection(pathMessages).document(chatId)
@@ -62,7 +65,7 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
         do{
             try refUserAccepted.setData(from: chat)
             try refUserOwner.setData(from: chat)
-            complete(chatId)
+            self.chatId = chatId
         }catch let error {
             print(error.localizedDescription)
         }
@@ -73,11 +76,12 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
         
         let ref = store.collection(pathHelpers).document(acceptedStoryUser).collection(pathMessages).document(chatId).collection(pathChatMessages)
         
-        ref.getDocuments { [weak self] snapshot, error in
+        ref.getDocuments {  [weak self] snapshot, error in
+            guard let self = self else {return}
             
             if ((snapshot?.isEmpty) != nil){
-                self?.store.collection(self!.pathHelpers).document(acceptedStoryUser).collection(self!.pathMessages).document(chatId).delete()
-                self?.store.collection(self!.pathHelpers).document(ownerStoryUser).collection(self!.pathMessages).document(chatId).delete()
+                self.store.collection(self.pathHelpers).document(acceptedStoryUser).collection(self.pathMessages).document(chatId).delete()
+                self.store.collection(self.pathHelpers).document(ownerStoryUser).collection(self.pathMessages).document(chatId).delete()
             }
         }
 

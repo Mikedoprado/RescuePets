@@ -11,8 +11,8 @@ import SDWebImageSwiftUI
 struct ProfileView: View {
     
     @EnvironmentObject var auth: AuthenticationModel
-    @ObservedObject var userViewModel = UserViewModel()
-    @ObservedObject var storyViewModel = StoryViewModel()
+    @ObservedObject var userViewModel : UserViewModel
+    @StateObject var storyViewModel = StoryViewModel()
     @Binding var isShowing : Bool
     @Binding var isAnimating : Bool
     var textCreated = "Created"
@@ -139,12 +139,7 @@ struct ProfileView: View {
             .animation(.spring())
             
             if showEditProfile {
-                
-                VStack {
-                    
-                    EditProfileView(userViewModel: userViewModel, show: $showEditProfile, animateEdit: $animEditProfile)
-                    
-                }
+                EditProfileView(userViewModel: userViewModel, show: $showEditProfile, animateEdit: $animEditProfile)
             }
             
             if showMenu {
@@ -184,7 +179,7 @@ struct ProfileView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ProfileView(isShowing: .constant(true), isAnimating: .constant(true))
+            ProfileView(userViewModel: UserViewModel(), isShowing: .constant(true), isAnimating: .constant(true))
         }.previewLayout(.sizeThatFits)
     }
 }

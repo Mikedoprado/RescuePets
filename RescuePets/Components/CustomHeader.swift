@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CustomHeader: View {
     
-    @ObservedObject var storyViewModel : StoryViewModel
     @ObservedObject var storyCellViewModel : StoryCellViewModel
+    @ObservedObject var storyViewModel : StoryViewModel
     @Binding var user : User
     @Binding var showingAlert : Bool
     var action: () -> Void
@@ -23,15 +23,19 @@ struct CustomHeader: View {
             Spacer()
             HStack(spacing: 30) {
                 if user.id != storyCellViewModel.userId {
-                    Button {
-                        storyCellViewModel.story.isActive.toggle()
-                        storyViewModel.update(storyCellViewModel.story, user: user)
-                    } label: {
+//                    Button {
+//                        storyCellViewModel.story.isActive.toggle()
+//                        storyViewModel.update(storyCellViewModel.story, user: user)
+//                    } label: {
                         Image(storyCellViewModel.acceptedStory)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 25, height: 25, alignment: .center)
-                    }
+                            .onTapGesture {
+                                storyCellViewModel.story.isActive.toggle()
+                                storyViewModel.update(storyCellViewModel.story, user: user)
+                            }
+//                    }
                 }
                 if user.id == storyCellViewModel.userId {
                     Button {

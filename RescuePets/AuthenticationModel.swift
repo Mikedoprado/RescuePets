@@ -18,11 +18,7 @@ class AuthenticationModel: ObservableObject {
     let pathUser = "helpers"
     let pathProfilePicture = "profilePicture"
     
-    var userId: String {
-        return isSignedIn ? auth.currentUser!.uid : ""
-    }
-    
-    @Published var signedIn = false
+    var signedIn = false
     
     var isSignedIn: Bool {
         return auth.currentUser != nil
@@ -31,15 +27,15 @@ class AuthenticationModel: ObservableObject {
     var currentUserId : String? {
         return isSignedIn ? auth.currentUser?.uid : nil
     }
-    
+
     func signIn(email: String, password: String, complete: @escaping (String?, Bool)->Void) {
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self else {return}
             if error != nil {
                 complete(error!.localizedDescription, false)
             }
-            
             DispatchQueue.main.async {
-                self?.signedIn = true
+                self.signedIn = true
                 complete(nil, false)
             }
         }
@@ -48,9 +44,9 @@ class AuthenticationModel: ObservableObject {
     func createUser(_ username: String, _ email: String, _ password: String, location: String, imageSelected : ImageSelected, kindOfUser: String){
         
         auth.createUser(withEmail: email, password: password) { [weak self] user, error in
-            guard user != nil , error == nil else {return}
+            guard let self = self, user != nil , error == nil else {return}
             if let userId = user?.user.uid {
-                self?.sendProfilePictureToDB(userId: userId, imageData: imageSelected.imageData, complete: { imageUrl in
+                self.sendProfilePictureToDB(userId: userId, imageData: imageSelected.imageData, complete: { imageUrl in
                     let dict = [
                         "username": username,
                         "email": email,
@@ -75,10 +71,10 @@ class AuthenticationModel: ObservableObject {
                         ]
                     ] as [String : Any]
                     
-                    self?.store.collection(self!.pathUser).document(userId).setData(dict)
+                    self.store.collection(self.pathUser).document(userId).setData(dict)
                     
                     DispatchQueue.main.async{
-                        self?.signedIn = true
+                        self.signedIn = true
                     }
                 })
             }
@@ -141,11 +137,10 @@ class AuthenticationModel: ObservableObject {
     }
     
     func updateEmail(email: String, complete: @escaping (String?, Bool) -> Void ){
-        
-        guard let currentUserId = auth.currentUser?.uid else {return}
-        let ref = self.store.collection(pathUser).document(currentUserId)
-        
-        auth.currentUser?.updateEmail(to: email, completion: { error in
+
+        auth.currentUser?.updateEmail(to: email, completion: { [weak self] error in
+            guard let self = self, let currentUserId = self.auth.currentUser?.uid else {return}
+            let ref = self.store.collection(self.pathUser).document(currentUserId)
             if error != nil {
                 complete(error!.localizedDescription as String, false)
             }else{
@@ -158,10 +153,11 @@ class AuthenticationModel: ObservableObject {
     func updatePassword(userEmail: String, oldPassword: String, newPassword: String, complete: @escaping (String?, Bool) -> Void ) {
         
         auth.signIn(withEmail: userEmail, password: oldPassword) { [weak self] result, err in
+            guard let self = self else {return}
             if err != nil {
                 complete(err?.localizedDescription, false)
             }else{
-                self?.auth.currentUser?.updatePassword(to: newPassword, completion: { error in
+                self.auth.currentUser?.updatePassword(to: newPassword, completion: { error in
                     if error != nil {
                         complete(error?.localizedDescription, false)
                     }else{

@@ -19,7 +19,7 @@ struct MessageCellView: View {
   
     func showUserInfo(){
         
-        guard let currentUserId = auth.currentUserId else {return}
+        let currentUserId = auth.currentUserId 
         let from = ((currentUserId != chat.acceptedStoryUser) ? chat.acceptedStoryUser : chat.ownerStoryUser)
         
         self.userRepository.loadUserById(userID: from) { user in

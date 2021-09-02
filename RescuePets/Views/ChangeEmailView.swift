@@ -10,11 +10,10 @@ import SwiftUI
 import SwiftUI
 
 struct ChangeEmailView: View {
-    
-    
+
     @ObservedObject var userViewModel : UserViewModel
     @EnvironmentObject var auth: AuthenticationModel
-    @ObservedObject var signupVM = SignViewModel()
+    @StateObject var signupVM = SignViewModel()
     @Binding var isAnimatingEditEmail : Bool
     @Binding var showChangeEmail : Bool
     

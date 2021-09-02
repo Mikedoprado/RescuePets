@@ -14,8 +14,8 @@ struct ActiveDetailView: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
-    @ObservedObject var chatViewModel = ChatViewModel()
-    @Binding var showstory : Bool
+//    @StateObject var chatViewModel = ChatViewModel()
+    @Binding var showStory : Bool
     @Binding var isAnimating : Bool
     @State var showMapFullScreen = false
     @State private var showingAlert = false
@@ -25,11 +25,10 @@ struct ActiveDetailView: View {
     
     @State var screen = UIScreen.main.bounds.width
     @State var showMessage = false
-    @State var chatId : String = ""
     
     
     var imagestory : String  {
-        switch storyCellViewModel.kindOfAnimal{
+        switch storyCellViewModel.kindOfAnimal {
         case "Dog":
             return KindOfAnimal.Dog.animal
         case "Cat":
@@ -63,7 +62,7 @@ struct ActiveDetailView: View {
     func dismissView(){
         self.isAnimating.toggle()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.showstory.toggle()
+            self.showStory.toggle()
         }
     }
     
@@ -80,16 +79,15 @@ struct ActiveDetailView: View {
         return scale
     }
     
-    fileprivate func CreateChat() {
-        let timestamp = Int(Date().timeIntervalSince1970)
-        let newChat = Chat(storyId: storyCellViewModel.id , ownerStoryUser: storyCellViewModel.userId, acceptedStoryUser: storyCellViewModel.userAcceptedStoryID, timestamp: timestamp, isReaded: false)
-        chatViewModel.add(newChat) { chatId in
-            self.chatId = chatId
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.showMessage = true
-            }
-        }
-    }
+//    fileprivate func CreateChat() {
+//        let timestamp = Int(Date().timeIntervalSince1970)
+//        let newChat = Chat(storyId: storyCellViewModel.id , ownerStoryUser: storyCellViewModel.userId, acceptedStoryUser: storyCellViewModel.userAcceptedStoryID, timestamp: timestamp, isReaded: false)
+//        chatViewModel.add(newChat)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//            self.showMessage = true
+//        }
+//
+//    }
     
     var body: some View {
         ZStack {
@@ -97,7 +95,7 @@ struct ActiveDetailView: View {
                 ZStack {
                     VStack{
                         // MARK: header
-                        CustomHeader(storyViewModel: storyViewModel, storyCellViewModel: storyCellViewModel, user: $user, showingAlert: $showingAlert, action: {
+                        CustomHeader(storyCellViewModel: storyCellViewModel, storyViewModel: storyViewModel, user: $user, showingAlert: $showingAlert, action: {
                             dismissView()
                         }, sectionTitle: $sectionTitle)
                         HStack {
@@ -118,7 +116,7 @@ struct ActiveDetailView: View {
                             }
                             if storyCellViewModel.userAcceptedStoryID != "" && user.id == storyCellViewModel.userAcceptedStoryID{
                                 Button{
-                                    CreateChat()
+//                                    CreateChat()
                                 }label:{
                                     DesignImage.message.image
                                         .resizable()
@@ -171,7 +169,7 @@ struct ActiveDetailView: View {
                                     .frame(height: 180)
                                     .background(ThemeColors.whiteGray.color)
                                 
-                                LocationInfoView(city: $storyCellViewModel.city , address: $storyCellViewModel.address)
+                                LocationInfoView(city: storyCellViewModel.city , address: storyCellViewModel.address)
                                     .frame(height: 120)
                                     .background(ThemeColors.whiteGray.color)
                                     .cornerRadius(20)
@@ -193,9 +191,9 @@ struct ActiveDetailView: View {
             if showMapFullScreen {
                 MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
             }
-            if showMessage {
-                ChatMessagesView(userId: $storyCellViewModel.userId, userAcceptedStoryId: $storyCellViewModel.userAcceptedStoryID, storyId: $storyCellViewModel.id, messageViewModel: MessageViewModel(chatId: chatId), chatViewModel: chatViewModel, showMessages: $showMessage, chatId: $chatId)
-            }
+//            if showMessage {
+//                ChatMessagesView(userId: $storyCellViewModel.userId, userAcceptedStoryId: $storyCellViewModel.userAcceptedStoryID, storyId: $storyCellViewModel.id, messageViewModel: MessageViewModel(chatId: chatViewModel.chatId), chatViewModel: chatViewModel, showMessages: $showMessage, chatId: $chatViewModel.chatId)
+//            }
         }
     }
 }

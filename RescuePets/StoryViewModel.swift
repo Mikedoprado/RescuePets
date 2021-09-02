@@ -10,16 +10,14 @@ import Combine
 
 final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     
-    @Published var storyRepository =  StoryDataRepository()
+    var storyRepository =  StoryDataRepository()
     @Published var storyCellViewModels : [StoryCellViewModel] = []
     @Published var storyCellViewModelsCreated : [StoryCellViewModel] = []
     @Published var storyCellViewModelsAccepted : [StoryCellViewModel] = []
     @Published var amountCreatedStories : Int = 0
     @Published var amountAcceptedStories : Int = 0
     private var cancellables = Set<AnyCancellable>()
-    
-    
-    
+
     init(){
         load()
         loadCreated()
@@ -29,10 +27,12 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     
     func load() {
         storyRepository.$stories.map { stories in
-            stories.map { story in
+            print(stories.count)
+            return stories.map { story in
                 StoryCellViewModel(story: story)
             }
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModels, on: self)
         .store(in: &cancellables)
     }
@@ -43,6 +43,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModelsCreated, on: self)
         .store(in: &cancellables)
     }
@@ -52,6 +53,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModelsAccepted, on: self)
         .store(in: &cancellables)
     }
@@ -60,24 +62,26 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         $storyCellViewModelsCreated.map{ stories in
             stories.count
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountCreatedStories, on: self)
         .store(in: &cancellables)
         
         $storyCellViewModelsAccepted.map{ stories in
             stories.count
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountAcceptedStories, on: self)
         .store(in: &cancellables)
     }
     
     func add(_ story: Story, imageData: [Data]) {
-        self.storyRepository.add(story, imageData: imageData)
+        storyRepository.add(story, imageData: imageData)
     }
     
     func remove(_ story: Story) {
         if let index = storyCellViewModels.firstIndex(where: {$0.id == story.id}){
             storyCellViewModels.remove(at: index)
-            self.storyRepository.remove(story)
+            storyRepository.remove(story)
         }
     }
     
@@ -85,6 +89,6 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         if let index = storyCellViewModelsAccepted.firstIndex(where: {$0.id == story.id}){
             storyCellViewModelsAccepted.remove(at: index)
         }
-        self.storyRepository.update(story, user: user)
+        storyRepository.update(story, user: user)
     }
 }

@@ -13,6 +13,7 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
 
     @Published var chatRepository = ChatRepository()
     @Published var chatCellViewModels : [ChatCellViewModel] = []
+    @Published var chatId : String = ""
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -22,17 +23,22 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     func load() {
         chatRepository.$chats.map{ chats in
             chats.map { chat in
-                return ChatCellViewModel(chat: chat)
+                ChatCellViewModel(chat: chat)
             }
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.chatCellViewModels, on: self)
         .store(in: &cancellables)
     }
     
-    func add(_ chat: Chat, complete: @escaping (String)->()) {
-        self.chatRepository.add(chat, complete: { chatId in
-            complete(chatId)
-        })
+    func add(_ chat: Chat) {
+        self.chatRepository.add(chat)
+        chatRepository.$chatId.map { id in
+            return id
+        }
+        .receive(on: DispatchQueue.main)
+        .weakAssign(to: \.chatId, on: self)
+        .store(in: &cancellables)
     }
     
     

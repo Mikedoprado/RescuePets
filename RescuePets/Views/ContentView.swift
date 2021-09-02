@@ -9,16 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @EnvironmentObject var auth : AuthenticationModel
+    @StateObject var auth = AuthenticationModel()
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         ZStack {
             if auth.isSignedIn{
                 HomeMapView()
             }else{
                 Authentication()
             }
-        }
+        }.environmentObject(auth)
     }
 }
 

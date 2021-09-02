@@ -45,7 +45,8 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
             .collection("chat")
             .order(by: "timestamp", descending: false)
         
-        ref.addSnapshotListener { snapshotStories, error in
+        ref.addSnapshotListener { [weak self] snapshotStories, error in
+            guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
             }

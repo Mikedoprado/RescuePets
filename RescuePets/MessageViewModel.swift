@@ -28,6 +28,7 @@ final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
                 MessageCellViewModel(message: message)
             }
         }
+        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.messagesViewModels, on: self)
         .store(in: &cancellables)
     }
