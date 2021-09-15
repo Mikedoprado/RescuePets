@@ -12,6 +12,7 @@ var screen = UIScreen.main.bounds
 struct NotifyView: View {
     
     @StateObject var storyViewModel = StoryViewModel()
+    @EnvironmentObject var userViewModel : UserViewModel
     @Binding var showNotify : Bool
     @Binding var isAnimating : Bool
     @State var changeView = false
@@ -20,9 +21,9 @@ struct NotifyView: View {
     @State var categories = ["General", "Accepted", "Created"]
     @State var selectedCategory = "General"
     @State var story : Story?
-    @Binding var user : User
     @State var colorMenu = ThemeColors.redSalsa
     @State var storyCellViewModel : StoryCellViewModel?
+    @Binding var showTabBar : Bool
     
     func getColor(story: Story) -> Color {
         switch story.animal.rawValue {
@@ -39,84 +40,85 @@ struct NotifyView: View {
         }
     }
     
+    func dismissView(){
+        self.isAnimating.toggle()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.showNotify.toggle()
+            
+        }
+    }
+    
+    func showStory(story: StoryCellViewModel){
+        self.storyCellViewModel = story
+        self.showDetailsStory.toggle()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isAnimatingActiveView = true
+            self.showTabBar = false
+        }
+    }
+    
     @ViewBuilder var body: some View {
         ZStack{
             VStack(spacing: 0) {
                 VStack {
                     HeaderView(title: $selectedCategory, actionDismiss: {
-                        self.isAnimating.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            self.showNotify.toggle()
-                            
-                        }
-                    }, color: .white, alignment: .center)
+                        dismissView()
+                    }, color: .white, alignment: .center, closeButtonIsActive: false)
                     SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
                 }
                 .background(ThemeColors.redSalsa.color)
                 .animation(.default)
-
+                
                 ScrollView(.vertical) {
                     if selectedCategory == "General"{
                         LazyVStack {
                             ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
-                                Button(action: {
-                                    self.story = storyCellVM.story
-                                    self.storyCellViewModel = storyCellVM
-                                    self.showDetailsStory.toggle()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        self.isAnimatingActiveView = true
+                                StoryCell(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
+                                    .padding(.vertical, 20)
+                                    .onTapGesture {
+                                        showStory(story: storyCellVM)
                                     }
-                                }, label: {
-                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
-                                })
                             }
                         }
-                        .padding(.bottom, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 120)
                     }
                     if selectedCategory == "Accepted"{
                         LazyVStack {
-                            
+
                             ForEach(storyViewModel.storyCellViewModelsAccepted) { storyCellVM in
-                                Button(action: {
-                                    self.story = storyCellVM.story
-                                    self.showDetailsStory.toggle()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        self.isAnimatingActiveView = true
+                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: userViewModel.userCellViewModel.user)
+                                    .onTapGesture {
+                                        showStory(story: storyCellVM)
                                     }
-                                }, label: {
-                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
-                                })
                             }
                         }
-                        .padding(.bottom, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 120)
                     }
                     if selectedCategory == "Created"{
                         LazyVStack {
                             ForEach(storyViewModel.storyCellViewModelsCreated) { storyCellVM in
-                                Button(action: {
-                                    self.story = storyCellVM.story
-                                    self.showDetailsStory.toggle()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        self.isAnimatingActiveView = true
+                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: userViewModel.userCellViewModel.user)
+                                    .onTapGesture {
+                                        showStory(story: storyCellVM)
                                     }
-                                }, label: {
-                                    StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: $user)
-                                })
                             }
                         }
-                        .padding(.bottom, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 120)
                     }
-                    
+
                 }
+                Spacer()
             }
             .frame(width: screen.width)
-            .background(ThemeColors.white.color)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
-            .animation(.default)
+            .background(ThemeColors.redSalsa.color)
+//            .clipShape(RoundedRectangle(cornerRadius: 20))
+
             if showDetailsStory {
                 if let story = storyCellViewModel{
-                    ActiveDetailView(storyCellViewModel: story, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: $user)
+                    ActiveDetailView(storyCellViewModel: story, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
                 }
             }
         }

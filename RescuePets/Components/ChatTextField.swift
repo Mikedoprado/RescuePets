@@ -28,14 +28,13 @@ struct ChatTextField: View {
                 DesignImage.send.image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 35, height: 35)
+                    .frame(width: 30, height: 30)
             })
             Spacer()
         }
         .frame(height: 50)
         .padding(.all, 10)
         .background(ThemeColors.blueCuracao.color)
-
     }
 }
 

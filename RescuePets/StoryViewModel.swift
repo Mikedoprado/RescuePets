@@ -27,8 +27,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     
     func load() {
         storyRepository.$stories.map { stories in
-            print(stories.count)
-            return stories.map { story in
+            stories.map { story in
                 StoryCellViewModel(story: story)
             }
         }

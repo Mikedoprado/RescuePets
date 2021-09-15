@@ -10,8 +10,8 @@ import SDWebImageSwiftUI
 
 struct ProfileView: View {
     
-    @EnvironmentObject var auth: AuthenticationModel
-    @ObservedObject var userViewModel : UserViewModel
+//    @EnvironmentObject var auth: AuthenticationModel
+    @EnvironmentObject var userViewModel : UserViewModel
     @StateObject var storyViewModel = StoryViewModel()
     @Binding var isShowing : Bool
     @Binding var isAnimating : Bool
@@ -62,7 +62,7 @@ struct ProfileView: View {
                             }
                         })
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 50)
                     .padding(.horizontal, 30)
                     VStack{
                         AnimatedImage(url: URL(string: userViewModel.userCellViewModel.profileImage))
@@ -129,17 +129,19 @@ struct ProfileView: View {
                     BadgesView(userViewModel: userViewModel)
                 }
                 .padding(.bottom, 30)
+                Spacer()
                 
             }
             .background(ThemeColors.white.color)
-            .cornerRadius(20)
+//            .cornerRadius(20)
             .offset(y: self.isAnimating ? 0 : UIScreen.main.bounds.height)
             .ignoresSafeArea(edges: .bottom)
             .blur(radius: showMenu ? 5 : 0)
             .animation(.spring())
             
             if showEditProfile {
-                EditProfileView(userViewModel: userViewModel, show: $showEditProfile, animateEdit: $animEditProfile)
+                EditProfileView(show: $showEditProfile, animateEdit: $animEditProfile)
+//                    .padding(.horizontal, -30)
             }
             
             if showMenu {
@@ -147,6 +149,7 @@ struct ProfileView: View {
                     ThemeColors.darkGray.color
                         .opacity(1)
                         .blendMode(.multiply)
+                        .padding(.horizontal, -30)
                         .ignoresSafeArea( edges: .all)
                         .onTapGesture {
                             self.showMenu = false
@@ -162,10 +165,10 @@ struct ProfileView: View {
                                 }
                             }, actionLogOut: {
                                 self.dismissView()
-                                self.auth.signOut()
+                                self.userViewModel.userRepository.signOut()
                             }, showMenu: $showMenu, animateMenu: $animateMenu)
                         }
-                        .padding(.top, 150)
+                        .padding(.top, 50)
                         .padding(.trailing, 30)
                         Spacer()
                     }
@@ -179,7 +182,7 @@ struct ProfileView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ProfileView(userViewModel: UserViewModel(), isShowing: .constant(true), isAnimating: .constant(true))
+            ProfileView(isShowing: .constant(true), isAnimating: .constant(true))
         }.previewLayout(.sizeThatFits)
     }
 }

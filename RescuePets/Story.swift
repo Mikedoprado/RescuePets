@@ -23,10 +23,10 @@ struct Story : Codable, Identifiable {
     var city: String
     var address: String
     var description: String?
-    var isActive: Bool
     var latitude: Double
     var longitude: Double
-    var userAcceptedStoryID: String?
+    var userAcceptedStoryID: [String : Bool]?
+    var chatId : String?
 }
 
 enum TypeOfThreat: String, Codable {

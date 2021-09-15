@@ -12,8 +12,6 @@ import SwiftUI
 final class ChatCellViewModel: ObservableObject, Identifiable {
     
     @Published var chat : Chat
-    @Published var chatRepository = ChatRepository()
-    var storyRepository = StoryDataRepository()
     
     var id : String = ""
     var ownerStoryUser: String = ""
@@ -59,7 +57,7 @@ final class ChatCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $chat.map { chat in
-            self.storyRepository.setupTimeStamp(time: chat.timestamp)
+            Timestamp.setupTimeStamp(time: chat.timestamp)
         }
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)

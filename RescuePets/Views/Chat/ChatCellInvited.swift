@@ -16,7 +16,7 @@ struct ChatCellInvited: View {
     
     var body: some View {
         VStack {
-            HStack{
+            HStack(alignment: .top){
                 Spacer()
                 ZStack {
                     HStack{
@@ -25,15 +25,18 @@ struct ChatCellInvited: View {
                     }
                     .padding(.all, 15)
                 }
-                .background(ThemeColors.redSalsa.color)
-                .cornerRadius(20)
-
+                .background(RoundedCornersShape(corners: [.topLeft,.topRight,.bottomLeft], radius: 20)
+                                .fill(ThemeColors.redSalsa.color))
+                
                 VStack (alignment: .trailing, spacing: 10){
                     AnimatedImage(url: URL(string: profileImage))
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 40, height: 40)
+                        .foregroundColor(ThemeColors.lightGray.color)
+                        .padding(.top, 10)
                         .clipShape(Circle())
+                    
                 }
                 
             }

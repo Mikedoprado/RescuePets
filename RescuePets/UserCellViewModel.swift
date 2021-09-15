@@ -8,8 +8,7 @@
 import Combine
 
 final class UserCellViewModel: ObservableObject, Identifiable {
-    
-//    @Published var userRepository = UserRepository()
+
     @Published var user : User
     
     var id = ""

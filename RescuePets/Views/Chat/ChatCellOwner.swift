@@ -16,12 +16,14 @@ struct ChatCellOwner: View {
     
     var body: some View {
         VStack {
-            HStack{
-                VStack (alignment: .leading, spacing: 10){
+            HStack(alignment: .top){
+                VStack(alignment: .leading, spacing: 10){
                     AnimatedImage(url: URL(string: profileImage))
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 40, height: 40)
+                        .foregroundColor(ThemeColors.lightGray.color)
+                        .padding(.top, 10)
                         .clipShape(Circle())
                 }
                 ZStack {
@@ -32,8 +34,10 @@ struct ChatCellOwner: View {
                     }
                     .padding(.all, 15)
                 }
-                .background(ThemeColors.blueCuracao.color)
-                .cornerRadius(20)
+                .background(
+                    RoundedCornersShape(corners: [.topLeft,.topRight,.bottomRight], radius: 20)
+                        .fill(ThemeColors.blueCuracao.color)
+                )
                Spacer()
             }
         }

@@ -21,19 +21,22 @@ struct HeaderView: View {
     var actionDismiss : (() -> Void)
     var color: ColorChoose
     var alignment : Alignment
+    var closeButtonIsActive = true
     
     var body: some View {
         HStack (alignment: alignment == .top ? .top : .center){
             Text(title)
                 .modifier(FontModifier(weight: .bold, size: .title, color: (color == .black) ? .darkGray : .white))
             Spacer()
-            HStack(spacing: 30) {
-                Button (action: self.actionDismiss, label: {
-                    Image((color == .black) ? "btnCloseBlack" : "btnCloseWhite")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 25, height: 25, alignment: .center)
-                })
+            if closeButtonIsActive {
+                HStack(spacing: 30) {
+                    Button (action: self.actionDismiss, label: {
+                        Image((color == .black) ? "btnCloseBlack" : "btnCloseWhite")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 25, height: 25, alignment: .center)
+                    })
+                }
             }
         }
         .padding(.horizontal, 30)

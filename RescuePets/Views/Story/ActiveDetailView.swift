@@ -14,18 +14,19 @@ struct ActiveDetailView: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
-//    @StateObject var chatViewModel = ChatViewModel()
+    @EnvironmentObject var userViewModel : UserViewModel
     @Binding var showStory : Bool
     @Binding var isAnimating : Bool
     @State var showMapFullScreen = false
     @State private var showingAlert = false
     @Namespace var animation
-    @Binding var user : User
+    var user : User
     @State var sectionTitle = "Story"
     
     @State var screen = UIScreen.main.bounds.width
     @State var showMessage = false
-    
+    @State var animShowMessage = false
+    @Binding var showTabBar : Bool
     
     var imagestory : String  {
         switch storyCellViewModel.kindOfAnimal {
@@ -63,6 +64,7 @@ struct ActiveDetailView: View {
         self.isAnimating.toggle()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.showStory.toggle()
+            self.showTabBar = true
         }
     }
     
@@ -79,23 +81,13 @@ struct ActiveDetailView: View {
         return scale
     }
     
-//    fileprivate func CreateChat() {
-//        let timestamp = Int(Date().timeIntervalSince1970)
-//        let newChat = Chat(storyId: storyCellViewModel.id , ownerStoryUser: storyCellViewModel.userId, acceptedStoryUser: storyCellViewModel.userAcceptedStoryID, timestamp: timestamp, isReaded: false)
-//        chatViewModel.add(newChat)
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//            self.showMessage = true
-//        }
-//
-//    }
-    
     var body: some View {
         ZStack {
             VStack(spacing: 0){
                 ZStack {
                     VStack{
                         // MARK: header
-                        CustomHeader(storyCellViewModel: storyCellViewModel, storyViewModel: storyViewModel, user: $user, showingAlert: $showingAlert, action: {
+                        CustomHeader(storyCellViewModel: storyCellViewModel, storyViewModel: storyViewModel, user: user, showingAlert: $showingAlert, action: {
                             dismissView()
                         }, sectionTitle: $sectionTitle)
                         HStack {
@@ -114,14 +106,17 @@ struct ActiveDetailView: View {
                                     Spacer()
                                 }
                             }
-                            if storyCellViewModel.userAcceptedStoryID != "" && user.id == storyCellViewModel.userAcceptedStoryID{
+                            if (storyCellViewModel.userAcceptedStoryID[userViewModel.userCellViewModel.id] != nil) {
                                 Button{
-//                                    CreateChat()
+                                    self.showMessage = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        self.animShowMessage = true
+                                    }
                                 }label:{
-                                    DesignImage.message.image
+                                    DesignImage.chatIcon.image
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 40, height: 40)
+                                        .frame(width: 30, height: 30)
                                 }
                             }
                         }
@@ -183,7 +178,7 @@ struct ActiveDetailView: View {
                 
             }
             .background(ThemeColors.white.color)
-            .cornerRadius(20)
+//            .cornerRadius(20)
             .scaleEffect(self.isAnimating ? 1 :  0)
             .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
             .animation(.default)
@@ -191,9 +186,9 @@ struct ActiveDetailView: View {
             if showMapFullScreen {
                 MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
             }
-//            if showMessage {
-//                ChatMessagesView(userId: $storyCellViewModel.userId, userAcceptedStoryId: $storyCellViewModel.userAcceptedStoryID, storyId: $storyCellViewModel.id, messageViewModel: MessageViewModel(chatId: chatViewModel.chatId), chatViewModel: chatViewModel, showMessages: $showMessage, chatId: $chatViewModel.chatId)
-//            }
+            if showMessage {
+                CommentView(showMessage: $showMessage, animShowMessage: $animShowMessage, commentViewModel: CommentViewModel(storyId: storyCellViewModel.id), storyId: storyCellViewModel.id)
+            }
         }
     }
 }

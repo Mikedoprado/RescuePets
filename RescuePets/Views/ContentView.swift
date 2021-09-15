@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var auth = AuthenticationModel()
+    @StateObject var auth = UserViewModel()
 
     @ViewBuilder var body: some View {
         ZStack {
-            if auth.isSignedIn{
+            if auth.userRepository.isSignedIn{
                 HomeMapView()
             }else{
                 Authentication()

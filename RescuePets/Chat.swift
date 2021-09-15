@@ -18,6 +18,7 @@ struct Chat : Codable, Identifiable {
     var ownerStoryUser: String
     var acceptedStoryUser: String
     var timestamp: Int
+    var lastComment: String?
     var isReaded: Bool
     
 }

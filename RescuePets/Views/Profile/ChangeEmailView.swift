@@ -11,8 +11,7 @@ import SwiftUI
 
 struct ChangeEmailView: View {
 
-    @ObservedObject var userViewModel : UserViewModel
-    @EnvironmentObject var auth: AuthenticationModel
+    @EnvironmentObject var userViewModel : UserViewModel
     @StateObject var signupVM = SignViewModel()
     @Binding var isAnimatingEditEmail : Bool
     @Binding var showChangeEmail : Bool
@@ -51,7 +50,7 @@ struct ChangeEmailView: View {
     }
     
     fileprivate func signInToChangeEmail() {
-        auth.signIn(email: oldEmail.lowercased(), password: password) { error, value in
+        userViewModel.signIn(email: oldEmail.lowercased(), password: password) { error, value in
             switch value {
             case true:
                 self.showSign = false
@@ -77,7 +76,7 @@ struct ChangeEmailView: View {
                 HeaderView(title: $sectionTitle, actionDismiss: {
                     dismissView()
                 }, color: .black, alignment: .top)
-                .padding(.horizontal, -30)
+            
                 VStack(spacing: 20){
                     HStack(alignment: .top){
                         Text("If you want to change the email you need to log in again before to make this change.")
@@ -104,7 +103,7 @@ struct ChangeEmailView: View {
                         }
                     NormalButton(textButton: "Done") {
                         if email != userViewModel.userCellViewModel.email {
-                            auth.updateEmail(email: email) { error, value in
+                            userViewModel.updateEmail(email: email) { error, value in
                                 chooseKindOfAlert(value, error)
                             }
                             self.showSign = false
@@ -128,10 +127,10 @@ struct ChangeEmailView: View {
                         )
                     }
                 }
+                .padding(.horizontal, 30)
                 Spacer()
             }
             .padding(.bottom, 20)
-            .padding(.horizontal, 30)
             .background(ThemeColors.white.color)
             .cornerRadius(20)
             
@@ -150,6 +149,6 @@ struct ChangeEmailView: View {
 
 struct ChangeEmailView_Previews: PreviewProvider {
     static var previews: some View {
-        ChangeEmailView(userViewModel: UserViewModel(), isAnimatingEditEmail: .constant(true), showChangeEmail: .constant(true))
+        ChangeEmailView(isAnimatingEditEmail: .constant(true), showChangeEmail: .constant(true))
     }
 }

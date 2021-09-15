@@ -30,6 +30,7 @@ struct EmptyStateHome: View {
                 Spacer()
             }
             .padding(.horizontal, 30)
+            .padding(.bottom, 80)
         }
     }
 }

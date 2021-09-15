@@ -15,7 +15,7 @@ struct RegisterView: View {
     var isSigned : Bool
     @Binding var show : Bool
     @Binding var showImagePicker : Bool
-    @EnvironmentObject var auth : AuthenticationModel
+    @EnvironmentObject var userViewModel : UserViewModel
     @ObservedObject private var locationManager = LocationManager()
     @ObservedObject private var userRepository = UserRepository()
     
@@ -88,7 +88,7 @@ struct RegisterView: View {
                             }else{
                                 if email != "" && password != "" && username != "" && imageSelected != nil && kindOfUser != ""{
                                     self.isLoading = true
-                                    self.auth.createUser(username, email, password, location: locationManager.city.lowercased(), imageSelected: imageSelected!, kindOfUser : kindOfUser.lowercased())
+                                    self.userViewModel.userRepository.createUser(username, email, password, location: locationManager.city.lowercased(), imageSelected: imageSelected!, kindOfUser : kindOfUser.lowercased())
                                 }
                             }
                         }

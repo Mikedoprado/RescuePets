@@ -9,9 +9,9 @@ import SwiftUI
 
 struct Authentication: View {
     
-    @ObservedObject var signupVM = SignViewModel()
+    @StateObject var signupVM = SignViewModel()
     @StateObject private var keyboardHandler = KeyboardHandler()
-    @EnvironmentObject var auth : AuthenticationModel
+    @EnvironmentObject var auth : UserViewModel
     
     @State var password: String = ""
     @State var username: String = ""
@@ -42,7 +42,7 @@ struct Authentication: View {
 
                             ZStack {
                                 if showSignIn{
-                                    SignInView(email: $signupVM.email, password: $password, isSigned: signupVM.isSignUpComplete, show: $showSignIn, auth: _auth, isLoading: $isLoading)
+                                    SignInView(email: $signupVM.email, password: $password, isSigned: signupVM.isSignUpComplete, show: $showSignIn, isLoading: $isLoading)
                                         .offset(y:10)
                                 }
                                 ButtonAuth(show: $showSignIn, hide: $showRegister, nameButton: "Sign In with email", password: $password, username: $username, email: $signupVM.email)
@@ -60,7 +60,7 @@ struct Authentication: View {
                             .padding(.top, showSignIn ? 10 : 0)
                             ZStack {
                                 if showRegister{
-                                    RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, auth: _auth, imageSelected: $imageSelected, isLoading : $isLoading)
+                                    RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, imageSelected: $imageSelected, isLoading : $isLoading)
                                         .offset(y:10)
                                 }
                                 ButtonAuth(show: $showRegister, hide: $showSignIn, nameButton: "Register with email", password: $password, username: $username, email: $signupVM.email)
@@ -117,7 +117,7 @@ struct Authentication: View {
             ImagePicker(selectedImage: $inputImage)
                 .ignoresSafeArea(edges: .all)
         })
-        .onChange(of: auth.signedIn, perform: { value in
+        .onChange(of: auth.userRepository.signedIn, perform: { value in
             if value{
                 isLoading = false
             }

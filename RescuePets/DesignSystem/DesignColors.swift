@@ -13,6 +13,7 @@ enum ThemeColors {
     case blueCuracao
     case goldenFlow
     case redSalsa
+    case redSalsaDark
     case whiteSmashed
     case darkGray
     case gray
@@ -47,7 +48,9 @@ enum ThemeColors {
         case .black:
             return Color(#colorLiteral(red: 0.1007985225, green: 0.1010723503, blue: 0.09869561228, alpha: 1))
         case .whiteClear:
-            return Color(#colorLiteral(red: 0.9803921569, green: 0.9803921569, blue: 0.9803921569, alpha: 1))
+            return Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+        case .redSalsaDark:
+            return Color(#colorLiteral(red: 0.8257176699, green: 0.2196078431, blue: 0.2823529412, alpha: 1))
         }
     }
 }

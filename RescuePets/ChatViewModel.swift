@@ -10,10 +10,10 @@ import Foundation
 
 
 final class ChatViewModel: RepositoryChatHelper , ObservableObject {
-
-    @Published var chatRepository = ChatRepository()
+    
+    var chatRepository = ChatRepository()
     @Published var chatCellViewModels : [ChatCellViewModel] = []
-    @Published var chatId : String = ""
+    @Published var chatId : String?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -23,7 +23,7 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     func load() {
         chatRepository.$chats.map{ chats in
             chats.map { chat in
-                ChatCellViewModel(chat: chat)
+                return ChatCellViewModel(chat: chat)
             }
         }
         .receive(on: DispatchQueue.main)
@@ -33,12 +33,11 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     
     func add(_ chat: Chat) {
         self.chatRepository.add(chat)
-        chatRepository.$chatId.map { id in
-            return id
-        }
-        .receive(on: DispatchQueue.main)
-        .weakAssign(to: \.chatId, on: self)
-        .store(in: &cancellables)
+        chatRepository.$chatId
+            .sink(receiveValue: { id in
+                self.chatId = id
+            })
+            .store(in: &cancellables)
     }
     
     

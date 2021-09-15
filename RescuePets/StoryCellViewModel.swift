@@ -10,7 +10,6 @@ import SwiftUI
 final class StoryCellViewModel: ObservableObject, Identifiable {
     
     @Published var story: Story
-    var storyRepository = StoryDataRepository()
     var timestamp : String = ""
     
     var acceptedStory = ""
@@ -25,7 +24,9 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
     var images = [String]()
     var latitude = 0.0
     var longitude = 0.0
-    var userAcceptedStoryID = ""
+    var numHelpers = 0
+    var userAcceptedStoryID : [String:Bool] = [:]
+    var presentImage = ""
     
     private var cancellables = Set<AnyCancellable>()
 
@@ -40,20 +41,23 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .weakAssign(to: \.id, on: self)
         .store(in: &cancellables)
         
-        $story.compactMap { [weak self] story in
-            self?.storyRepository.setupTimeStamp(time: story.timestamp)
+        $story.compactMap { story in
+            Timestamp.setupTimeStamp(time: story.timestamp)
         }
         .receive(on: DispatchQueue.main)
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
-        $story.compactMap { story in
-            story.isActive ? "storyAcept" : "storyAdd"
-        }
-        .sink(receiveValue: { [weak self] value in
-            self?.acceptedStory = value
-        })
-        .store(in: &cancellables)
+        $story
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self]story in
+                if story.userAcceptedStoryID != nil {
+                guard let userId = DBInteract.currentUserId else {return}
+                self?.acceptedStory = story.userAcceptedStoryID![userId] != nil ? "I'm helping" : "I want to help"
+            }else{
+                self?.acceptedStory = "I want to help"
+            }
+        }.store(in: &cancellables)
 
         $story.map{ story in
             story.animal.animal
@@ -135,6 +139,20 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .weakAssign(to: \.kindOfStory, on: self)
         .store(in: &cancellables)
         
+        $story.map{ story in
+            story.userAcceptedStoryID?.count ?? 0
+        }
+        .receive(on: DispatchQueue.main)
+        .weakAssign(to: \.numHelpers, on: self)
+        .store(in: &cancellables)
+        
+        $story
+            .receive(on: DispatchQueue.main)
+            .sink { story in
+                if let image = story.images?.first{
+                    self.presentImage = image
+                }
+        }.store(in: &cancellables)
     }
 }
 

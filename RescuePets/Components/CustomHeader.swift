@@ -11,7 +11,7 @@ struct CustomHeader: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
-    @Binding var user : User
+    var user : User
     @Binding var showingAlert : Bool
     var action: () -> Void
     @Binding var sectionTitle : String
@@ -27,14 +27,14 @@ struct CustomHeader: View {
 //                        storyCellViewModel.story.isActive.toggle()
 //                        storyViewModel.update(storyCellViewModel.story, user: user)
 //                    } label: {
-                        Image(storyCellViewModel.acceptedStory)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25, alignment: .center)
-                            .onTapGesture {
-                                storyCellViewModel.story.isActive.toggle()
-                                storyViewModel.update(storyCellViewModel.story, user: user)
-                            }
+//                        Image(storyCellViewModel.acceptedStory)
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(width: 25, height: 25, alignment: .center)
+//                            .onTapGesture {
+//                                storyCellViewModel.story.isActive.toggle()
+//                                storyViewModel.update(storyCellViewModel.story, user: user)
+//                            }
 //                    }
                 }
                 if user.id == storyCellViewModel.userId {

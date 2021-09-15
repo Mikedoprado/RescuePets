@@ -13,7 +13,7 @@ struct SignInView: View {
     @Binding var password : String
     var isSigned : Bool
     @Binding var show : Bool
-    @EnvironmentObject var auth : AuthenticationModel
+    @EnvironmentObject var userViewModel : UserViewModel
     @Binding var isLoading : Bool
     
     @State var titleAlert = ""
@@ -29,7 +29,8 @@ struct SignInView: View {
                 
                 NormalButton(textButton: "Sign In") {
                     if email != "" && password != "" {
-                        self.auth.signIn(email: email, password: password) {  error, value in
+                        self.userViewModel.userRepository.signIn(email: email, password: password) {  error, value in
+                            
                             if !value {
                                 if let message = error {
                                     showingAlertSign = true

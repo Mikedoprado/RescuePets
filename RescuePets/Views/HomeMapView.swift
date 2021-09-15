@@ -11,7 +11,7 @@ import SwiftUI
 
 struct HomeMapView: View {
     
-    @StateObject var userViewModel = UserViewModel()
+    @EnvironmentObject var userViewModel : UserViewModel
     @State private var isShowPhotoLibrary = false
     @State private var showProfileUser = false
     @State private var showCreateStory : Bool = false
@@ -27,6 +27,7 @@ struct HomeMapView: View {
     @State var imageSelected : ImageSelected = ImageSelected(imageData: Data(), image: Image(""))
     @State var showMessages = false
     @State var isAnimatingMessages = false
+    @State var showTabBar = true
     
     var tabBarItems = [
         "iconNotify:",
@@ -62,7 +63,7 @@ struct HomeMapView: View {
         ZStack{
             ZStack {
                 ThemeColors.redSalsa.color
-                    .cornerRadius(20)
+//                    .cornerRadius(20)
                     .ignoresSafeArea(.all)
                 EmptyStateHome()
                     .onTapGesture {
@@ -79,44 +80,51 @@ struct HomeMapView: View {
                 }
                 
                 if showNotifcationsView {
-                    NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, user: $userViewModel.userCellViewModel.user)
+                    NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, showTabBar: $showTabBar)
                         .ignoresSafeArea()
                 }
                 
                 if showMessages {
                     MessagesView(showMessages: $showMessages, isAnimating: $isAnimatingMessages)
                 }
+                
                 VStack {
                     Spacer()
                     TabBar(selectedIndex: $selectedIndex, tabBarItemActive: tabBarItems,
                            actionItem1: {
                                 showNotifcationsView = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    animNotify = true
-                                }
+                                isShowPhotoLibrary = false
+                                showMessages = false
+                                showProfileUser = false
                            },
                            actionItem2: {
                                 isShowPhotoLibrary = true
+                                showNotifcationsView = false
+                                showMessages = false
+                                showProfileUser = false
                            },
                            actionItem3: {
                                 showMessages = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    isAnimatingMessages = true
-                                }
+                                isShowPhotoLibrary = false
+                                showNotifcationsView = false
+                                showProfileUser = false
                            },
                            actionItem4: {
                                 showProfileUser = true
+                                showMessages = false
+                                isShowPhotoLibrary = false
+                                showNotifcationsView = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     animProfileUser = showProfileUser
                                 }
                            })
                 }
-                .offset(y: (showMessages || showNotifcationsView || isShowPhotoLibrary) ? UIScreen.main.bounds.height : 0)
+                .offset(y: !showTabBar ? UIScreen.main.bounds.height : 0)
             }
             .blur(radius: showProfileUser ? 5 : 0)
             .scaleEffect(CGSize(width: showProfileUser ? 0.95 : 1.0, height: showProfileUser ? 0.95 : 1.0))
             .ignoresSafeArea(edges: .bottom)
-            .animation(.spring())
+            .animation(.default)
             
             if showProfileUser {
                 
@@ -126,16 +134,14 @@ struct HomeMapView: View {
                     .ignoresSafeArea( edges: .all)
                     
                 
-                ProfileView(userViewModel: userViewModel, isShowing: $showProfileUser, isAnimating: $animProfileUser)
+                ProfileView(isShowing: $showProfileUser, isAnimating: $animProfileUser)
                     .ignoresSafeArea(edges: .all)
             }
             
             if showCreateStory {
-                CreateStoryView(imageSelected: $imageSelected, isShowing: $animCreateStory, userViewModel: userViewModel)
+                CreateStoryView(imageSelected: $imageSelected, isShowing: $animCreateStory)
                     .ignoresSafeArea(edges: .all)
             }
-            
-            
         }
         .background(ThemeColors.darkGray.color)
         .ignoresSafeArea(edges: .all)
@@ -143,6 +149,7 @@ struct HomeMapView: View {
             ImagePicker(selectedImage: $inputImage)
                 .ignoresSafeArea(edges: .all)
         })
+        
     }
 }
 
@@ -153,46 +160,4 @@ struct HomeMapView_Previews: PreviewProvider {
 }
 
 
-struct TabBar: View {
-    
-    @Binding var selectedIndex : Int
-    var tabBarItemActive : [String]
-    var actionItem1 : ()->Void
-    var actionItem2 : ()->Void
-    var actionItem3 : ()->Void
-    var actionItem4 : ()->Void
-    
-    var body: some View {
-        VStack{
-            HStack(alignment: .center){
-                ForEach(0..<4) { index in
-                    Button(action: {
-                        selectedIndex = index
-                        switch index {
-                        case 0:
-                            self.actionItem1()
-                            self.selectedIndex = -1
-                        case 1:
-                            self.actionItem2()
-                        case 2:
-                            self.actionItem3()
-                        case 3:
-                            self.actionItem4()
-                        default:
-                            print("any button press")
-                        }
-                    }, label: {
-                        Spacer()
-                        Image( selectedIndex == index ? "\(tabBarItemActive[index])Active" : "\(tabBarItemActive[index])Inactive")
-                        Spacer()
-                    })
-                }
-            }
-            .padding(.bottom, 20)
-        }
-        .frame(height: 100)
-        .background(ThemeColors.white.color)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        
-    }
-}
+

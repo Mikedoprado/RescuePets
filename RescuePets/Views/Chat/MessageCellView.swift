@@ -10,19 +10,18 @@ import SDWebImageSwiftUI
 
 struct MessageCellView: View {
     
-    var chat : ChatCellViewModel
-    @ObservedObject var userRepository = UserRepository()
-    @EnvironmentObject var auth : AuthenticationModel
+    @ObservedObject var chat : ChatCellViewModel
+    @EnvironmentObject var userViewModel : UserViewModel
 
     @State var username = ""
     @State var profilePicture = ""
   
     func showUserInfo(){
         
-        let currentUserId = auth.currentUserId 
+        guard let currentUserId = DBInteract.auth.currentUser?.uid else {return}
         let from = ((currentUserId != chat.acceptedStoryUser) ? chat.acceptedStoryUser : chat.ownerStoryUser)
         
-        self.userRepository.loadUserById(userID: from) { user in
+        self.userViewModel.userRepository.loadUserById(userID: from) { user in
             if let username = user.username, let profilePicture = user.profileImage{
                 self.username = username
                 self.profilePicture = profilePicture

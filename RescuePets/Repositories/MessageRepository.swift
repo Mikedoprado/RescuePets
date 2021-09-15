@@ -20,15 +20,11 @@ protocol RepositoryMessageHelper {
 
 final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     
-    var pathStories = "stories"
-    var pathMessages = "messages"
-    var pathHelpers = "helpers"
-    var store = Firestore.firestore()
-    var auth = AuthenticationModel()
     var chatId : String
     
     @Published var messages : [Message] = []
     private var cancellables: Set<AnyCancellable> = []
+    private var listenerRegistration: ListenerRegistration?
     
     init(chatId: String){
         self.chatId = chatId
@@ -36,16 +32,20 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     }
     
     func load() {
-        guard let currentUserId = auth.currentUserId else {return}
-        let ref = store
-            .collection(pathHelpers)
+        
+        if listenerRegistration != nil {
+            listenerRegistration?.remove()
+        }
+        
+        guard let currentUserId = DBInteract.auth.currentUser?.uid else {return}
+        listenerRegistration = DBInteract.store
+            .collection(DBPath.helpers.path)
             .document(currentUserId)
-            .collection(pathMessages)
+            .collection(DBPath.messages.path)
             .document(chatId)
             .collection("chat")
             .order(by: "timestamp", descending: false)
-        
-        ref.addSnapshotListener { [weak self] snapshotStories, error in
+            .addSnapshotListener { [weak self] snapshotStories, error in
             guard let self = self else {return}
             if error != nil {
                 print(error?.localizedDescription as Any)
@@ -62,25 +62,25 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     
     func add(_ message: Message, chatId: String, from: String, to: String) {
         
-        let messageId = store
-            .collection(pathHelpers)
+        let messageId = DBInteract.store
+            .collection(DBPath.helpers.path)
             .document(from)
-            .collection(pathMessages)
+            .collection(DBPath.messages.path)
             .document(chatId).collection("chat")
             .document().documentID
         
-        let refFrom = store
-            .collection(pathHelpers)
+        let refFrom = DBInteract.store
+            .collection(DBPath.helpers.path)
             .document(from)
-            .collection(pathMessages)
+            .collection(DBPath.messages.path)
             .document(chatId)
             .collection("chat")
             .document(messageId)
         
-        let refTo = store
-            .collection(pathHelpers)
+        let refTo = DBInteract.store
+            .collection(DBPath.helpers.path)
             .document(to)
-            .collection(pathMessages)
+            .collection(DBPath.messages.path)
             .document(chatId)
             .collection("chat")
             .document(messageId)

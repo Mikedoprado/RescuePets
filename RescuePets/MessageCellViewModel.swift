@@ -12,7 +12,6 @@ import SwiftUI
 final class MessageCellViewModel: ObservableObject, Identifiable {
     
     @Published var message : Message
-    @Published var storyRepository = StoryDataRepository()
     
     var id : String = ""
     var from: String = ""
@@ -51,8 +50,8 @@ final class MessageCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         
-        $message.compactMap{ [weak self] message in
-            self?.storyRepository.setupTimeStamp(time: message.timestamp)
+        $message.compactMap{ message in
+            Timestamp.setupTimeStamp(time: message.timestamp)
         }
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)

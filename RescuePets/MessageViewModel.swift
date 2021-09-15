@@ -10,8 +10,8 @@ import Foundation
 
 
 final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
-
-    @Published var messageRepository : MessageRepository
+    
+    var messageRepository : MessageRepository
     @Published var messagesViewModels : [MessageCellViewModel] = []
     
     

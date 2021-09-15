@@ -35,7 +35,7 @@ struct CreateStoryView: View {
     
     @ObservedObject var locationManager = LocationManager()
     @ObservedObject private var storyViewModel = StoryViewModel()
-    @ObservedObject var userViewModel : UserViewModel
+    @EnvironmentObject var userViewModel : UserViewModel
     
     @State var x : CGFloat = 0
     @State var count : CGFloat = 0
@@ -50,7 +50,7 @@ struct CreateStoryView: View {
     func createstory(){
         
         let timestamp = Int(Date().timeIntervalSince1970)
-        let images = images.map{$0.imageData}
+        let images = images.map{$0.imageData} 
         
         if kindOfStory != "" && animal != "" && text != "" {
             let story = Story(
@@ -62,10 +62,8 @@ struct CreateStoryView: View {
                 city: locationManager.city.lowercased(),
                 address: locationManager.address,
                 description: text,
-                isActive: false,
                 latitude: (locationManager.location?.coordinate.latitude)!,
-                longitude:(locationManager.location?.coordinate.longitude)!,
-                userAcceptedStoryID: "")
+                longitude:(locationManager.location?.coordinate.longitude)!)
             
             self.storyViewModel.add(story, imageData: images)
             
@@ -233,7 +231,7 @@ struct CreatestoryView_Previews: PreviewProvider {
     static var previews: some View {
         CreateStoryView(
             imageSelected: .constant(ImageSelected(imageData: Data(), image: Image(""))),
-            isShowing: .constant(true), userViewModel: UserViewModel()
+            isShowing: .constant(true)
         )
     }
 }

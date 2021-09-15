@@ -10,8 +10,7 @@ import SDWebImageSwiftUI
 
 struct EditProfileView: View {
     
-    @ObservedObject var userViewModel : UserViewModel
-    @EnvironmentObject var auth: AuthenticationModel
+    @EnvironmentObject var userViewModel : UserViewModel
     @StateObject private var keyboardHandler = KeyboardHandler()
     @Binding var show : Bool
     @Binding var animateEdit : Bool
@@ -69,9 +68,11 @@ struct EditProfileView: View {
     var body: some View {
         ZStack {
             VStack{
+                
                 HeaderView(title: $sectionTitle, actionDismiss: {
                     self.dismissView()
                 }, color: .black, alignment: .center)
+                
                 ScrollView(.vertical, showsIndicators: false){
                     VStack(alignment: .center, spacing: 20){
                         Button(action: {
@@ -139,7 +140,7 @@ struct EditProfileView: View {
                         }
                         
                         NormalButton(textButton: "Save changes"){
-                            self.auth.updateUserInfo(
+                            self.userViewModel.updateUserInfo(
                                 username: username,
                                 kindOfUser: kindOfUser,
                                 imageData: imageSelected != nil ? imageSelected!.imageData : nil, userViewModel: userViewModel) { error, value in
@@ -168,7 +169,6 @@ struct EditProfileView: View {
                 }
                 .padding(.horizontal, 30)
                 .padding(.bottom, keyboardHandler.keyboardHeight)
-                
             }
             .background(ThemeColors.white.color)
             .cornerRadius(20)
@@ -182,11 +182,13 @@ struct EditProfileView: View {
                     .ignoresSafeArea(edges: .all)
             })
             if showChangeEmail {
-                ChangeEmailView(userViewModel: userViewModel, isAnimatingEditEmail: $animChangeEmail, showChangeEmail: $showChangeEmail)
+                ChangeEmailView(isAnimatingEditEmail: $animChangeEmail, showChangeEmail: $showChangeEmail)
+//                    .padding(.horizontal, -30)
                 
             }
             if showChangePassword{
-                ChangePasswordView(userViewModel: userViewModel, isAnimatingEditChangePassword: $animChangePassword, showChangePassword: $showChangePassword)
+                ChangePasswordView(isAnimatingEditChangePassword: $animChangePassword, showChangePassword: $showChangePassword)
+//                    .padding(.horizontal, -30)
             }
         }
     }
@@ -204,6 +206,6 @@ struct EditProfileView: View {
 
 struct EditProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        EditProfileView( userViewModel: UserViewModel(), show: .constant(true), animateEdit: .constant(true))
+        EditProfileView(show: .constant(true), animateEdit: .constant(true))
     }
 }

@@ -15,7 +15,7 @@ struct MessagesView: View {
     @State var categories = ["New", "Readed"]
     @State var selectedCategory = "New"
     @State var colorMenu = ThemeColors.blueCuracao
-    @ObservedObject var chatViewModel = ChatViewModel()
+    @StateObject var chatViewModel = ChatViewModel()
     @State var showChat = false
     
     @State var userId = ""
@@ -24,13 +24,13 @@ struct MessagesView: View {
     @State var chatId = ""
     
     func showChat(chat: Chat){
+        guard let chatId = chat.id else {return}
         self.userId = chat.ownerStoryUser
         self.userAcceptedStoryId = chat.acceptedStoryUser
         self.storyId = chat.storyId
-        self.chatId = chat.id!
+        self.chatId = chatId
         self.showChat = true
     }
-    
 
     var body: some View {
         ZStack {
@@ -43,14 +43,12 @@ struct MessagesView: View {
                                 self.showMessages = false
                             }
                         }
-                    }, color: .white, alignment: .center)
-                    .padding(.bottom, 30)
-                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
+                    }, color: .white, alignment: .center, closeButtonIsActive: false)
+                    .padding(.bottom, 20)
                 }
                 .background(ThemeColors.blueCuracao.color)
                 .animation(.default)
                 ScrollView{
-                    
                     ForEach(chatViewModel.chatCellViewModels){ chat in
                         Button(action: {
                             self.showChat(chat: chat.chat)
@@ -58,12 +56,11 @@ struct MessagesView: View {
                             MessageCellView(chat: chat)
                                 .padding(.horizontal, 30)
                         })
-
                     }
                 }
                 Spacer()
             }
-            .background(ThemeColors.white.color)
+            .background(ThemeColors.blueCuracao.color)
             .ignoresSafeArea(edges: .all)
             
             if showChat {
@@ -71,18 +68,20 @@ struct MessagesView: View {
                     userId: $userId,
                     userAcceptedStoryId: $userAcceptedStoryId,
                     storyId: $storyId,
-                    messageViewModel: MessageViewModel(chatId: chatId),
                     chatViewModel: chatViewModel,
                     showMessages: $showChat,
-                    chatId: $chatId
+                    chatId: chatId
                 )
             }
             
         }
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
-        .animation(.default)
+//        .clipShape(RoundedRectangle(cornerRadius: 20))
+//        .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
+//        .animation(.default)
         .ignoresSafeArea( edges: .all)
+        .onAppear{
+            print(chatViewModel.chatCellViewModels.forEach{print($0.id)})
+        }
     }
 }
 
