@@ -15,7 +15,7 @@ struct MessagesView: View {
     @State var categories = ["New", "Readed"]
     @State var selectedCategory = "New"
     @State var colorMenu = ThemeColors.blueCuracao
-    @StateObject var chatViewModel = ChatViewModel()
+    @StateObject var chatViewModel = ChatViewModel(chatId: "")
     @State var showChat = false
     
     @State var userId = ""
@@ -24,11 +24,11 @@ struct MessagesView: View {
     @State var chatId = ""
     
     func showChat(chat: Chat){
-        guard let chatId = chat.id else {return}
-        self.userId = chat.ownerStoryUser
-        self.userAcceptedStoryId = chat.acceptedStoryUser
-        self.storyId = chat.storyId
-        self.chatId = chatId
+//        guard let chatId = chat.id else {return}
+//        self.userId = chat.ownerStoryUser
+//        self.userAcceptedStoryId = chat.acceptedStoryUser
+//        self.storyId = chat.storyId
+//        self.chatId = chatId
         self.showChat = true
     }
 

@@ -11,7 +11,16 @@ struct StoryCellView: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
-    var user : User
+    @EnvironmentObject var userViewModel: UserViewModel
+    @State var username = ""
+    
+    func showUser(){
+        self.userViewModel.userRepository.loadUserById(userID: storyCellViewModel.userId) {  user in
+            if let username = user.username{
+                self.username = username
+            }
+        }
+    }
     
     var body: some View {
         HStack {
@@ -23,7 +32,7 @@ struct StoryCellView: View {
                 VStack (alignment: .leading){
                     Text(storyCellViewModel.kindOfStory)
                         .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
-                    Text(storyCellViewModel.username.capitalized)
+                    Text(username.capitalized)
                         .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
                     Text(storyCellViewModel.timestamp)
                         .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))

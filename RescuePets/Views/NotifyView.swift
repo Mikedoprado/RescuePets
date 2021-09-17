@@ -87,7 +87,7 @@ struct NotifyView: View {
                         LazyVStack {
 
                             ForEach(storyViewModel.storyCellViewModelsAccepted) { storyCellVM in
-                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: userViewModel.userCellViewModel.user)
+                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
                                     .onTapGesture {
                                         showStory(story: storyCellVM)
                                     }
@@ -99,7 +99,7 @@ struct NotifyView: View {
                     if selectedCategory == "Created"{
                         LazyVStack {
                             ForEach(storyViewModel.storyCellViewModelsCreated) { storyCellVM in
-                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, user: userViewModel.userCellViewModel.user)
+                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
                                     .onTapGesture {
                                         showStory(story: storyCellVM)
                                     }

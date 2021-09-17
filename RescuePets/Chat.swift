@@ -14,11 +14,10 @@ import MapKit
 struct Chat : Codable, Identifiable {
     
     @DocumentID var id: String?
-    var storyId: String
-    var ownerStoryUser: String
-    var acceptedStoryUser: String
+    var owners : [String : Bool]
+    var to: String
     var timestamp: Int
     var lastComment: String?
-    var isReaded: Bool
+    var isReaded: [String : Bool]
     
 }

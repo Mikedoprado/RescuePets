@@ -86,7 +86,10 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
     
     func update(_ story: Story, user: User) {
         if let index = storyCellViewModelsAccepted.firstIndex(where: {$0.id == story.id}){
-            storyCellViewModelsAccepted.remove(at: index)
+            if let indexStoryAccepted = storyCellViewModelsAccepted[index].userAcceptedStoryID.firstIndex(where: {$0 == user.id}){
+                storyCellViewModelsAccepted[index].userAcceptedStoryID.remove(at: indexStoryAccepted)
+                storyCellViewModelsAccepted.remove(at: index)
+            }
         }
         storyRepository.update(story, user: user)
     }

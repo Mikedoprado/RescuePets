@@ -23,6 +23,8 @@
 		D32B53F926827BC8001C66F8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32B53F826827BC8001C66F8 /* User.swift */; };
 		D32B53FB26827F04001C66F8 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32B53FA26827F04001C66F8 /* Story.swift */; };
 		D32B53FD26827FF8001C66F8 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32B53FC26827FF8001C66F8 /* Message.swift */; };
+		D331C9E326F3A5AC003CE106 /* CounterHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D331C9E226F3A5AC003CE106 /* CounterHelpers.swift */; };
+		D331C9E526F3A8D5003CE106 /* StoryHelpersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D331C9E426F3A8D5003CE106 /* StoryHelpersView.swift */; };
 		D332C77E267AA12200F22655 /* DesignImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = D332C77D267AA12200F22655 /* DesignImages.swift */; };
 		D332C780267AA66000F22655 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D332C77F267AA66000F22655 /* HomeMapView.swift */; };
 		D332C783267AA6E500F22655 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D332C782267AA6E500F22655 /* MapView.swift */; };
@@ -130,6 +132,8 @@
 		D32B53F826827BC8001C66F8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D32B53FA26827F04001C66F8 /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		D32B53FC26827FF8001C66F8 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		D331C9E226F3A5AC003CE106 /* CounterHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterHelpers.swift; sourceTree = "<group>"; };
+		D331C9E426F3A8D5003CE106 /* StoryHelpersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryHelpersView.swift; sourceTree = "<group>"; };
 		D332C77D267AA12200F22655 /* DesignImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignImages.swift; sourceTree = "<group>"; };
 		D332C77F267AA66000F22655 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
 		D332C782267AA6E500F22655 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -278,6 +282,7 @@
 				D3299E1226D4496200E025B5 /* MenuPopUp.swift */,
 				D37F986226D981C500FFAE14 /* SkeletonView.swift */,
 				D346E2C126F0E9DA008C6F25 /* TabBar.swift */,
+				D331C9E226F3A5AC003CE106 /* CounterHelpers.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -333,6 +338,7 @@
 				D32B53EE26822986001C66F8 /* StoryCellView.swift */,
 				D3C45BFE2684ED1200DFA358 /* ActiveDetailView.swift */,
 				D38C68CE26E69AAA0037DA55 /* StoryCell.swift */,
+				D331C9E426F3A8D5003CE106 /* StoryHelpersView.swift */,
 			);
 			path = Story;
 			sourceTree = "<group>";
@@ -701,7 +707,9 @@
 				D3A4F20426B04EF30082D01E /* DraggableView.swift in Sources */,
 				D3299E1326D4496200E025B5 /* MenuPopUp.swift in Sources */,
 				D37FB40C26C71A0700499E93 /* MessageRepository.swift in Sources */,
+				D331C9E526F3A8D5003CE106 /* StoryHelpersView.swift in Sources */,
 				D339A3EE269F76FE0041F4B0 /* SelectorSection.swift in Sources */,
+				D331C9E326F3A5AC003CE106 /* CounterHelpers.swift in Sources */,
 				D306D3F026EB95F500D3290A /* CommentCellViewModel.swift in Sources */,
 				D371B01F26A082F80097F8F2 /* MapActiveView.swift in Sources */,
 				D34BA82C2680C5860084097F /* CreateStoryView.swift in Sources */,

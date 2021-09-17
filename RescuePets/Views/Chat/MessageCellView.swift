@@ -18,16 +18,16 @@ struct MessageCellView: View {
   
     func showUserInfo(){
         
-        guard let currentUserId = DBInteract.auth.currentUser?.uid else {return}
-        let from = ((currentUserId != chat.acceptedStoryUser) ? chat.acceptedStoryUser : chat.ownerStoryUser)
-        
-        self.userViewModel.userRepository.loadUserById(userID: from) { user in
-            if let username = user.username, let profilePicture = user.profileImage{
-                self.username = username
-                self.profilePicture = profilePicture
-               
-            }
-        }
+//        guard let currentUserId = DBInteract.auth.currentUser?.uid else {return}
+//        let from = ((currentUserId != chat.acceptedStoryUser) ? chat.acceptedStoryUser : chat.ownerStoryUser)
+//
+//        self.userViewModel.userRepository.loadUserById(userID: from) { user in
+//            if let username = user.username, let profilePicture = user.profileImage{
+//                self.username = username
+//                self.profilePicture = profilePicture
+//
+//            }
+//        }
     }
     
     var body: some View {

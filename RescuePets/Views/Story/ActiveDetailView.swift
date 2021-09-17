@@ -75,10 +75,17 @@ struct ActiveDetailView: View {
         
         let diff = abs(x - 30)
         if diff < 100 {
-            scale = 1 + (100 - diff) / 500
+            scale = 1 + (100 - diff) / UIScreen.main.bounds.width
         }
         
         return scale
+    }
+    
+    fileprivate func showComments() {
+        self.showMessage = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.animShowMessage = true
+        }
     }
     
     var body: some View {
@@ -106,24 +113,29 @@ struct ActiveDetailView: View {
                                     Spacer()
                                 }
                             }
-                            if (storyCellViewModel.userAcceptedStoryID[userViewModel.userCellViewModel.id] != nil) {
-                                Button{
-                                    self.showMessage = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        self.animShowMessage = true
+                            HStack(spacing: 20){
+                                CounterHelpers(storyCellViewModel: storyCellViewModel, color: ThemeColors.whiteGray.color)
+                                    .onTapGesture {
+                                        print("direct Message")
                                     }
-                                }label:{
-                                    DesignImage.chatIcon.image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 30, height: 30)
+                                if (storyCellViewModel.userAcceptedStoryID.contains(userViewModel.userCellViewModel.id) || storyCellViewModel.userId == userViewModel.userCellViewModel.id) {
+                                    Button{
+                                        showComments()
+                                    }label:{
+                                        DesignImage.chatIcon.image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 30, height: 30)
+                                    }
                                 }
                             }
+                            
                         }
                         .padding(.horizontal, 30)
                         .padding(.top, 10)
                         .padding(.bottom, 10)
                     }
+//                    .background(ThemeColors.whiteGray.color)
                 }
                 
                 // MARK: info scrollable
@@ -148,30 +160,29 @@ struct ActiveDetailView: View {
                                             .scaleEffect(CGSize(width: scale, height: scale))
                                             .animation(.easeOut(duration: 0.5))
                                     }
-                                    .frame(width:UIScreen.main.bounds.width / 1.2 ,height:UIScreen.main.bounds.width / 1.2)
+                                    .frame(width:UIScreen.main.bounds.width / 1.2 ,height: UIScreen.main.bounds.width - 50)
                                     
                                 }
                             }
                             .padding(.horizontal, 30)
                         }
-                        Button(action: {
+                        VStack(alignment: .leading, spacing: 20){
+                            MapActiveView(story: storyCellViewModel, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
+                                .frame(height: 180)
+                                .background(ThemeColors.whiteGray.color)
+                            
+                            LocationInfoView(city: storyCellViewModel.city , address: storyCellViewModel.address)
+                                .frame(height: 120)
+                                .background(ThemeColors.whiteGray.color)
+                                .cornerRadius(20)
+                                .padding(.top, -50)
+                                .padding(.horizontal, 30)
+                        }.onTapGesture {
                             withAnimation(.default) {
                                 self.showMapFullScreen.toggle()
                             }
-                        }, label: {
-                            VStack(alignment: .leading, spacing: 20){
-                                MapActiveView(story: storyCellViewModel, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
-                                    .frame(height: 180)
-                                    .background(ThemeColors.whiteGray.color)
-                                
-                                LocationInfoView(city: storyCellViewModel.city , address: storyCellViewModel.address)
-                                    .frame(height: 120)
-                                    .background(ThemeColors.whiteGray.color)
-                                    .cornerRadius(20)
-                                    .padding(.top, -50)
-                                    .padding(.horizontal, 30)
-                            }
-                        })
+                        }
+                        .padding(.bottom, 30)
                     }.padding(.top, 20)
                     Spacer()
                 }

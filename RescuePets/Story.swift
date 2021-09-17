@@ -25,7 +25,7 @@ struct Story : Codable, Identifiable {
     var description: String?
     var latitude: Double
     var longitude: Double
-    var userAcceptedStoryID: [String : Bool]?
+    var userAcceptedStoryID: [String]?
     var chatId : String?
 }
 

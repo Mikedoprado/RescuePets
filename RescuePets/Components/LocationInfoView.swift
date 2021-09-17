@@ -35,7 +35,7 @@ struct LocationInfoView: View {
                     Text("City")
                         .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                     Spacer()
-                    Text(city)
+                    Text(city.capitalized)
                         .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
                 }
                 HStack{

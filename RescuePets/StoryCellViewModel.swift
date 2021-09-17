@@ -25,7 +25,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
     var latitude = 0.0
     var longitude = 0.0
     var numHelpers = 0
-    var userAcceptedStoryID : [String:Bool] = [:]
+    var userAcceptedStoryID : [String] = []
     var presentImage = ""
     
     private var cancellables = Set<AnyCancellable>()
@@ -50,10 +50,10 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         
         $story
             .receive(on: DispatchQueue.main)
-            .sink { [weak self]story in
-                if story.userAcceptedStoryID != nil {
+            .sink { [weak self] story in
+                if ((story.userAcceptedStoryID?.isEmpty) != nil) {
                 guard let userId = DBInteract.currentUserId else {return}
-                self?.acceptedStory = story.userAcceptedStoryID![userId] != nil ? "I'm helping" : "I want to help"
+                    self?.acceptedStory = (story.userAcceptedStoryID?.contains(userId))! ? "I'm helping" : "I want to help"
             }else{
                 self?.acceptedStory = "I want to help"
             }

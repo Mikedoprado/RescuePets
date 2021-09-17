@@ -16,7 +16,7 @@ struct ChatMessagesView: View {
     @StateObject private var keyboardHandler = KeyboardHandler()
     @EnvironmentObject var userViewModel : UserViewModel
     @StateObject var messageViewModel = MessageViewModel(chatId: "")
-    @StateObject var chatViewModel = ChatViewModel()
+    @StateObject var chatViewModel = ChatViewModel(chatId: "")
     @State var isFocused = false
     @State var sectionTitle = "Messages"
     @Binding var showMessages : Bool

@@ -14,11 +14,10 @@ final class ChatCellViewModel: ObservableObject, Identifiable {
     @Published var chat : Chat
     
     var id : String = ""
-    var ownerStoryUser: String = ""
-    var acceptedStoryUser: String = ""
-    var isReaded: Bool = false
-    var storyId: String = ""
+    var owners : [String:Bool] = [:]
+    var isReaded: [String:Bool] = [:]
     var timestamp: String = ""
+    var lastMessage: String = ""
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -33,27 +32,15 @@ final class ChatCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $chat.map { chat in
-            chat.ownerStoryUser
+            chat.owners
         }
-        .weakAssign(to: \.ownerStoryUser, on: self)
-        .store(in: &cancellables)
-        
-        $chat.map { chat in
-            chat.acceptedStoryUser
-        }
-        .weakAssign(to: \.acceptedStoryUser, on: self)
+        .weakAssign(to: \.owners, on: self)
         .store(in: &cancellables)
         
         $chat.map { chat in
             chat.isReaded
         }
         .weakAssign(to: \.isReaded, on: self)
-        .store(in: &cancellables)
-        
-        $chat.map { chat in
-            chat.storyId
-        }
-        .weakAssign(to: \.storyId, on: self)
         .store(in: &cancellables)
         
         $chat.map { chat in

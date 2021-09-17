@@ -62,26 +62,9 @@ struct StoryCell: View {
                         .padding(.horizontal, 30)
                         
                     HStack(spacing: 5){
-                        HStack {
-                            DesignImage.profileImageRed.image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 20, height: 20)
-                                        .clipShape(Circle())
-                                        .padding(.leading, 10)
-
-                            Text("\(storyCellViewModel.numHelpers)")
-                                .modifier(FontModifier(weight: .regular, size: .caption, color: .darkGray))
-                                .padding(.trailing, 10)
-
-
-                        }
-                        .frame(height:40)
-                        .background(ThemeColors.white.color)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-
+                        CounterHelpers(storyCellViewModel: storyCellViewModel, color: ThemeColors.white.color)
                         Spacer()
-                        if userViewModel.userCellViewModel.user.id != storyCellViewModel.userId {
+                        if userViewModel.userCellViewModel.user.id != storyCellViewModel.userId || storyCellViewModel.numHelpers <= 50 {
                             Button(action: {
                                 storyViewModel.update(storyCellViewModel.story, user: userViewModel.userCellViewModel.user)
                             }, label: {
@@ -114,3 +97,5 @@ struct StoryCell: View {
 //        StoryCell(storyCellViewModel: StoryCellViewModel(story: Story), storyViewModel: StoryViewModel())
 //    }
 //}
+
+

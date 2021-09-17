@@ -38,7 +38,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         }
         .receive(on: DispatchQueue.main)
         .sink(receiveValue: { [weak self] user in
-//            print(user.location)
+            //            print(user.location)
             self?.user = user
             self?.load()
             self?.loadAcceptedStories()
@@ -105,6 +105,9 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
             }
     }
     // MARK: load stories accepted by the currentUser
+    
+    // MARK: update for load stories direct from stories and not saved two times
+    
     func loadAcceptedStories(){
         
         if listenerRegistrationStoryAccepted != nil {
@@ -112,22 +115,22 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         }
         
         guard let userID = user.id else {return}
+        
         listenerRegistrationStoryAccepted = DBInteract.store
-            .collection(DBPath.helpers.path)
-            .document(userID)
-            .collection(DBPath.acceptedStories.path)
+            .collection(DBPath.stories.path)
             .order(by: "timestamp", descending: true)
+            .whereField("userAcceptedStoryID", arrayContains: userID)
             .addSnapshotListener { [weak self] snapshotStories, error in
+                
                 guard let self = self else {return}
                 if error != nil {
                     print(error?.localizedDescription as Any)
                 }
                 if let snapshot = snapshotStories {
-                    
                     if !snapshot.isEmpty{
-                        self.storiesAccepted = snapshot.documents.compactMap({ document in
+                        self.storiesAccepted = snapshot.documents.compactMap{ document in
                             try? document.data(as: Story.self)
-                        })
+                        }
                     }
                 }
             }
@@ -168,7 +171,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
             }
             
             if let dictUser = story.userAcceptedStoryID, !story.userAcceptedStoryID!.isEmpty {
-                dictUser.forEach({ (userId: String, value: Bool) in
+                dictUser.forEach({ (userId: String) in
                     DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).delete { error in
                         if error != nil {
                             print(error?.localizedDescription as Any)
@@ -184,29 +187,26 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         
         guard let userId = user.id, let storyId = story.id else {return}
         
-        var dict : [String:Bool] = [:]
-        
+        var dict : [String] = []
+//        let timestamp = Int(Date().timeIntervalSince1970)
         if story.userAcceptedStoryID != nil {
             dict = story.userAcceptedStoryID!
         }
         
-        if dict[userId] != nil {
-            dict[userId] = nil
+        if dict.contains(userId) {
+            guard let index = dict.firstIndex(of: userId) else {return}
+            dict.remove(at: index)
             DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-            DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).delete(completion: { error in
-                if error != nil{
-                    print(error?.localizedDescription as Any)
-                    return
-                }
-            })
+//            DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).delete(completion: { error in
+//                if error != nil{
+//                    print(error?.localizedDescription as Any)
+//                    return
+//                }
+//            })
         }else{
-            dict[userId] = true
+            dict.append(userId)
             DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-            do{
-                try DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).setData(from: story)
-            }catch{
-                fatalError("something have happened")
-            }
+//            DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).setData(["timestamp": timestamp])
         }
     }
     
