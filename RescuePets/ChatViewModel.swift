@@ -11,20 +11,17 @@ import Foundation
 
 final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     
-    var chatRepository : ChatRepository?
+    var chatRepository = ChatRepository()
     @Published var chatCellViewModels : [ChatCellViewModel] = []
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(chatId: String) {
-        load(chatId: chatId)
+    init() {
+        load()
     }
     
-    func load(chatId: String) {
-        
-        chatRepository = ChatRepository(chatId: chatId)
-        
-        chatRepository?.$chats.map{ chats in
+    func load() {
+        chatRepository.$chats.map{ chats in
             chats.map { chat in
                 return ChatCellViewModel(chat: chat)
             }
@@ -35,12 +32,12 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     }
     
     func add(_ chat: Chat) {
-        self.chatRepository?.add(chat)
+        self.chatRepository.add(chat)
     }
     
     
     func remove(_ chatId: String, from: String, to: String) {
-        self.chatRepository?.remove(chatId, from: from, to: to)
+        self.chatRepository.remove(chatId, from: from, to: to)
     }
     
     

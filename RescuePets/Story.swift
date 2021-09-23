@@ -30,7 +30,7 @@ struct Story : Codable, Identifiable {
 }
 
 enum TypeOfThreat: String, Codable {
-    case Rescue, Adoption, Wounded, Maltreatment, Desnutrition
+    case Rescue, Adoption, Wounded, Maltreatment, Desnutrition, Malnourished
 }
 
 enum KindOfAnimal: String,Codable {

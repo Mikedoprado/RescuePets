@@ -65,7 +65,6 @@ struct MenuPopUp: View {
             }
         }
         .scaleEffect(CGSize(width: animateMenu ? 1.0 : 0, height: animateMenu ? 1.0 : 0), anchor: .center)
-        .animation(.default)
     }
 }
 

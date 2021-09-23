@@ -6,78 +6,89 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ChatMessagesView: View {
     
     @State var message = ""
-    @Binding var userId : String
-    @Binding var userAcceptedStoryId : String
-    @Binding var storyId : String
     @StateObject private var keyboardHandler = KeyboardHandler()
     @EnvironmentObject var userViewModel : UserViewModel
-    @StateObject var messageViewModel = MessageViewModel(chatId: "")
-    @StateObject var chatViewModel = ChatViewModel(chatId: "")
-    @State var isFocused = false
+    @StateObject var messageViewModel : MessageViewModel
     @State var sectionTitle = "Messages"
     @Binding var showMessages : Bool
-    @StateObject var storyViewModel = StoryViewModel()
-    @State var chatId : String?
+    @Binding var animateChat: Bool
+    @Binding var chatId : String
+ 
+    @Binding var user: User
     
-    @State var currentUsername = ""
-    @State var currentProfileImage = ""
-    @State var othertUsername = ""
-    @State var otherProfileImage = ""
-    @State var storyCellViewModel : StoryCellViewModel?
-    @State var username = ""
-    @State var image = ""
-
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0){
                 VStack {
-                    HeaderView(title: $sectionTitle, actionDismiss: {
-                        dismissView()
-                    }, color: .black, alignment: .center)
-                }
-                .cornerRadius(20)
-                .padding(.bottom, 20)
-            }
-            .background(ThemeColors.white.color)
-            ScrollView(.vertical, showsIndicators: false){
-                LazyVStack(spacing: 20){
-                    ForEach(messageViewModel.messagesViewModels){ message in
-                        if message.from == userViewModel.userRepository.currentUserId{
-                            ChatCellOwner(text: message.text, username: currentUsername, profileImage: currentProfileImage)
-                                .padding(.horizontal, 30)
-                        }else{
-                            ChatCellInvited(text: message.text, username: othertUsername, profileImage: otherProfileImage)
-                                .padding(.horizontal, 30)
+                    HStack{
+                        AnimatedImage(url: URL(string: user.profileImage!))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(ThemeColors.blueCuracao.color)
+                            .clipShape(Circle())
+                        VStack(alignment: .leading) {
+                            Text(user.username!.capitalized)
+                                .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                            Text(user.kindOfUser!)
+                                .modifier(FontModifier(weight: .bold, size: .caption, color: .white))
                         }
+                        Spacer()
+                        Button(action: {
+                            self.dismissView()
+                        }, label: {
+                            DesignImage.closeWhite.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25)
+                        })
                     }
+                }
+                .padding(.top, 50)
+                .padding(.bottom, 20)
+                .padding(.horizontal, 20)
+            }
+            .background(ThemeColors.redSalsa.color)
+            ScrollView(.vertical, showsIndicators: false){
+                LazyVStack(spacing: 0){
+                    
+                        ForEach(messageViewModel.messagesViewModels){ message in
+                            if message.from == userViewModel.userCellViewModel.id {
+                                ChatCellOwner(text: message.text, username: userViewModel.userCellViewModel.username, profileImage: userViewModel.userCellViewModel.profileImage)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 10)
+                            }else{
+                                ChatCellInvited(text: message.text, username: user.username!, profileImage: user.profileImage!)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 10)
+                            }
+                        }
+                    
                 }
                 .padding(.bottom, 20)
                 
             }
             ChatTextField(message: $message, action: {
-                self.addMessage()
-                self.message =  ""
+                withAnimation {
+                    self.addMessage()
+                    self.message =  ""
+                }
             })
                 .padding(.bottom, keyboardHandler.keyboardHeight)
-                .animation(.default)
             
         }
         .background(ThemeColors.white.color)
         .edgesIgnoringSafeArea(.all)
+        .offset(y: self.animateChat ? 0 : UIScreen.main.bounds.height)
+        .animation(.spring(), value: self.animateChat)
         .onTapGesture {
-            self.isFocused = false
             self.hideKeyboard()
         }
-        .onAppear{
-            self.username(userId: userId)
-            self.username(userId: userAcceptedStoryId)
-            self.loadStory()
-        }
-
     }
 }
 
@@ -89,56 +100,29 @@ extension ChatMessagesView {
     }
     
     func dismissView(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.showMessages = false
-        }
-    }
-    
-    func username(userId: String) {
-        if userId == userViewModel.userRepository.currentUserId {
-            self.currentUsername = userViewModel.userCellViewModel.username
-            self.currentProfileImage = userViewModel.userCellViewModel.profileImage
-        }else{
-            showUserName(userId: userId) {  user in
-                self.othertUsername = user.username!
-                self.otherProfileImage = user.profileImage!
+        withAnimation {
+            self.hideKeyboard()
+            self.animateChat = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.showMessages = false
             }
-        }
-    }
-    
-    func showUserName(userId: String, complete: @escaping (User)-> ()){
-        userViewModel.userRepository.loadUserById(userID: userId) { user in
-           complete(user)
-        }
-    }
-    
-    func loadStory(){
-        storyViewModel.storyRepository.loadStoryById(storyId: storyId) { story in
-            self.storyCellViewModel = StoryCellViewModel(story: story)
-            self.username = story.username
-            self.image = story.images![0]
         }
     }
 
     func addMessage(){
         let timestamp = Int(Date().timeIntervalSince1970)
-        guard let currentUserID = userViewModel.userRepository.currentUserId else {return}
-        let to = currentUserID != userId ? userId : userAcceptedStoryId
-        let newMessage = Message(from: currentUserID, to: to, text: message, timestamp: timestamp)
-
-        if chatId == nil{
-//            chatViewModel.add(Chat(storyId: storyCellViewModel!.id, ownerStoryUser: storyCellViewModel!.userId, acceptedStoryUser: storyCellViewModel!.userAcceptedStoryID, timestamp: timestamp, lastComment: nil, isReaded: false))
-            
-            messageViewModel.add(newMessage, chatId: chatId!, from: currentUserID, to: to)
-        }else{
-            messageViewModel.add(newMessage, chatId: chatId!, from: currentUserID, to: to)
+        if let userId = user.id {
+            let newMessage = Message( from: userViewModel.userCellViewModel.id, to: userId, text: message, timestamp: timestamp)
+            self.messageViewModel.add(newMessage, chatId: chatId, from: userViewModel.userCellViewModel.id, to: userId, complete: { id in
+                self.chatId = id
+            })
         }
     }
 }
 
 //struct ChatMessagesView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        ChatMessagesView(userId: .constant(""), userAcceptedStoryId: .constant(""), storyId: .constant(""), chatViewModel: ChatViewModel(), chatCellViewModel: ChatCellViewModel(chat: Chat()), showMessages: .constant(true), chatId: .constant(""))
+//        ChatMessagesView(userId: .constant(""), showMessages: .constant(true), animateChat: .constant(true))
 //    }
 //}
 

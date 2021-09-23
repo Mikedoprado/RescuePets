@@ -12,7 +12,7 @@ import FirebaseFirestore
 import FirebaseStorage
 
 protocol RepositoryChatHelper {
-    func load(chatId: String)
+    func load()
     func add(_ chat: Chat)
     func remove(_ chatId: String, from: String, to: String)
 }
@@ -24,13 +24,32 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
     private var listenerRegistration: ListenerRegistration?
     private var cancellables: Set<AnyCancellable> = []
     
-    init(chatId: String) {
-        load(chatId: chatId)
+    init() {
+        load()
     }
     
-    func load(chatId: String) {
+    func load() {
+        if listenerRegistration != nil {
+            listenerRegistration?.remove()
+        }
+        guard let currentUserId = DBInteract.currentUserId else {return}
         
-
+        listenerRegistration = DBInteract
+            .store
+            .collection(DBPath.helpers.path)
+            .document(currentUserId)
+            .collection(DBPath.chat.path)
+            .addSnapshotListener({ snapshot, error in
+                if error != nil {
+                    print(error?.localizedDescription as Any)
+                }
+                
+                if snapshot != nil && !snapshot!.isEmpty{
+                    self.chats = snapshot!.documents.compactMap({ document in
+                        try? document.data(as: Chat.self)
+                    })
+                }
+        })
     }
     
     
@@ -46,6 +65,32 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
 
     }
     
+    
+    func checkChatExist(userId: String, complete: @escaping (String)->()){
+        guard let currentUserId = DBInteract.currentUserId else {return}
+        DBInteract
+            .store
+            .collection(DBPath.helpers.path)
+            .document(currentUserId)
+            .collection(DBPath.chat.path)
+            .whereField("owners", arrayContains: userId)
+            .getDocuments { snapshot, error in
+                if error != nil {
+                    print(error?.localizedDescription as Any)
+                }
+                
+                if !snapshot!.isEmpty{
+                    if let chatId = snapshot?.documents.compactMap({ document in
+                        document.documentID
+                    }){
+                        complete(chatId.first!)
+                    }
+                    
+                }else{
+                    complete("")
+                }
+            }
+    }
 
 
 }

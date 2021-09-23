@@ -59,5 +59,7 @@ final class UserViewModel: ObservableObject {
     func signOut(){
         self.userRepository.signOut()
     }
+    
+
 
 }

@@ -56,7 +56,7 @@ struct SelectorSection: View {
             }
         }
         .frame(width: (color.color == ThemeColors.redSalsa.color) ? 300 : 200, height: 40)
-        .padding(.bottom, 20)
+        
     }
 }
 

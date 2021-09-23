@@ -12,15 +12,8 @@ struct StoryCellView: View {
     @ObservedObject var storyCellViewModel : StoryCellViewModel
     @ObservedObject var storyViewModel : StoryViewModel
     @EnvironmentObject var userViewModel: UserViewModel
-    @State var username = ""
     
-    func showUser(){
-        self.userViewModel.userRepository.loadUserById(userID: storyCellViewModel.userId) {  user in
-            if let username = user.username{
-                self.username = username
-            }
-        }
-    }
+    
     
     var body: some View {
         HStack {
@@ -32,24 +25,13 @@ struct StoryCellView: View {
                 VStack (alignment: .leading){
                     Text(storyCellViewModel.kindOfStory)
                         .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
-                    Text(username.capitalized)
+                    Text(storyCellViewModel.username.capitalized)
                         .modifier(FontModifier(weight: .regular, size: .paragraph, color: .lightGray))
-                    Text(storyCellViewModel.timestamp)
-                        .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
                 }
+                
                 Spacer()
-//                if user.id != storyCellViewModel.story.userId {
-//                    HStack {
-//                        Button{
-//                            storyViewModel.update(storyCellViewModel.story, user: user)
-//                        }label: {
-//                            Image(storyCellViewModel.acceptedStory)
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fit)
-//                                .frame(width: 30, height: 30)
-//                        }
-//                    }
-//                }
+                Text(storyCellViewModel.timestamp)
+                    .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 30)
@@ -57,7 +39,6 @@ struct StoryCellView: View {
         }
         .background(ThemeColors.whiteClear.color)
         .cornerRadius(10)
-        .padding(.horizontal, 30)
     }
 }
 

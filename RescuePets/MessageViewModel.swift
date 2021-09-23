@@ -13,7 +13,7 @@ final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
     
     var messageRepository : MessageRepository
     @Published var messagesViewModels : [MessageCellViewModel] = []
-    
+    var chatId = ""
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -33,8 +33,13 @@ final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
         .store(in: &cancellables)
     }
     
-    func add(_ message: Message, chatId: String, from: String, to: String) {
-        self.messageRepository.add(message, chatId: chatId, from: from, to: to)
+    func add(_ message: Message, chatId: String?, from: String, to: String, complete: @escaping (String)->()) {
+        self.messageRepository.add(message, chatId: chatId, from: from, to: to, complete: { [weak self] id in
+            if self?.chatId == ""{
+                self?.chatId = id
+            }
+            complete(id)
+        })
     }
     
     func remove(_ message: Message) {

@@ -68,11 +68,13 @@ struct ButtonAuth: View {
                         )
                 }.padding(.horizontal, 20)
             }.onTapGesture {
-                self.show.toggle()
-                self.hide = false
-                self.email = ""
-                self.password = ""
-                self.username = ""
+                withAnimation {
+                    self.show.toggle()
+                    self.hide = false
+                    self.email = ""
+                    self.password = ""
+                    self.username = ""
+                }
             }
             if show{
                 Spacer()

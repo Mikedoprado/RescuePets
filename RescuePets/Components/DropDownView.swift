@@ -37,7 +37,6 @@ struct DropDownView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                             .rotationEffect(.degrees(self.selectedIndex == -1 && !self.showOptions ? 180 : 0))
-                            .animation(.default)
                     }
                     .padding(.horizontal, 20)
                 }
@@ -54,7 +53,6 @@ struct DropDownView: View {
                             Text(items[index])
                                 .modifier(FontModifier(weight: .bold, size: .paragraph, color: (self.selectedIndex == index) ? .white : .halfGray))
                                 .padding(.leading, 20)
-                                .animation(.default)
                             Spacer()
                             ((self.selectedIndex == index) ?
                                 DesignImage.storyAcept.image : DesignImage.storyAdd.image)
@@ -62,7 +60,6 @@ struct DropDownView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 24, height: 24)
                                 .padding(.trailing, 20)
-                                .animation(.default)
                         }
                         .frame(height: 60)
                         .background((self.selectedIndex == index) ?  ThemeColors.redSalsa.color : Color.white)

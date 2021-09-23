@@ -167,13 +167,13 @@ struct EditProfileView: View {
                     }
                     
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 20)
                 .padding(.bottom, keyboardHandler.keyboardHeight)
             }
             .background(ThemeColors.white.color)
             .cornerRadius(20)
             .offset(y: self.animateEdit ? 0 : UIScreen.main.bounds.height)
-            .animation(.spring())
+            .animation(.spring(), value: self.animateEdit)
             .onTapGesture {
                 self.hideKeyboard()
             }
@@ -183,12 +183,11 @@ struct EditProfileView: View {
             })
             if showChangeEmail {
                 ChangeEmailView(isAnimatingEditEmail: $animChangeEmail, showChangeEmail: $showChangeEmail)
-//                    .padding(.horizontal, -30)
+
                 
             }
             if showChangePassword{
                 ChangePasswordView(isAnimatingEditChangePassword: $animChangePassword, showChangePassword: $showChangePassword)
-//                    .padding(.horizontal, -30)
             }
         }
     }

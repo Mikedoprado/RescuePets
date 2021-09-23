@@ -39,6 +39,9 @@ struct MapInfoView: View {
                 LocationInfoView(city: story.city, address: story.address)
                     .background(ThemeColors.whiteGray.color)
                     .cornerRadius(20)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 80)
+                
             }
         }
         .ignoresSafeArea()

@@ -12,7 +12,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
     @Published var story: Story
     var timestamp : String = ""
     
-    var acceptedStory = ""
+    @Published var acceptedStory = ""
     var id : String = ""
     var kindOfAnimal = ""
     var kindOfStory = ""
@@ -37,27 +37,25 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.compactMap { story in
             story.id
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.id, on: self)
         .store(in: &cancellables)
         
         $story.compactMap { story in
             Timestamp.setupTimeStamp(time: story.timestamp)
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
-        $story
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] story in
-                if ((story.userAcceptedStoryID?.isEmpty) != nil) {
-                guard let userId = DBInteract.currentUserId else {return}
-                    self?.acceptedStory = (story.userAcceptedStoryID?.contains(userId))! ? "I'm helping" : "I want to help"
+        $story.sink{ story in
+            if !story.userAcceptedStoryID!.isEmpty {
+                if let currentUserId = DBInteract.currentUserId {
+                    self.acceptedStory = (story.userAcceptedStoryID?.contains(currentUserId))! ? "I'm helping" : "I want to help"
+                }
             }else{
-                self?.acceptedStory = "I want to help"
-            }
-        }.store(in: &cancellables)
+                self.acceptedStory = "I want to help"
+            } 
+        }
+        .store(in: &cancellables)
 
         $story.map{ story in
             story.animal.animal
@@ -68,21 +66,18 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.map{ story in
             story.userId
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.userId, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.username
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.username, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.city
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.city, on: self)
         .store(in: &cancellables)
 
@@ -95,28 +90,24 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.compactMap{ story in
             story.description
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.description, on: self)
         .store(in: &cancellables)
 
         $story.map{ story in
             story.address
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.address, on: self)
         .store(in: &cancellables)
 
         $story.compactMap{ story in
             story.images
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.images, on: self)
         .store(in: &cancellables)
 
         $story.compactMap{ story in
             story.userAcceptedStoryID
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.userAcceptedStoryID, on: self)
         .store(in: &cancellables)
 
@@ -135,19 +126,16 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         $story.map{ story in
             story.kindOfStory
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.kindOfStory, on: self)
         .store(in: &cancellables)
         
         $story.map{ story in
             story.userAcceptedStoryID?.count ?? 0
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.numHelpers, on: self)
         .store(in: &cancellables)
         
         $story
-            .receive(on: DispatchQueue.main)
             .sink { story in
                 if let image = story.images?.first{
                     self.presentImage = image

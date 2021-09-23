@@ -53,18 +53,23 @@ struct ChangeEmailView: View {
         userViewModel.signIn(email: oldEmail.lowercased(), password: password) { error, value in
             switch value {
             case true:
-                self.showSign = false
-                self.titleAlert = "Login"
-                self.messageAlert = "Now you can change the email"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.showingSameEmail = true
+                withAnimation {
+                    self.showSign = false
+                    self.titleAlert = "Login"
+                    self.messageAlert = "Now you can change the email"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self.showingSameEmail = true
+                    }
                 }
+                
             case false:
-                self.showSign = false
-                self.titleAlert = "Login"
-                if let  err = error { self.messageAlert = err }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.showingSameEmail = true
+                withAnimation {
+                    self.showSign = false
+                    self.titleAlert = "Login"
+                    if let  err = error { self.messageAlert = err }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self.showingSameEmail = true
+                    }
                 }
             }
         }
@@ -112,7 +117,9 @@ struct ChangeEmailView: View {
                             self.titleAlert = "Email repeated"
                             self.messageAlert = "The email that you write is the same that we have in the database"
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                self.showingSameEmail = true
+                                withAnimation {
+                                    self.showingSameEmail = true
+                                }
                             }
                         }
                     }
@@ -141,7 +148,7 @@ struct ChangeEmailView: View {
             }
         }
         .offset(y: self.isAnimatingEditEmail ? 0 : UIScreen.main.bounds.height)
-        .animation(.spring())
+        .animation(.spring(), value: self.isAnimatingEditEmail)
     }
 }
 

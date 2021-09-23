@@ -12,17 +12,19 @@ import SwiftUI
 final class ChatCellViewModel: ObservableObject, Identifiable {
     
     @Published var chat : Chat
+    var userRepository : UserRepository
     
     var id : String = ""
-    var owners : [String:Bool] = [:]
+    var owners : [String] = []
     var isReaded: [String:Bool] = [:]
     var timestamp: String = ""
     var lastMessage: String = ""
+    @Published var user : User = User()
     
     private var cancellables = Set<AnyCancellable>()
     
     init(chat: Chat) {
-
+        userRepository = UserRepository()
         self.chat = chat
         
         $chat.compactMap { chat in
@@ -49,5 +51,29 @@ final class ChatCellViewModel: ObservableObject, Identifiable {
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
+        $chat.compactMap { chat in
+            chat.lastComment
+        }
+        .weakAssign(to: \.lastMessage, on: self)
+        .store(in: &cancellables)
+        
+        $chat
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
+            .map { chat in
+                Future<User,Never> { promise in
+                    let from = ((DBInteract.currentUserId != chat.owners[0]) ? chat.owners[0] : chat.owners[1])
+                    self.userRepository.loadUserById(userID: from) { user in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            promise(.success(user))
+                        }
+                    }
+                }
+        }
+        .switchToLatest()
+        .sink { [weak self] user in
+                self?.user = user
+        }
+        .store(in: &cancellables)
+
     }
 }

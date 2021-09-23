@@ -34,7 +34,7 @@ struct CreateStoryView: View {
     @StateObject var remaining = RemaininInt(remain: 250)
     
     @ObservedObject var locationManager = LocationManager()
-    @ObservedObject private var storyViewModel = StoryViewModel()
+    @ObservedObject  var storyViewModel : StoryViewModel
     @EnvironmentObject var userViewModel : UserViewModel
     
     @State var x : CGFloat = 0
@@ -112,7 +112,7 @@ struct CreateStoryView: View {
                             PickerAnimal(kindOfAnimal: self.$animal, initialValue: $initialValuePickerAnimal)
                         }
                         .padding(.top, 10)
-                        .padding(.horizontal, 30)
+                        .padding(.horizontal, 20)
                         DropDownView(
                             title: $dropDownTitle,
                             items: $items ,
@@ -124,7 +124,7 @@ struct CreateStoryView: View {
                                 }
                             })
                             .padding(.vertical, 10)
-                            .padding(.horizontal, 30)
+                            .padding(.horizontal, 20)
                         
                         VStack(spacing: 20){
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -137,21 +137,19 @@ struct CreateStoryView: View {
                                             image.image
                                                 .resizable()
                                                 .scaledToFill()
-                                                .frame(width:UIScreen.main.bounds.width / 1.2 - 60, height: UIScreen.main.bounds.width / 1.2 - 60)
+                                                .frame(width:UIScreen.main.bounds.width / 1.2 - 40, height: UIScreen.main.bounds.width / 1.2 - 60)
                                                 .background(ThemeColors.whiteGray.color)
                                                 .cornerRadius(10)
                                                 .padding(.top, 30)
-                                                .padding(.horizontal, 30)
+                                                .padding(.horizontal, 20)
                                                 .scaleEffect(CGSize(width: scale, height: scale))
-                                                .animation(.easeOut(duration: 0.5))
                                         }
                                         .frame(width:UIScreen.main.bounds.width / 1.2 ,height:UIScreen.main.bounds.width / 1.2)
                                         
                                     }
                                 }
-                                .padding(.horizontal, 30)
+                                .padding(.horizontal, 20)
                             }
-                            .animation(.spring())
                             
                             VStack(spacing: 20){
                                 if images.count < 4{
@@ -172,17 +170,17 @@ struct CreateStoryView: View {
                                 LocationInfoView(city: locationManager.city, address: locationManager.address)
                                 SwitchShare(shareInFb: $shareInFb)
                                 NormalButton(textButton: "Publish story"){
+                                    self.hideKeyboard()
                                     self.createstory()
                                     self.isShowing = false
                                     self.reinitValues()
                                 }
                                 .padding(.bottom, 20)
                             }
-                            .padding(.horizontal, 30)
+                            .padding(.horizontal, 20)
                             
                         }
                         .padding(.bottom, keyboardHandler.keyboardHeight)
-                        .animation(.default)
                         Spacer()
                     }
                 }
@@ -209,7 +207,6 @@ struct CreateStoryView: View {
             self.dataCount = images.count
         }
         .offset(y: self.isShowing ? 0 :  UIScreen.main.bounds.height)
-        .animation(.default)
         .sheet(isPresented: $isShowPhotoLibrary, onDismiss: loadImage, content: {
             ImagePicker(selectedImage: $inputImage)
                 .ignoresSafeArea(edges: .all)
@@ -227,14 +224,14 @@ struct CreateStoryView: View {
     }
 }
 
-struct CreatestoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreateStoryView(
-            imageSelected: .constant(ImageSelected(imageData: Data(), image: Image(""))),
-            isShowing: .constant(true)
-        )
-    }
-}
+//struct CreatestoryView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CreateStoryView(
+//            imageSelected: .constant(ImageSelected(imageData: Data(), image: Image(""))),
+//            isShowing: .constant(true)
+//        )
+//    }
+//}
 
 struct SwitchShare: View {
     

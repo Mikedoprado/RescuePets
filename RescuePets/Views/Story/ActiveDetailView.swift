@@ -27,38 +27,9 @@ struct ActiveDetailView: View {
     @State var showMessage = false
     @State var animShowMessage = false
     @Binding var showTabBar : Bool
+    @State var showHelper = false
+    @State var animateHelpers = false
     
-    var imagestory : String  {
-        switch storyCellViewModel.kindOfAnimal {
-        case "Dog":
-            return KindOfAnimal.Dog.animal
-        case "Cat":
-            return KindOfAnimal.Cat.animal
-        case "Bird":
-            return KindOfAnimal.Bird.animal
-        case "Other":
-            return KindOfAnimal.Other.animal
-        default:
-            return KindOfAnimal.Other.animal
-        }
-    }
-    
-    var typeOfThreat : String {
-        switch storyCellViewModel.kindOfStory {
-        case "Rescue":
-            return TypeOfThreat.Rescue.rawValue
-        case "Adoption":
-            return TypeOfThreat.Adoption.rawValue
-        case "Wounded":
-            return TypeOfThreat.Wounded.rawValue
-        case "Maltreatment":
-            return TypeOfThreat.Maltreatment.rawValue
-        case "Desnutrition":
-            return TypeOfThreat.Desnutrition.rawValue
-        default:
-            return TypeOfThreat.Rescue.rawValue
-        }
-    }
     
     func dismissView(){
         self.isAnimating.toggle()
@@ -69,22 +40,37 @@ struct ActiveDetailView: View {
     }
     
     private func getScale(proxy: GeometryProxy) -> CGFloat {
-        var scale: CGFloat = 1
-        
-        let x = proxy.frame(in: .global).minX
-        
-        let diff = abs(x - 30)
-        if diff < 100 {
-            scale = 1 + (100 - diff) / UIScreen.main.bounds.width
+        withAnimation {
+            var scale: CGFloat = 1
+            
+            let x = proxy.frame(in: .global).minX
+            
+            let diff = abs(x - 30)
+            if diff < 100 {
+                scale = 1 + (100 - diff) / UIScreen.main.bounds.width
+            }
+            
+            return scale
         }
         
-        return scale
     }
     
     fileprivate func showComments() {
-        self.showMessage = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.animShowMessage = true
+        withAnimation {
+            self.showMessage = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.animShowMessage = true
+            }
+        }
+        
+    }
+    
+    fileprivate func showHelpers(){
+        withAnimation {
+            self.showHelper = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.animateHelpers = true
+            }
         }
     }
     
@@ -104,7 +90,7 @@ struct ActiveDetailView: View {
                                 .frame(width: 50, height: 50)
                             
                             VStack (alignment: .leading){
-                                Text(typeOfThreat)
+                                Text(storyCellViewModel.kindOfStory)
                                     .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
                                 
                                 HStack {
@@ -116,7 +102,9 @@ struct ActiveDetailView: View {
                             HStack(spacing: 20){
                                 CounterHelpers(storyCellViewModel: storyCellViewModel, color: ThemeColors.whiteGray.color)
                                     .onTapGesture {
-                                        print("direct Message")
+                                        if storyCellViewModel.numHelpers != 0 {
+                                            self.showHelpers()
+                                        }
                                     }
                                 if (storyCellViewModel.userAcceptedStoryID.contains(userViewModel.userCellViewModel.id) || storyCellViewModel.userId == userViewModel.userCellViewModel.id) {
                                     Button{
@@ -131,7 +119,7 @@ struct ActiveDetailView: View {
                             }
                             
                         }
-                        .padding(.horizontal, 30)
+                        .padding(.horizontal, 20)
                         .padding(.top, 10)
                         .padding(.bottom, 10)
                     }
@@ -145,7 +133,9 @@ struct ActiveDetailView: View {
                         Text(storyCellViewModel.description)
                             .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                             .fixedSize(horizontal: false, vertical: true)
-                            .padding(.horizontal, 30)
+                            .padding(.horizontal, 20)
+                        
+                        
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 0){
@@ -158,13 +148,12 @@ struct ActiveDetailView: View {
                                             .padding(.top, 30)
                                             .padding(.horizontal, 30)
                                             .scaleEffect(CGSize(width: scale, height: scale))
-                                            .animation(.easeOut(duration: 0.5))
                                     }
                                     .frame(width:UIScreen.main.bounds.width / 1.2 ,height: UIScreen.main.bounds.width - 50)
                                     
                                 }
                             }
-                            .padding(.horizontal, 30)
+                            .padding(.horizontal, 20)
                         }
                         VStack(alignment: .leading, spacing: 20){
                             MapActiveView(story: storyCellViewModel, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
@@ -176,7 +165,7 @@ struct ActiveDetailView: View {
                                 .background(ThemeColors.whiteGray.color)
                                 .cornerRadius(20)
                                 .padding(.top, -50)
-                                .padding(.horizontal, 30)
+                                .padding(.horizontal, 20)
                         }.onTapGesture {
                             withAnimation(.default) {
                                 self.showMapFullScreen.toggle()
@@ -189,16 +178,17 @@ struct ActiveDetailView: View {
                 
             }
             .background(ThemeColors.white.color)
-//            .cornerRadius(20)
-            .scaleEffect(self.isAnimating ? 1 :  0)
             .offset(y: self.isAnimating ? 0 :  UIScreen.main.bounds.height)
-            .animation(.default)
+            .animation(.spring(), value: self.isAnimating)
             
             if showMapFullScreen {
                 MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
             }
             if showMessage {
                 CommentView(showMessage: $showMessage, animShowMessage: $animShowMessage, commentViewModel: CommentViewModel(storyId: storyCellViewModel.id), storyId: storyCellViewModel.id)
+            }
+            if showHelper {
+                StoryHelpersView(storyCellViewModel: storyCellViewModel, showHelpers: $showHelper, animateHelpers: $animateHelpers )
             }
         }
     }

@@ -19,6 +19,7 @@ final class MessageCellViewModel: ObservableObject, Identifiable {
     var text: String = ""
     var timestamp: String = ""
 
+
     private var cancellables = Set<AnyCancellable>()
     
     init(message: Message) {
@@ -55,6 +56,7 @@ final class MessageCellViewModel: ObservableObject, Identifiable {
         }
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
+        
         
     }
     

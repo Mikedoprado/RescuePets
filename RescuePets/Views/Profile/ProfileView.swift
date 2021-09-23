@@ -10,9 +10,8 @@ import SDWebImageSwiftUI
 
 struct ProfileView: View {
     
-//    @EnvironmentObject var auth: AuthenticationModel
     @EnvironmentObject var userViewModel : UserViewModel
-    @StateObject var storyViewModel = StoryViewModel()
+    @ObservedObject var storyViewModel : StoryViewModel
     @Binding var isShowing : Bool
     @Binding var isAnimating : Bool
     var textCreated = "Created"
@@ -63,7 +62,7 @@ struct ProfileView: View {
                         })
                     }
                     .padding(.top, 50)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 20)
                     VStack{
                         AnimatedImage(url: URL(string: userViewModel.userCellViewModel.profileImage))
                             .resizable()
@@ -99,7 +98,7 @@ struct ProfileView: View {
                                 .modifier(FontModifier(weight: .bold, size: .caption, color: .whiteGray))
                         }
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 20)
                     .padding(.top, 20)
                     
                     HStack {
@@ -113,7 +112,7 @@ struct ProfileView: View {
                         Text("\(userViewModel.userCellViewModel.location.capitalized)")
                             .modifier(FontModifier(weight: .bold, size: .titleCaption, color: .white))
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 20)
                     .padding(.vertical, 20)
                 }
                 .background(ThemeColors.redSalsa.color)
@@ -122,7 +121,7 @@ struct ProfileView: View {
                         .modifier(FontModifier(weight: .bold, size: .subtitle, color: .redSalsa))
                     Spacer()
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 
                 VStack{
@@ -133,15 +132,13 @@ struct ProfileView: View {
                 
             }
             .background(ThemeColors.white.color)
-//            .cornerRadius(20)
             .offset(y: self.isAnimating ? 0 : UIScreen.main.bounds.height)
             .ignoresSafeArea(edges: .bottom)
             .blur(radius: showMenu ? 5 : 0)
-            .animation(.spring())
+            .animation(.spring(), value: self.isAnimating)
             
             if showEditProfile {
                 EditProfileView(show: $showEditProfile, animateEdit: $animEditProfile)
-//                    .padding(.horizontal, -30)
             }
             
             if showMenu {
@@ -149,7 +146,7 @@ struct ProfileView: View {
                     ThemeColors.darkGray.color
                         .opacity(1)
                         .blendMode(.multiply)
-                        .padding(.horizontal, -30)
+//                        .padding(.horizontal, -30)
                         .ignoresSafeArea( edges: .all)
                         .onTapGesture {
                             self.showMenu = false
@@ -179,13 +176,13 @@ struct ProfileView: View {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ProfileView(isShowing: .constant(true), isAnimating: .constant(true))
-        }.previewLayout(.sizeThatFits)
-    }
-}
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group {
+//            ProfileView(isShowing: .constant(true), isAnimating: .constant(true))
+//        }.previewLayout(.sizeThatFits)
+//    }
+//}
 
 
 struct BadgesView: View {
@@ -211,6 +208,6 @@ struct BadgesView: View {
                     }
             }
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 20)
     }
 }

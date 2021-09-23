@@ -12,6 +12,7 @@ import SwiftUI
 struct HomeMapView: View {
     
     @EnvironmentObject var userViewModel : UserViewModel
+    @StateObject var storyViewModel = StoryViewModel()
     @State private var isShowPhotoLibrary = false
     @State private var showProfileUser = false
     @State private var showCreateStory : Bool = false
@@ -47,7 +48,7 @@ struct HomeMapView: View {
     
     func loadImage() {
         if let inputImage = inputImage {
-            if let imageData = inputImage.jpegData(compressionQuality: 0.8){
+            if let imageData = inputImage.jpegData(compressionQuality: 0.7){
                 let image = Image(uiImage: inputImage)
                 self.imageSelected = ImageSelected(imageData: imageData, image: image)
             }
@@ -80,12 +81,12 @@ struct HomeMapView: View {
                 }
                 
                 if showNotifcationsView {
-                    NotifyView(showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, showTabBar: $showTabBar)
+                    NotifyView(storyViewModel: storyViewModel, showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, showTabBar: $showTabBar)
                         .ignoresSafeArea()
                 }
                 
                 if showMessages {
-                    MessagesView(showMessages: $showMessages, isAnimating: $isAnimatingMessages)
+                    MessagesView(showMessages: $showMessages, isAnimating: $isAnimatingMessages, showTabBar: $showTabBar)
                 }
                 
                 VStack {
@@ -124,7 +125,6 @@ struct HomeMapView: View {
             .blur(radius: showProfileUser ? 5 : 0)
             .scaleEffect(CGSize(width: showProfileUser ? 0.95 : 1.0, height: showProfileUser ? 0.95 : 1.0))
             .ignoresSafeArea(edges: .bottom)
-            .animation(.default)
             
             if showProfileUser {
                 
@@ -134,12 +134,12 @@ struct HomeMapView: View {
                     .ignoresSafeArea( edges: .all)
                     
                 
-                ProfileView(isShowing: $showProfileUser, isAnimating: $animProfileUser)
+                ProfileView(storyViewModel: storyViewModel,isShowing: $showProfileUser, isAnimating: $animProfileUser)
                     .ignoresSafeArea(edges: .all)
             }
             
             if showCreateStory {
-                CreateStoryView(imageSelected: $imageSelected, isShowing: $animCreateStory)
+                CreateStoryView(imageSelected: $imageSelected, isShowing: $animCreateStory, storyViewModel: storyViewModel)
                     .ignoresSafeArea(edges: .all)
             }
         }

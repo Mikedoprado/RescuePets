@@ -43,7 +43,8 @@ struct CommentCellView: View {
                     .modifier(FontModifier(weight: .bold, size: .caption, color: .lightGray))
                 
             }
-        }.padding(.horizontal, 30)
+        }
+        .padding(.horizontal, 20)
         .onAppear{
             self.showUser()
         }

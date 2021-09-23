@@ -19,11 +19,14 @@ struct CommentView: View {
     var storyId = ""
     
     func dismissView(){
-        self.animShowMessage = false
-        self.hideKeyboard()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.showMessage = false
+        withAnimation {
+            self.animShowMessage = false
+            self.hideKeyboard()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.showMessage = false
+            }
         }
+        
     }
     
     func hideKeyboard() {
@@ -64,12 +67,11 @@ struct CommentView: View {
                 self.addComment()
             })
             .padding(.bottom, keyboardHandler.keyboardHeight)
-            .animation(.default)
         }
         .background(ThemeColors.white.color)
         .ignoresSafeArea(edges: .vertical)
         .offset(y: self.animShowMessage ? 0 :  UIScreen.main.bounds.height)
-        .animation(.default)
+        .animation(.spring(), value: self.animShowMessage)
         .onTapGesture {
             self.hideKeyboard()
         }

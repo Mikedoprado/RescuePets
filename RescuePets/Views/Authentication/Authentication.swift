@@ -32,68 +32,69 @@ struct Authentication: View {
     var body: some View {
         ZStack {
             ScrollView(.vertical) {
-                    HStack{
-                        VStack(alignment: .center, spacing: 20){
-                            DesignImage.logo.image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 300, height: 300)
-                                .padding(.top, 40)
-
-                            ZStack {
-                                if showSignIn{
-                                    SignInView(email: $signupVM.email, password: $password, isSigned: signupVM.isSignUpComplete, show: $showSignIn, isLoading: $isLoading)
-                                        .offset(y:10)
-                                }
-                                ButtonAuth(show: $showSignIn, hide: $showRegister, nameButton: "Sign In with email", password: $password, username: $username, email: $signupVM.email)
+                HStack{
+                    VStack(alignment: .center, spacing: 20){
+                        DesignImage.logo.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 300, height: 300)
+                            .padding(.top, 40)
+                        
+                        ZStack {
+                            if showSignIn{
+                                
+                                SignInView(email: $signupVM.email, password: $password, isSigned: signupVM.isSignUpComplete, show: $showSignIn, isLoading: $isLoading)
+                                    .offset(y:10)
+                                
                             }
-                            HStack {
-                                Spacer()
-                                Button{
-                                    print("forget my password")
-                                }label: {
-                                    Text("Forgot your password")
-                                        .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
-                                        .lineLimit(1)
-                                }
-                            }
-                            .padding(.top, showSignIn ? 10 : 0)
-                            ZStack {
-                                if showRegister{
-                                    RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, imageSelected: $imageSelected, isLoading : $isLoading)
-                                        .offset(y:10)
-                                }
-                                ButtonAuth(show: $showRegister, hide: $showSignIn, nameButton: "Register with email", password: $password, username: $username, email: $signupVM.email)
-                            }
-                            HStack(alignment: .center){
-                                Text("or sign in with")
-                                    .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
-                                Spacer()
-                                HStack(spacing: 40){
-                                    SmallButton(icon: "logoFacebook")
-                                    SmallButton(icon: "logoGoogle")
-                                    SmallButton(icon: "logoApple")
-                                }
-                            }
-                            .padding(.top, showRegister ? 10 : 0)
-                            .padding(.bottom, 30)
-                            Spacer()
+                            ButtonAuth(show: $showSignIn, hide: $showRegister, nameButton: "Sign In with email", password: $password, username: $username, email: $signupVM.email)
                         }
-                        .padding(.horizontal, 30)
-                        .ignoresSafeArea(edges: .bottom)
+                        HStack {
+                            Spacer()
+                            Button{
+                                print("forget my password")
+                            }label: {
+                                Text("Forgot your password")
+                                    .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
+                                    .lineLimit(1)
+                            }
+                        }
+                        .padding(.top, showSignIn ? 10 : 0)
+                        ZStack {
+                            if showRegister{
+                                RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, imageSelected: $imageSelected, isLoading : $isLoading)
+                                    .offset(y:10)
+                            }
+                            ButtonAuth(show: $showRegister, hide: $showSignIn, nameButton: "Register with email", password: $password, username: $username, email: $signupVM.email)
+                        }
+                        HStack(alignment: .center){
+                            Text("or sign in with")
+                                .modifier(FontModifier(weight: .bold, size: .paragraph, color: .white))
+                            Spacer()
+                            HStack(spacing: 40){
+                                SmallButton(icon: "logoFacebook")
+                                SmallButton(icon: "logoGoogle")
+                                SmallButton(icon: "logoApple")
+                            }
+                        }
+                        .padding(.top, showRegister ? 10 : 0)
+                        .padding(.bottom, 30)
+                        Spacer()
                     }
+                    .padding(.horizontal, 30)
+                    .ignoresSafeArea(edges: .bottom)
                 }
-                .background(ThemeColors.redSalsa.color)
-                .padding(.bottom, keyboardHandler.keyboardHeight)
-                .animation(.default)
-                .ignoresSafeArea(edges: .all)
-                .onTapGesture {
-                    self.isFocused = false
-                    self.hideKeyboard()
-                }
-                .onAppear(perform: {
-                    signupVM.email = ""
-                    password = ""
+            }
+            .background(ThemeColors.redSalsa.color)
+            .padding(.bottom, keyboardHandler.keyboardHeight)
+            .ignoresSafeArea(edges: .all)
+            .onTapGesture {
+                self.isFocused = false
+                self.hideKeyboard()
+            }
+            .onAppear(perform: {
+                signupVM.email = ""
+                password = ""
             })
             if isLoading {
                 VStack{

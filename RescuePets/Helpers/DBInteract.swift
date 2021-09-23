@@ -23,7 +23,7 @@ class DBInteract {
 
 enum DBPath {
     
-    case stories, messages, helpers, chatMessages, createdStories, acceptedStories, profilePictures, comments
+    case stories, messages, helpers, chatMessages, createdStories, acceptedStories, profilePictures, comments, chat
     
     var path : String {
         switch self {
@@ -43,6 +43,8 @@ enum DBPath {
             return "profilePicture"
         case .comments:
             return "comments"
+        case .chat:
+            return "chat"
         }
     }
 }

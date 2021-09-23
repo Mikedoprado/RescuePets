@@ -14,8 +14,7 @@ import MapKit
 struct Chat : Codable, Identifiable {
     
     @DocumentID var id: String?
-    var owners : [String : Bool]
-    var to: String
+    var owners : [String]
     var timestamp: Int
     var lastComment: String?
     var isReaded: [String : Bool]

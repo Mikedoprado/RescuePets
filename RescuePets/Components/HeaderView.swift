@@ -39,7 +39,7 @@ struct HeaderView: View {
                 }
             }
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 20)
         .padding(.top, 50)
     }
 }

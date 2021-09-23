@@ -12,44 +12,52 @@ struct MessageCellView: View {
     
     @ObservedObject var chat : ChatCellViewModel
     @EnvironmentObject var userViewModel : UserViewModel
+    @State var profileImage = ""
+    @State var username = "username"
+    @Binding var isActive : Bool
 
-    @State var username = ""
-    @State var profilePicture = ""
-  
-    func showUserInfo(){
-        
-//        guard let currentUserId = DBInteract.auth.currentUser?.uid else {return}
-//        let from = ((currentUserId != chat.acceptedStoryUser) ? chat.acceptedStoryUser : chat.ownerStoryUser)
-//
-//        self.userViewModel.userRepository.loadUserById(userID: from) { user in
-//            if let username = user.username, let profilePicture = user.profileImage{
-//                self.username = username
-//                self.profilePicture = profilePicture
-//
-//            }
-//        }
+    fileprivate func showUser(_ user: User) {
+        if let username = user.username , let profileImage = user.profileImage{
+            self.profileImage = profileImage
+            self.username = username.capitalized
+        }
     }
     
     var body: some View {
-        HStack {
-            AnimatedImage(url: URL(string: profilePicture))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 50, height: 50, alignment: .center)
-                .clipShape(Circle())
-            VStack (alignment: .leading){
-                HStack {
-                    Text(username.capitalized)
-                        .modifier(FontModifier(weight: .bold, size: .paragraph, color: .blueCuracao))
-                    Spacer()
-                    Text("\(chat.timestamp)")
-                        .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
+        ZStack {
+            HStack {
+                AnimatedImage(url: URL(string:  profileImage))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .background(ThemeColors.lightGray.color)
+                    .clipShape(Circle())
+                VStack (alignment: .leading){
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(username)
+                                .modifier(FontModifier(weight: .bold, size: .paragraph, color: .darkGray))
+                            Text(chat.lastMessage)
+                                .modifier(FontModifier(weight: .bold, size: .caption, color: .gray))
+                        }
+                        
+                        Spacer()
+                        Text("\(chat.timestamp)")
+                            .modifier(FontModifier(weight: .bold, size: .caption, color: .lightGray))
+                    }
                 }
+                .redacted(reason: self.profileImage != "" ? [] : .placeholder)
             }
+            .padding(.horizontal, 30)
+            .padding(.vertical, 20)
+            
         }
-        .padding(.top, 10)
-        .onAppear{
-            showUserInfo()
+        .frame(width: UIScreen.main.bounds.width - 40, height: 70)
+        .background(ThemeColors.white.color)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .onChange(of: chat.user) { user in
+            showUser(user)
+            isActive = true
         }
     }
 }

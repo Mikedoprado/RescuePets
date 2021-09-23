@@ -98,14 +98,14 @@ struct ChangePasswordView: View {
                     )
                 }
             }
-            .padding(.horizontal, 30)
+            .padding(.horizontal, 20)
             Spacer()
         }
         .padding(.bottom, 20)
         .background(ThemeColors.white.color)
         .cornerRadius(20)
         .offset(y: self.isAnimatingEditChangePassword ? 0 : UIScreen.main.bounds.height)
-        .animation(.spring())
+        .animation(.spring(), value: self.isAnimatingEditChangePassword)
         .ignoresSafeArea( edges: .all)
         .onTapGesture {
             self.hideKeyboard()

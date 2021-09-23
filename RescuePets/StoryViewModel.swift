@@ -31,7 +31,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModels, on: self)
         .store(in: &cancellables)
     }
@@ -42,7 +42,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModelsCreated, on: self)
         .store(in: &cancellables)
     }
@@ -52,7 +52,7 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
                 StoryCellViewModel(story: story)
             }
         }
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.storyCellViewModelsAccepted, on: self)
         .store(in: &cancellables)
     }
@@ -61,14 +61,14 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         $storyCellViewModelsCreated.map{ stories in
             stories.count
         }
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountCreatedStories, on: self)
         .store(in: &cancellables)
         
         $storyCellViewModelsAccepted.map{ stories in
             stories.count
         }
-        .receive(on: DispatchQueue.main)
+//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountAcceptedStories, on: self)
         .store(in: &cancellables)
     }

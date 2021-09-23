@@ -11,7 +11,7 @@ var screen = UIScreen.main.bounds
 
 struct NotifyView: View {
     
-    @StateObject var storyViewModel = StoryViewModel()
+    @ObservedObject var storyViewModel : StoryViewModel
     @EnvironmentObject var userViewModel : UserViewModel
     @Binding var showNotify : Bool
     @Binding var isAnimating : Bool
@@ -20,25 +20,9 @@ struct NotifyView: View {
     @State var isAnimatingActiveView = false
     @State var categories = ["General", "Accepted", "Created"]
     @State var selectedCategory = "General"
-    @State var story : Story?
     @State var colorMenu = ThemeColors.redSalsa
     @State var storyCellViewModel : StoryCellViewModel?
     @Binding var showTabBar : Bool
-    
-    func getColor(story: Story) -> Color {
-        switch story.animal.rawValue {
-        case "Dog":
-            return ThemeColors.blueCuracao.color
-        case "Cat":
-            return ThemeColors.redSalsa.color
-        case "Bird":
-            return ThemeColors.goldenFlow.color
-        case "Other":
-            return ThemeColors.darkGray.color
-        default:
-            return ThemeColors.whiteSmashed.color
-        }
-    }
     
     func dismissView(){
         self.isAnimating.toggle()
@@ -49,76 +33,61 @@ struct NotifyView: View {
     }
     
     func showStory(story: StoryCellViewModel){
-        self.storyCellViewModel = story
-        self.showDetailsStory.toggle()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.isAnimatingActiveView = true
-            self.showTabBar = false
-        }
+            self.storyCellViewModel = story
+            self.showDetailsStory.toggle()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.isAnimatingActiveView = true
+                self.showTabBar = false
+            }
     }
     
-    @ViewBuilder var body: some View {
+    var body: some View {
         ZStack{
             VStack(spacing: 0) {
-                VStack {
-                    HeaderView(title: $selectedCategory, actionDismiss: {
-                        dismissView()
-                    }, color: .white, alignment: .center, closeButtonIsActive: false)
-                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
+                ZStack{
+                    VStack{
+                        switch selectedCategory {
+                        case "General" :
+                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                                self.showStory(story: story)
+                            }, kind: .general)
+                        case "Accepted" :
+                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                                self.showStory(story: story)
+                            }, kind: .accepted)
+                        case "Created" :
+                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                                self.showStory(story: story)
+                            }, kind: .created)
+                        default:
+                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                                self.showStory(story: story)
+                            }, kind: .general)
+                        }
+                    }
+                    .padding(.bottom, 80)
+                    .padding(.top, 120)
+                    VStack{
+                        VStack {
+                            HeaderView(title: $selectedCategory,
+                                       actionDismiss: {},
+                                       color: .white,
+                                       alignment: .center,
+                                       closeButtonIsActive: false)
+                            SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
+                                .padding(.bottom, 20)
+                        }
+                        .background(ThemeColors.redSalsa.color)
+                        Spacer()
+                    }
                 }
-                .background(ThemeColors.redSalsa.color)
-                .animation(.default)
                 
-                ScrollView(.vertical) {
-                    if selectedCategory == "General"{
-                        LazyVStack {
-                            ForEach(storyViewModel.storyCellViewModels) { storyCellVM in
-                                StoryCell(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
-                                    .padding(.vertical, 20)
-                                    .onTapGesture {
-                                        showStory(story: storyCellVM)
-                                    }
-                            }
-                        }
-                        .padding(.top, 20)
-                        .padding(.bottom, 120)
-                    }
-                    if selectedCategory == "Accepted"{
-                        LazyVStack {
-
-                            ForEach(storyViewModel.storyCellViewModelsAccepted) { storyCellVM in
-                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
-                                    .onTapGesture {
-                                        showStory(story: storyCellVM)
-                                    }
-                            }
-                        }
-                        .padding(.top, 20)
-                        .padding(.bottom, 120)
-                    }
-                    if selectedCategory == "Created"{
-                        LazyVStack {
-                            ForEach(storyViewModel.storyCellViewModelsCreated) { storyCellVM in
-                                StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
-                                    .onTapGesture {
-                                        showStory(story: storyCellVM)
-                                    }
-                            }
-                        }
-                        .padding(.top, 20)
-                        .padding(.bottom, 120)
-                    }
-
-                }
-                Spacer()
             }
-            .frame(width: screen.width)
             .background(ThemeColors.redSalsa.color)
-//            .clipShape(RoundedRectangle(cornerRadius: 20))
-
+            
             if showDetailsStory {
-                if let story = storyCellViewModel{
-                    ActiveDetailView(storyCellViewModel: story, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
+                if storyCellViewModel != nil {
+                    ActiveDetailView(storyCellViewModel: storyCellViewModel!, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
                 }
             }
         }
@@ -130,6 +99,7 @@ struct NotifyView: View {
 //        NotifyView(showNotify: .constant(true), isAnimating: .constant(true))
 //    }
 //}
+
 
 
 

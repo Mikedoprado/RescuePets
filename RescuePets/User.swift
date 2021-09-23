@@ -10,7 +10,11 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct User : Codable, Identifiable {
+struct User : Codable, Identifiable, Equatable {
+    
+    static func ==(lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id && lhs.email == rhs.email
+    }
 
     @DocumentID var id: String?
     var username: String?

@@ -16,27 +16,26 @@ struct ChatCellOwner: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .top){
+            HStack(alignment: .bottom){
                 VStack(alignment: .leading, spacing: 10){
                     AnimatedImage(url: URL(string: profileImage))
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 25, height: 25)
                         .foregroundColor(ThemeColors.lightGray.color)
-                        .padding(.top, 10)
                         .clipShape(Circle())
                 }
                 ZStack {
                     HStack{
                         Text(text)
-                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .white))
+                            .modifier(FontModifier(weight: .regular, size: .paragraph, color: .gray))
                         
                     }
                     .padding(.all, 15)
                 }
                 .background(
                     RoundedCornersShape(corners: [.topLeft,.topRight,.bottomRight], radius: 20)
-                        .fill(ThemeColors.blueCuracao.color)
+                        .fill(ThemeColors.whiteGray.color)
                 )
                Spacer()
             }
