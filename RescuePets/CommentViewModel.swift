@@ -39,5 +39,7 @@ final class CommentViewModel: CommentHelper ,ObservableObject {
         self.commentRepository?.remove(comment, storyId: storyId)
     }
     
-    
+    deinit{
+        print("deinit CommentViewModel")
+    }
 }

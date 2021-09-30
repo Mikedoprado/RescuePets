@@ -28,6 +28,10 @@ class LocationManager: NSObject, ObservableObject {
         
     }
     
+    deinit{
+        print("deinit LocationManager")
+    }
+    
 }
 
 extension LocationManager: CLLocationManagerDelegate {
@@ -85,5 +89,7 @@ extension LocationManager: CLLocationManagerDelegate {
                     }
             })
         }
+    
+    
     
 }

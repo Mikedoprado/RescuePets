@@ -39,7 +39,8 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
             .collection(DBPath.helpers.path)
             .document(currentUserId)
             .collection(DBPath.chat.path)
-            .addSnapshotListener({ snapshot, error in
+            .addSnapshotListener({ [weak self] snapshot, error in
+                guard let self = self else {return}
                 if error != nil {
                     print(error?.localizedDescription as Any)
                 }
@@ -90,6 +91,10 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
                     complete("")
                 }
             }
+    }
+    
+    deinit{
+        print("deinit Chat repository")
     }
 
 

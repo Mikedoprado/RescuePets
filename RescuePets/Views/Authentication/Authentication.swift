@@ -21,8 +21,9 @@ struct Authentication: View {
     @State var showRegister = false
     @State var showImagePicker = false
     
-    @State private var inputImage: UIImage?
-    @State var imageSelected : ImageSelected?
+    @State private var inputImage : UIImage?
+    @State private var dataImage : Data?
+//    @State var imageSelected : ImageSelected?
     @State var isLoading = false
     
     func hideKeyboard() {
@@ -62,7 +63,7 @@ struct Authentication: View {
                         .padding(.top, showSignIn ? 10 : 0)
                         ZStack {
                             if showRegister{
-                                RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, imageSelected: $imageSelected, isLoading : $isLoading)
+                                RegisterView(email: $signupVM.email, password: $password, username: $username, isSigned: signupVM.isSignUpComplete, show: $showRegister, showImagePicker: $showImagePicker, imageProfile: $inputImage, dataImageProfile: $dataImage, isLoading : $isLoading)
                                     .offset(y:10)
                             }
                             ButtonAuth(show: $showRegister, hide: $showSignIn, nameButton: "Register with email", password: $password, username: $username, email: $signupVM.email)
@@ -123,14 +124,18 @@ struct Authentication: View {
                 isLoading = false
             }
         })
+        .onChange(of:self.showRegister, perform: { value in
+            if !value{
+                self.inputImage = nil
+                self.dataImage = nil
+            }
+        })
     }
+        
     
     func loadImage(){
-        if let newImage = inputImage {
-            if let imageData = newImage.jpegData(compressionQuality: 0.8){
-                let image = Image(uiImage: newImage)
-                imageSelected = ImageSelected(imageData: imageData, image: image)
-            }
+        if let imageData = inputImage?.jpegData(compressionQuality: 1){
+            self.dataImage = imageData
         }
     }
 }

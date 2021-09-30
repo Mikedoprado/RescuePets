@@ -40,8 +40,8 @@ final class UserViewModel: ObservableObject {
     func signIn(email: String, password: String, complete: @escaping (String?, Bool)->Void) {
         self.userRepository.signIn(email: email, password: password, complete: complete)
     }
-    func createUser(_ username: String, _ email: String, _ password: String, location: String, imageSelected : ImageSelected, kindOfUser: String){
-        self.userRepository.createUser(username, email, password, location: location, imageSelected: imageSelected, kindOfUser: kindOfUser)
+    func createUser(_ username: String, _ email: String, _ password: String, location: String, imageData : Data, kindOfUser: String){
+        self.userRepository.createUser(username, email, password, location: location, imageData: imageData, kindOfUser: kindOfUser)
     }
     
     func updateEmail(email: String, complete: @escaping (String?, Bool) -> Void ){
@@ -60,6 +60,8 @@ final class UserViewModel: ObservableObject {
         self.userRepository.signOut()
     }
     
-
+    deinit{
+        print("deinit UserViewModel")
+    }
 
 }

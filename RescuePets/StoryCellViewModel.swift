@@ -46,13 +46,18 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .weakAssign(to: \.timestamp, on: self)
         .store(in: &cancellables)
         
-        $story.sink{ story in
-            if !story.userAcceptedStoryID!.isEmpty {
+        $story.sink{ [weak self] story in
+            self?.userAcceptedStoryID = story.userAcceptedStoryID ?? []
+        }
+        .store(in: &cancellables)
+        
+        $story.sink{ [weak self] story in
+            if !(story.userAcceptedStoryID?.isEmpty ?? true) {
                 if let currentUserId = DBInteract.currentUserId {
-                    self.acceptedStory = (story.userAcceptedStoryID?.contains(currentUserId))! ? "I'm helping" : "I want to help"
+                    self?.acceptedStory = (story.userAcceptedStoryID?.contains(currentUserId))! ? "I'm helping" : "I want to help"
                 }
             }else{
-                self.acceptedStory = "I want to help"
+                self?.acceptedStory = "I want to help"
             } 
         }
         .store(in: &cancellables)
@@ -105,12 +110,6 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .weakAssign(to: \.images, on: self)
         .store(in: &cancellables)
 
-        $story.compactMap{ story in
-            story.userAcceptedStoryID
-        }
-        .weakAssign(to: \.userAcceptedStoryID, on: self)
-        .store(in: &cancellables)
-
         $story.map{ story in
             story.longitude
         }
@@ -136,9 +135,9 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $story
-            .sink { story in
+            .sink { [weak self] story in
                 if let image = story.images?.first{
-                    self.presentImage = image
+                    self?.presentImage = image
                 }
         }.store(in: &cancellables)
     }

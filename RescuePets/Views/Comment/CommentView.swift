@@ -12,7 +12,7 @@ struct CommentView: View {
     @Binding var showMessage : Bool
     @Binding var animShowMessage: Bool
     @EnvironmentObject var userViewModel : UserViewModel
-    @StateObject private var keyboardHandler = KeyboardHandler()
+    @ObservedObject var keyboardHandler = KeyboardHandler()
     @StateObject var commentViewModel = CommentViewModel(storyId: "")
     @State var message = ""
     @State var sectionTitle = "Comments"
@@ -67,6 +67,7 @@ struct CommentView: View {
                 self.addComment()
             })
             .padding(.bottom, keyboardHandler.keyboardHeight)
+            .animation(.spring(), value: keyboardHandler.keyboardHeight)
         }
         .background(ThemeColors.white.color)
         .ignoresSafeArea(edges: .vertical)
@@ -78,8 +79,4 @@ struct CommentView: View {
     }
 }
 
-struct CommentView_Previews: PreviewProvider {
-    static var previews: some View {
-        CommentView(showMessage: .constant(true), animShowMessage: .constant(true))
-    }
-}
+

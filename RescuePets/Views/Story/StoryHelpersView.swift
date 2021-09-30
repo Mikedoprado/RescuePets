@@ -40,6 +40,7 @@ struct StoryHelpersView: View {
     func showNewChat(user: User){
         self.user = user
         self.chatRepository.checkChatExist(userId: user.id!) { chatId in
+            print(chatId)
             self.chatId = chatId
             self.showChat = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -82,7 +83,12 @@ struct StoryHelpersView: View {
             
             
             if showChat{
-                ChatMessagesView(messageViewModel: MessageViewModel(chatId: chatId), showMessages: $showChat, animateChat: $animateChat, chatId: $chatId, user: $user)
+                ChatMessagesView(
+//                    messageViewModel: MessageViewModel(chatId: chatId),
+                    showMessages: $showChat,
+                    animateChat: $animateChat,
+                    chatId: $chatId, user: $user
+                )
             }
             
         }

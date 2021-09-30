@@ -11,7 +11,6 @@ import SwiftUI
 
 struct MapView: UIViewRepresentable {
     
-    
 //    @Binding var thumbImage : Image
     let map = MKMapView()
     
@@ -94,6 +93,9 @@ struct MapView: UIViewRepresentable {
 //                }
 //            }
 //        }
+        deinit{
+            print("deinit mapView")
+        }
     }
     
 }

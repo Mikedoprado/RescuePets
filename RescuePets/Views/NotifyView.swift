@@ -48,19 +48,19 @@ struct NotifyView: View {
                     VStack{
                         switch selectedCategory {
                         case "General" :
-                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
                                 self.showStory(story: story)
                             }, kind: .general)
                         case "Accepted" :
-                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
                                 self.showStory(story: story)
                             }, kind: .accepted)
                         case "Created" :
-                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
                                 self.showStory(story: story)
                             }, kind: .created)
                         default:
-                            ListStoriesView(storyViewModel: storyViewModel, action: { story in
+                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
                                 self.showStory(story: story)
                             }, kind: .general)
                         }

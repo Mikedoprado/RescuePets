@@ -98,12 +98,13 @@ extension UserRepository {
         
     }
     
-    func createUser(_ username: String, _ email: String, _ password: String, location: String, imageSelected : ImageSelected, kindOfUser: String){
+    func createUser(_ username: String, _ email: String, _ password: String, location: String, imageData : Data?, kindOfUser: String){
         
         DBInteract.auth.createUser(withEmail: email, password: password) { [weak self] user, error in
             guard let self = self, user != nil , error == nil else {return}
             if let userId = user?.user.uid {
-                self.sendProfilePictureToDB(userId: userId, imageData: imageSelected.imageData, complete: { imageUrl in
+                guard let data = imageData else {return}
+                self.sendProfilePictureToDB(userId: userId, imageData: data, complete: { imageUrl in
                     let dict = [
                         "username": username,
                         "email": email,

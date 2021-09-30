@@ -11,9 +11,9 @@ import SDWebImageSwiftUI
 struct ChatMessagesView: View {
     
     @State var message = ""
-    @StateObject private var keyboardHandler = KeyboardHandler()
+    @ObservedObject var keyboardHandler = KeyboardHandler()
     @EnvironmentObject var userViewModel : UserViewModel
-    @StateObject var messageViewModel : MessageViewModel
+    @StateObject var messageViewModel = MessageViewModel()
     @State var sectionTitle = "Messages"
     @Binding var showMessages : Bool
     @Binding var animateChat: Bool
@@ -80,6 +80,7 @@ struct ChatMessagesView: View {
                 }
             })
                 .padding(.bottom, keyboardHandler.keyboardHeight)
+                .animation(.spring(), value: keyboardHandler.keyboardHeight)
             
         }
         .background(ThemeColors.white.color)
@@ -88,6 +89,12 @@ struct ChatMessagesView: View {
         .animation(.spring(), value: self.animateChat)
         .onTapGesture {
             self.hideKeyboard()
+        }
+        .onAppear {
+            print(chatId)
+            if self.chatId != ""{
+                self.messageViewModel.chatId = chatId
+            }
         }
     }
 }

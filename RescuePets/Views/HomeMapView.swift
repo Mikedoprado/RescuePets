@@ -18,14 +18,15 @@ struct HomeMapView: View {
     @State private var showCreateStory : Bool = false
     @State private var showNotifcationsView = false
     @State var changeViewInNotifyView = false
-    @State private var inputImage: UIImage?
+    @State var inputImage : UIImage?
+    @State var newImage : UIImage?
+    @State var dataImage = Data()
     @State var selectedIndex = -1
     @State var animCreateStory = false
     @State var animProfileUser = false
     @State var animNotify = false
     @State var city = ""
     @State var address = ""
-    @State var imageSelected : ImageSelected = ImageSelected(imageData: Data(), image: Image(""))
     @State var showMessages = false
     @State var isAnimatingMessages = false
     @State var showTabBar = true
@@ -46,17 +47,10 @@ struct HomeMapView: View {
         animating = true
     }
     
-    func loadImage() {
-        if let inputImage = inputImage {
-            if let imageData = inputImage.jpegData(compressionQuality: 0.7){
-                let image = Image(uiImage: inputImage)
-                self.imageSelected = ImageSelected(imageData: imageData, image: image)
-            }
-            self.isShowPhotoLibrary = false
-            showCreateStory = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.animCreateStory = showCreateStory
-            }
+    func showCreate() {
+        self.showCreateStory = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.animCreateStory = true
         }
     }
     
@@ -64,24 +58,19 @@ struct HomeMapView: View {
         ZStack{
             ZStack {
                 ThemeColors.redSalsa.color
-//                    .cornerRadius(20)
                     .ignoresSafeArea(.all)
                 EmptyStateHome()
                     .onTapGesture {
                         self.hideKeyboard()
                     }
                 
-                if isShowPhotoLibrary {
-                    MapView()
-                        .ignoresSafeArea(.all)
-                    ThemeColors.black.color
-                        .opacity(0.4)
-                        .blendMode(.multiply)
-                        .ignoresSafeArea(.all)
-                }
-                
                 if showNotifcationsView {
-                    NotifyView(storyViewModel: storyViewModel, showNotify: $showNotifcationsView, isAnimating: $animNotify, changeView: changeViewInNotifyView, showTabBar: $showTabBar)
+                    NotifyView(
+                        storyViewModel: storyViewModel,
+                        showNotify: $showNotifcationsView,
+                        isAnimating: $animNotify,
+                        changeView: changeViewInNotifyView,
+                        showTabBar: $showTabBar)
                         .ignoresSafeArea()
                 }
                 
@@ -94,26 +83,26 @@ struct HomeMapView: View {
                     TabBar(selectedIndex: $selectedIndex, tabBarItemActive: tabBarItems,
                            actionItem1: {
                                 showNotifcationsView = true
-                                isShowPhotoLibrary = false
+                                showCreateStory = false
                                 showMessages = false
                                 showProfileUser = false
                            },
                            actionItem2: {
-                                isShowPhotoLibrary = true
+                                showCreate()
                                 showNotifcationsView = false
                                 showMessages = false
                                 showProfileUser = false
                            },
                            actionItem3: {
                                 showMessages = true
-                                isShowPhotoLibrary = false
+                            showCreateStory = false
                                 showNotifcationsView = false
                                 showProfileUser = false
                            },
                            actionItem4: {
                                 showProfileUser = true
                                 showMessages = false
-                                isShowPhotoLibrary = false
+                                showCreateStory = false
                                 showNotifcationsView = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     animProfileUser = showProfileUser
@@ -134,21 +123,27 @@ struct HomeMapView: View {
                     .ignoresSafeArea( edges: .all)
                     
                 
-                ProfileView(storyViewModel: storyViewModel,isShowing: $showProfileUser, isAnimating: $animProfileUser)
+                ProfileView(
+                    storyViewModel: storyViewModel,
+                    isShowing: $showProfileUser,
+                    isAnimating: $animProfileUser)
                     .ignoresSafeArea(edges: .all)
             }
             
-            if showCreateStory {
-                CreateStoryView(imageSelected: $imageSelected, isShowing: $animCreateStory, storyViewModel: storyViewModel)
-                    .ignoresSafeArea(edges: .all)
+            if showCreateStory{
+                CreateStoryView(
+                    inputImage: $newImage,
+                    imageData: $dataImage,
+                    showCreateStory: $showCreateStory,
+                    isShowing: $animCreateStory,
+                    storyViewModel: storyViewModel
+                )
+                    
             }
         }
         .background(ThemeColors.darkGray.color)
         .ignoresSafeArea(edges: .all)
-        .sheet(isPresented: $isShowPhotoLibrary, onDismiss: loadImage, content: {
-            ImagePicker(selectedImage: $inputImage)
-                .ignoresSafeArea(edges: .all)
-        })
+
         
     }
 }

@@ -8,12 +8,26 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Combine
 
 class RemaininInt: ObservableObject {
-    @Published var remain : Int
     
-    init(remain: Int) {
-        self.remain = remain
+    @Published var remain : Int = 0
+    @Published var count : Int = 0
+    let allowed : Int = 250
+    
+    private var cancellables : Set<AnyCancellable> = []
+    
+    init() {
+        $count.sink { [weak self] value in
+            guard let self = self else {return}
+            self.remain = abs(value - self.allowed)
+        }
+        .store(in: &cancellables)
+    }
+    
+    deinit{
+        print("deinit remainit")
     }
 }
 
@@ -77,11 +91,7 @@ struct TextView: UIViewRepresentable {
         
         func textViewDidChange(_ textView: UITextView){
             parent.text = textView.text
-            // calculation of characters
-            let allowed = 250
-            let typed = textView.text.count
-            let remaining = allowed - typed
-            parent.remain.remain = remaining
+            parent.remain.count = textView.text.count
         }
         
         func textViewDidBeginEditing(_ textView: UITextView) {
@@ -104,7 +114,7 @@ struct TextView: UIViewRepresentable {
 struct TextViewForstory: View {
     
     @Binding var text : String
-    @ObservedObject var remainingText : RemaininInt
+    @StateObject var remainingText = RemaininInt()
     
     var body: some View {
         ZStack {
@@ -114,7 +124,7 @@ struct TextViewForstory: View {
                 Spacer()
                 HStack{
                     Spacer()
-                    Text("\(remainingText.remain)/250")
+                    Text("\(remainingText.remain)")
                         .font(.system(size: 12))
                         .fontWeight(.bold)
                         .foregroundColor(ThemeColors.halfGray.color)

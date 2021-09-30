@@ -11,18 +11,25 @@ import Foundation
 
 final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
     
-    var messageRepository : MessageRepository
+    var messageRepository = MessageRepository()
     @Published var messagesViewModels : [MessageCellViewModel] = []
-    var chatId = ""
+    @Published var chatId : String = ""
+    @Published var isChatIdActive : Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(chatId: String) {
-        messageRepository = MessageRepository(chatId: chatId)
-        load()
+    init() {
+        $chatId
+            .sink { [weak self] chatId in
+            if chatId != ""{
+                self?.messageRepository.chatId = chatId
+                self?.load(chatId: chatId)
+            }
+        }
+            .store(in: &cancellables)
     }
 
-    func load() {
+    func load(chatId: String) {
         messageRepository.$messages.map { messages in
             messages.map { message in
                 MessageCellViewModel(message: message)
@@ -48,6 +55,10 @@ final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
     
     func update(_ message: Message, user: User) {
         
+    }
+    
+    deinit{
+        print("deinit MessageViewModel")
     }
 
 }

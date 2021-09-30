@@ -66,7 +66,12 @@ struct MessagesView: View {
             .ignoresSafeArea(edges: .all)
             
             if showChat {
-                ChatMessagesView(messageViewModel: MessageViewModel(chatId: chatId), showMessages: $showChat, animateChat: $animateChat, chatId: $chatId, user: $user)
+                ChatMessagesView(
+//                    messageViewModel: MessageViewModel(chatId: chatId),
+                    showMessages: $showChat,
+                    animateChat: $animateChat,
+                    chatId: $chatId,
+                    user: $user)
             }
             
         }

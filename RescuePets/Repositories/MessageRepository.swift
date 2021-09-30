@@ -12,7 +12,7 @@ import FirebaseFirestore
 import FirebaseStorage
 
 protocol RepositoryMessageHelper {
-    func load()
+    func load(chatId: String)
     func add(_ message: Message, chatId: String?, from: String, to: String, complete: @escaping (String)->())
     func remove(_ message: Message)
     func update(_ message: Message, user: User)
@@ -20,18 +20,23 @@ protocol RepositoryMessageHelper {
 
 final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     
-    var chatId : String
+    @Published var chatId : String = ""
     
     @Published var messages : [Message] = []
     private var cancellables: Set<AnyCancellable> = []
     private var listenerRegistration: ListenerRegistration?
     
-    init(chatId: String){
-        self.chatId = chatId
-        load()
+    init(){
+        $chatId
+            .sink { [weak self] chatId in
+            if chatId != ""{
+                self?.load(chatId: chatId)
+            }
+        }
+            .store(in: &cancellables)
     }
     
-    func load() {
+    func load(chatId: String) {
         if listenerRegistration != nil {
             listenerRegistration?.remove()
         }
@@ -72,6 +77,7 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
         }else{
             createChat(id: id, from: from, to: to, timestamp: timestamp, lastComment: message.text, complete: { [weak self] id in
                 self?.saveMessage(id: id, message: message, from: from, to: to)
+                self?.chatId = id
                 complete(id)
             })
         }
@@ -86,6 +92,9 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
         
     }
     
+    deinit{
+        print("deinit messageRepository")
+    }
     
 }
 
@@ -110,6 +119,7 @@ extension MessageRepository {
         let messageId = DBInteract.store.collection(DBPath.helpers.path).document(from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document().documentID
         let refFromUser = DBInteract.store.collection(DBPath.helpers.path).document(from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
         let refToUser = DBInteract.store.collection(DBPath.helpers.path).document(to).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
+        
         do{
             try refFromUser.setData(from: message)
             try refToUser.setData(from: message)

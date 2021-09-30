@@ -38,7 +38,6 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         }
         .receive(on: DispatchQueue.main)
         .sink(receiveValue: { [weak self] user in
-            //            print(user.location)
             self?.user = user
             self?.load()
             self?.loadAcceptedStories()
@@ -188,7 +187,6 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         guard let userId = user.id, let storyId = story.id else {return}
         
         var dict : [String] = []
-//        let timestamp = Int(Date().timeIntervalSince1970)
         if story.userAcceptedStoryID != nil {
             dict = story.userAcceptedStoryID!
         }
@@ -197,16 +195,10 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
             guard let index = dict.firstIndex(of: userId) else {return}
             dict.remove(at: index)
             DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-//            DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).delete(completion: { error in
-//                if error != nil{
-//                    print(error?.localizedDescription as Any)
-//                    return
-//                }
-//            })
+
         }else{
             dict.append(userId)
             DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-//            DBInteract.store.collection(DBPath.helpers.path).document(userId).collection(DBPath.acceptedStories.path).document(storyId).setData(["timestamp": timestamp])
         }
     }
     
@@ -258,5 +250,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         }
         
     }
+    
+    deinit{ print("deinit storyRepository")}
     
 }

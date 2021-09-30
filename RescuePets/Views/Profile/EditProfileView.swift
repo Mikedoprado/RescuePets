@@ -19,10 +19,12 @@ struct EditProfileView: View {
     @State var showKindUser = false
     @State var kindOfUser = ""
     @State var initialValueDropDown = false
+    @State var animateDropDown = false
     @State var username = ""
     @State var email = ""
-    @State var imageSelected : ImageSelected?
-    @State private var inputImage: UIImage?
+    
+    @State var inputImage : UIImage?
+    @State var imageData : Data?
     @State var sectionTitle = "Edit profile"
     // show and imagePicker
     @State var showImagePicker = false
@@ -79,8 +81,8 @@ struct EditProfileView: View {
                             self.showImagePicker = true
                         }, label: {
                             VStack{
-                                if imageSelected != nil {
-                                    imageSelected?.image
+                                if inputImage != nil{
+                                    Image(uiImage: inputImage!)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 100, height: 100)
@@ -97,7 +99,7 @@ struct EditProfileView: View {
                                 Text("Change your profile picture")
                                     .modifier(FontModifier(weight: .regular, size: .paragraph , color: .redSalsa))
                                     .onTapGesture {
-                                        print("change the image")
+                                        self.showImagePicker = true
                                     }
                             }
                         })
@@ -105,8 +107,13 @@ struct EditProfileView: View {
                         
                         TextFieldCustom(placeholder: userViewModel.userCellViewModel.username, title: "Username", kind:$username, isSecureField: false)
                         
-                        DropDownView(title: $dropDownTitle, items: $items, showOptions: $showKindUser, kindOfStory: $kindOfUser, initialValue: $initialValueDropDown, action: {
-                            self.showKindUser.toggle()
+                        DropDownView(title: $dropDownTitle, items: $items, showOptions: $showKindUser, kindOfStory: $kindOfUser, initialValue: $initialValueDropDown, animateDropDown: $animateDropDown, action: {
+                            withAnimation {
+                                self.showKindUser.toggle()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    self.animateDropDown.toggle()
+                                }
+                            }
                         })
                         HStack {
                             Button(action: {
@@ -143,7 +150,7 @@ struct EditProfileView: View {
                             self.userViewModel.updateUserInfo(
                                 username: username,
                                 kindOfUser: kindOfUser,
-                                imageData: imageSelected != nil ? imageSelected!.imageData : nil, userViewModel: userViewModel) { error, value in
+                                imageData: imageData, userViewModel: userViewModel) { error, value in
                                 chooseKindOfAlert(value, error)
                             }
                         }
@@ -194,17 +201,14 @@ struct EditProfileView: View {
     
     func loadImage(){
         self.showImagePicker = false
-        if let newImage = inputImage {
-            if let imageData = newImage.jpegData(compressionQuality: 0.8){
-                let image = Image(uiImage: newImage)
-                imageSelected = ImageSelected(imageData: imageData, image: image)
-            }
+        if let data = inputImage?.jpegData(compressionQuality: 0.8){
+            self.imageData = data
         }
     }
 }
 
-struct EditProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditProfileView(show: .constant(true), animateEdit: .constant(true))
-    }
-}
+//struct EditProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EditProfileView(show: .constant(true), animateEdit: .constant(true))
+//    }
+//}

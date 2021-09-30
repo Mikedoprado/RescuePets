@@ -9,12 +9,16 @@ import SwiftUI
 
 struct MapInfoView: View {
 
-    @ObservedObject var story : StoryCellViewModel
+//    @ObservedObject var story : StoryCellViewModel
+    var city : String
+    var latitude : Double
+    var longitude : Double
+    var address : String
     @Binding var animView : Bool
 
     var body: some View {
         ZStack {
-            MapActiveView(story: story, latitude: story.latitude, longitude: story.longitude)
+            MapActiveView(city: city, latitude: latitude, longitude: longitude)
                 HStack {
                     Spacer()
                     VStack {
@@ -23,7 +27,7 @@ struct MapInfoView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 25, height: 25, alignment: .center)
-                                .padding(.trailing, 30)
+                                .padding(.trailing, 20)
                         }
                         Spacer()
                     }
@@ -36,7 +40,7 @@ struct MapInfoView: View {
                 }
             VStack{
                 Spacer()
-                LocationInfoView(city: story.city, address: story.address)
+                LocationInfoView(city: city, address: address)
                     .background(ThemeColors.whiteGray.color)
                     .cornerRadius(20)
                     .padding(.horizontal, 20)

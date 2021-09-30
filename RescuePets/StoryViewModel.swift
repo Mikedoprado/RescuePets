@@ -30,9 +30,9 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
             stories.map { story in
                 StoryCellViewModel(story: story)
             }
-        }
-//        .receive(on: DispatchQueue.main)
-        .weakAssign(to: \.storyCellViewModels, on: self)
+        }.sink(receiveValue: { [weak self] stories in
+            self?.storyCellViewModels = stories
+        })
         .store(in: &cancellables)
     }
     
@@ -41,9 +41,9 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
             stories.map { story in
                 StoryCellViewModel(story: story)
             }
-        }
-//        .receive(on: DispatchQueue.main)
-        .weakAssign(to: \.storyCellViewModelsCreated, on: self)
+        }.sink(receiveValue: { [weak self] storiesCreated in
+            self?.storyCellViewModelsCreated = storiesCreated
+        })
         .store(in: &cancellables)
     }
     func loadAccepted() {
@@ -51,9 +51,9 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
             stories.map { story in
                 StoryCellViewModel(story: story)
             }
-        }
-//        .receive(on: DispatchQueue.main)
-        .weakAssign(to: \.storyCellViewModelsAccepted, on: self)
+        }.sink(receiveValue: { [weak self] storiesAccepted in
+            self?.storyCellViewModelsAccepted = storiesAccepted
+        })
         .store(in: &cancellables)
     }
     
@@ -61,14 +61,12 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         $storyCellViewModelsCreated.map{ stories in
             stories.count
         }
-//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountCreatedStories, on: self)
         .store(in: &cancellables)
         
         $storyCellViewModelsAccepted.map{ stories in
             stories.count
         }
-//        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.amountAcceptedStories, on: self)
         .store(in: &cancellables)
     }
@@ -92,5 +90,9 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
             }
         }
         storyRepository.update(story, user: user)
+    }
+    
+    deinit{
+        print("deinit storyViewModel")
     }
 }

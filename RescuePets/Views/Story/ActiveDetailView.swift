@@ -123,7 +123,6 @@ struct ActiveDetailView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 10)
                     }
-//                    .background(ThemeColors.whiteGray.color)
                 }
                 
                 // MARK: info scrollable
@@ -156,7 +155,7 @@ struct ActiveDetailView: View {
                             .padding(.horizontal, 20)
                         }
                         VStack(alignment: .leading, spacing: 20){
-                            MapActiveView(story: storyCellViewModel, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
+                            MapActiveView(city: storyCellViewModel.city, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
                                 .frame(height: 180)
                                 .background(ThemeColors.whiteGray.color)
                             
@@ -182,7 +181,7 @@ struct ActiveDetailView: View {
             .animation(.spring(), value: self.isAnimating)
             
             if showMapFullScreen {
-                MapInfoView(story: storyCellViewModel, animView: $showMapFullScreen)
+                MapInfoView(city: storyCellViewModel.city, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude, address: storyCellViewModel.address, animView: $showMapFullScreen)
             }
             if showMessage {
                 CommentView(showMessage: $showMessage, animShowMessage: $animShowMessage, commentViewModel: CommentViewModel(storyId: storyCellViewModel.id), storyId: storyCellViewModel.id)

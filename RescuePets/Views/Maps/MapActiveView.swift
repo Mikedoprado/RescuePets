@@ -13,24 +13,29 @@ import MapKit
 
 struct MapActiveView: View {
     
-    @ObservedObject var story : StoryCellViewModel
+//    @ObservedObject var story : StoryCellViewModel
+    var latitude : Double
+    var longitude : Double
+    var city: String
     @State var region : MKCoordinateRegion
 
-    init(story: StoryCellViewModel, latitude: Double, longitude: Double) {
-        self.story = story
+    init(city: String, latitude: Double, longitude: Double) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.city = city
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                         span: MKCoordinateSpan(latitudeDelta: 0.020, longitudeDelta: 0.020))
     }
     
-    func getPlace(story: StoryCellViewModel) -> Place {
-        let place = Place(name: story.city, latitude: story.latitude, longitude: story.longitude
+    func getPlace() -> Place {
+        let place = Place(name: self.city, latitude: self.latitude, longitude: self.longitude
         )
         return place
     }
 
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: [getPlace(story: story)]) { place in
+        Map(coordinateRegion: $region, annotationItems: [getPlace()]) { place in
             MapMarker(coordinate: place.coordinate)
         }
         .ignoresSafeArea(.all)

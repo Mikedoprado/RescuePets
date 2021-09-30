@@ -23,10 +23,9 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
     func load() {
         chatRepository.$chats.map{ chats in
             chats.map { chat in
-                return ChatCellViewModel(chat: chat)
+                ChatCellViewModel(chat: chat)
             }
         }
-        .receive(on: DispatchQueue.main)
         .weakAssign(to: \.chatCellViewModels, on: self)
         .store(in: &cancellables)
     }
@@ -40,5 +39,7 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
         self.chatRepository.remove(chatId, from: from, to: to)
     }
     
-    
+    deinit{
+        print("deinit ChatViewModel")
+    }
 }

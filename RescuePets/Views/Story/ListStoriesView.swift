@@ -11,6 +11,7 @@ struct ListStoriesView: View {
     
     @ObservedObject var storyViewModel : StoryViewModel
     @EnvironmentObject var userViewModel : UserViewModel
+    @Binding var isEnabled : Bool
     var action : (StoryCellViewModel)->()
     var kind : KindStory
     
@@ -39,16 +40,23 @@ struct ListStoriesView: View {
                     StoryCell(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, actionHelp: {
                         storyViewModel.update(storyCellVM.story, user: userViewModel.userCellViewModel.user)
                     }, actionShowActive: {
-                        self.action(storyCellVM)
+                        if !isEnabled {
+                            self.action(storyCellVM)
+                        }
+                        
                     })
                         .padding(.top, 20)
                     
                 }else{
                     StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
                         .padding(.top, 10)
+                        .disabled(!isEnabled)
                         .onTapGesture {
-                            self.action(storyCellVM)
+                            if !isEnabled {
+                                self.action(storyCellVM)
+                            }
                         }
+                        
                 }
             }
             .listRowBackground(ThemeColors.redSalsa.color)

@@ -10,9 +10,9 @@ import SwiftUI
 struct ImagePicker: UIViewControllerRepresentable {
 
     @Binding var selectedImage: UIImage?
-    @Environment(\.presentationMode) private var presentationMode
+//    @Environment(\.presentationMode) private var presentationMode
 
-    func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
+    func makeUIViewController(context: Context) -> UIImagePickerController {
         
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = .photoLibrary
@@ -22,12 +22,10 @@ struct ImagePicker: UIViewControllerRepresentable {
         return imagePicker
     }
     
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext<ImagePicker>) {
-        
-    }
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        return Coordinator(self)
     }
     
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -41,10 +39,18 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             
             if let image = info[.editedImage] as? UIImage {
-                parent.selectedImage = image
+                if let compressImage = image.jpegData(compressionQuality: 0.8){
+                    guard let newImage = UIImage(data: compressImage) else {return}
+                    parent.selectedImage = newImage
+                }
             }
             
-            parent.presentationMode.wrappedValue.dismiss()
+            picker.dismiss(animated: true)
+        }
+        deinit{
+            print("deinit imagePicker")
+//            self.parent.selectedImage = nil
         }
     }
+    
 }
