@@ -12,7 +12,6 @@ struct HelperCellView: View {
     
     @ObservedObject var userCellViewModel :  UserCellViewModel
     @EnvironmentObject var userViewModel : UserViewModel
-//    @Environment(\.redactionReasons) var redactionReasons
     var action: () -> Void
     
     var body: some View {

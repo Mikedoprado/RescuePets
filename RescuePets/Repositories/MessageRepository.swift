@@ -13,7 +13,7 @@ import FirebaseStorage
 
 protocol RepositoryMessageHelper {
     func load(chatId: String)
-    func add(_ message: Message, chatId: String?, from: String, to: String, complete: @escaping (String)->())
+    func add(_ message: Message, chatId: String?, complete: @escaping (String)->())
     func remove(_ message: Message)
     func update(_ message: Message, user: User)
 }
@@ -25,6 +25,7 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     @Published var messages : [Message] = []
     private var cancellables: Set<AnyCancellable> = []
     private var listenerRegistration: ListenerRegistration?
+    private var lastSnapshot : QueryDocumentSnapshot?
     
     init(){
         $chatId
@@ -37,11 +38,13 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
     }
     
     func load(chatId: String) {
+        
         if listenerRegistration != nil {
             listenerRegistration?.remove()
         }
         guard let currentUserId = DBInteract.currentUserId else {return}
-        listenerRegistration = DBInteract
+        
+        let query = DBInteract
             .store
             .collection(DBPath.helpers.path)
             .document(currentUserId)
@@ -49,34 +52,30 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
             .document(chatId)
             .collection(DBPath.messages.path)
             .order(by: "timestamp", descending: false)
-            .addSnapshotListener({ snapshotMessages, error in
-                if error != nil {
-                    print(error?.localizedDescription as Any)
-                }
-                if let snapshot = snapshotMessages{
-                    self.messages = snapshot.documents.compactMap({ document in
-                        try? document.data(as: Message.self)
-                    })
-                }
-            })
+//            .limit(to: 10)
 
+        DBInteract.getData(listener: listenerRegistration, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Message]?) in
+            guard let messages = items else {return}
+            self?.messages.append(contentsOf: messages)
+            self?.lastSnapshot = lastSnapshot
+        }
     }
     
-    func add(_ message: Message, chatId: String?, from: String, to: String, complete: @escaping (String)->()) {
+    func add(_ message: Message, chatId: String?,complete: @escaping (String)->()) {
         
         var id = ""
         let timestamp = Int(Date().timeIntervalSince1970)
 
         if chatId != "" && chatId != nil{
             id = chatId!
-            self.saveMessage(id: id, message: message, from: from, to: to)
-            let refFromUser = DBInteract.store.collection(DBPath.helpers.path).document(from).collection(DBPath.chat.path).document(id)
-            let refToUser = DBInteract.store.collection(DBPath.helpers.path).document(to).collection(DBPath.chat.path).document(id)
+            self.saveMessage(id: id, message: message)
+            let refFromUser = DBInteract.store.collection(DBPath.helpers.path).document(message.from).collection(DBPath.chat.path).document(id)
+            let refToUser = DBInteract.store.collection(DBPath.helpers.path).document(message.to).collection(DBPath.chat.path).document(id)
             refFromUser.updateData(["lastComment": message.text])
             refToUser.updateData(["lastComment": message.text]) 
         }else{
-            createChat(id: id, from: from, to: to, timestamp: timestamp, lastComment: message.text, complete: { [weak self] id in
-                self?.saveMessage(id: id, message: message, from: from, to: to)
+            createChat(id: id, from: message.from, to: message.to, timestamp: timestamp, lastComment: message.text, complete: { [weak self] id in
+                self?.saveMessage(id: id, message: message)
                 self?.chatId = id
                 complete(id)
             })
@@ -115,10 +114,10 @@ extension MessageRepository {
         }
     }
     
-    fileprivate func saveMessage(id: String, message: Message, from: String, to: String) {
-        let messageId = DBInteract.store.collection(DBPath.helpers.path).document(from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document().documentID
-        let refFromUser = DBInteract.store.collection(DBPath.helpers.path).document(from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
-        let refToUser = DBInteract.store.collection(DBPath.helpers.path).document(to).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
+    fileprivate func saveMessage(id: String, message: Message) {
+        let messageId = DBInteract.store.collection(DBPath.helpers.path).document(message.from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document().documentID
+        let refFromUser = DBInteract.store.collection(DBPath.helpers.path).document(message.from).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
+        let refToUser = DBInteract.store.collection(DBPath.helpers.path).document(message.to).collection(DBPath.chat.path).document(id).collection(DBPath.messages.path).document(messageId)
         
         do{
             try refFromUser.setData(from: message)

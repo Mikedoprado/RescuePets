@@ -148,7 +148,7 @@ struct CreateStoryView: View {
                                 self.animateDropDown.toggle()
                             }
                         }
-                    })
+                    }) 
                     .padding(.vertical, 10)
                     .padding(.horizontal, 20)
                 

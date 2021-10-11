@@ -25,7 +25,7 @@ struct ChatCellInvited: View {
                     }
                     .padding(.all, 15)
                 }
-                .background(RoundedCornersShape(corners: [.topLeft,.topRight,.bottomLeft], radius: 20)
+                .background(RoundedCornersShape(corners: [.topLeft,.topRight,.bottomLeft], radius: 15)
                                 .fill(ThemeColors.whiteGray.color))
                 
                 VStack (alignment: .trailing, spacing: 10){

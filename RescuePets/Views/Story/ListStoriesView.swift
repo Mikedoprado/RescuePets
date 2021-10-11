@@ -14,6 +14,7 @@ struct ListStoriesView: View {
     @Binding var isEnabled : Bool
     var action : (StoryCellViewModel)->()
     var kind : KindStory
+    var actionLoadMoreStories : ()-> Void
     
     enum KindStory {
         case general, accepted, created
@@ -22,7 +23,6 @@ struct ListStoriesView: View {
     
     func stories() -> [StoryCellViewModel]{
         switch kind {
-            
         case .general:
             return storyViewModel.storyCellViewModels
         case .accepted:
@@ -30,23 +30,27 @@ struct ListStoriesView: View {
         case .created:
             return storyViewModel.storyCellViewModelsCreated
         }
-        
     }
-    
+
     var body: some View {
         List{
             ForEach(stories()){ storyCellVM in
                 if kind == .general{
+                    
                     StoryCell(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel, actionHelp: {
                         storyViewModel.update(storyCellVM.story, user: userViewModel.userCellViewModel.user)
                     }, actionShowActive: {
                         if !isEnabled {
                             self.action(storyCellVM)
                         }
-                        
                     })
                         .padding(.top, 20)
-                    
+                        .onAppear {
+                            if storyCellVM.id == storyViewModel.storyCellViewModels.last?.id {
+                                self.actionLoadMoreStories()
+
+                            }
+                        }
                 }else{
                     StoryCellView(storyCellViewModel: storyCellVM, storyViewModel: storyViewModel)
                         .padding(.top, 10)
@@ -56,17 +60,16 @@ struct ListStoriesView: View {
                                 self.action(storyCellVM)
                             }
                         }
+                    
                         
                 }
             }
             .listRowBackground(ThemeColors.redSalsa.color)
-            .listRowSeparator(.hidden)
         }
+        .frame(width: screen.width + 40)
         .cornerRadius(0)
-        .padding(.horizontal, -20)
-        .onAppear{
-            UITableView.appearance().backgroundColor = UIColor(red: 0.9647058824, green: 0.2509803922, blue: 0.3098039216, alpha: 1)
-        }
+        .ignoresSafeArea()
+
     }
 }
 

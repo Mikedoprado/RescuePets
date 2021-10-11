@@ -10,7 +10,7 @@ import Foundation
 
 
 final class ChatViewModel: RepositoryChatHelper , ObservableObject {
-    
+
     var chatRepository = ChatRepository()
     @Published var chatCellViewModels : [ChatCellViewModel] = []
     
@@ -29,6 +29,8 @@ final class ChatViewModel: RepositoryChatHelper , ObservableObject {
         .weakAssign(to: \.chatCellViewModels, on: self)
         .store(in: &cancellables)
     }
+    
+    func load(userId: String) {}
     
     func add(_ chat: Chat) {
         self.chatRepository.add(chat)

@@ -15,6 +15,8 @@ struct ContentView: View {
         ZStack {
             if auth.userRepository.isSignedIn{
                 HomeMapView()
+//                TabBarView()
+//                    .ignoresSafeArea()
             }else{
                 Authentication()
             }

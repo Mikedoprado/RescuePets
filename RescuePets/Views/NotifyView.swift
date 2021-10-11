@@ -33,72 +33,81 @@ struct NotifyView: View {
     }
     
     func showStory(story: StoryCellViewModel){
-            self.storyCellViewModel = story
-            self.showDetailsStory.toggle()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.isAnimatingActiveView = true
-                self.showTabBar = false
-            }
+        self.storyCellViewModel = story
+        self.showDetailsStory.toggle()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isAnimatingActiveView = true
+            self.showTabBar = false
+        }
+    }
+    
+    func handleTableView(){
+        UITableView.appearance().separatorColor = .clear
+        UITableView.appearance().backgroundColor = UIColor(red: 0.9647058824, green: 0.2509803922, blue: 0.3098039216, alpha: 1)
+    }
+    
+    func handleOffset(category: String) -> CGFloat{
+        switch category{
+        case "General":
+            return screen.width + 40
+        case "Accepted":
+            return 0
+        case "Created":
+            return -screen.width - 40
+        default:
+            return 0
+        }
     }
     
     var body: some View {
         ZStack{
-            VStack(spacing: 0) {
-                ZStack{
-                    VStack{
-                        switch selectedCategory {
-                        case "General" :
-                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                                self.showStory(story: story)
-                            }, kind: .general)
-                        case "Accepted" :
-                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                                self.showStory(story: story)
-                            }, kind: .accepted)
-                        case "Created" :
-                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                                self.showStory(story: story)
-                            }, kind: .created)
-                        default:
-                            ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                                self.showStory(story: story)
-                            }, kind: .general)
-                        }
-                    }
-                    .padding(.bottom, 80)
-                    .padding(.top, 120)
-                    VStack{
-                        VStack {
-                            HeaderView(title: $selectedCategory,
-                                       actionDismiss: {},
-                                       color: .white,
-                                       alignment: .center,
-                                       closeButtonIsActive: false)
-                            SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
-                                .padding(.bottom, 20)
-                        }
-                        .background(ThemeColors.redSalsa.color)
-                        Spacer()
-                    }
-                }
-                
+            HStack(spacing: 0){
+                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+                    self.showStory(story: story)
+                }, kind: .general, actionLoadMoreStories:{
+                    storyViewModel.storyRepository.loadGeneralStories() 
+                })
+                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+                    self.showStory(story: story)
+                }, kind: .accepted, actionLoadMoreStories:{})
+                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+                    self.showStory(story: story)
+                }, kind: .created, actionLoadMoreStories:{})
+
             }
-            .background(ThemeColors.redSalsa.color)
+            .offset(x: self.handleOffset(category: selectedCategory))
+            .padding(.bottom, 80)
+            .padding(.top, 120)
+            VStack{
+                VStack{
+                    HeaderView(title: $selectedCategory, actionDismiss: {
+                    }, color: .white, alignment: .center, closeButtonIsActive: false)
+                        .frame(width: screen.width)
+                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
+                        .padding(.bottom, 20)
+                    
+                }
+                .background(ThemeColors.redSalsa.color)
+                Spacer()
+            }
             
             if showDetailsStory {
                 if storyCellViewModel != nil {
                     ActiveDetailView(storyCellViewModel: storyCellViewModel!, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
+                        .frame(width: screen.width)
                 }
             }
+        }
+        .frame(width: screen.width)
+        .background(ThemeColors.redSalsa.color)
+        .ignoresSafeArea()
+        .onAppear {
+            print(self.storyViewModel.storyCellViewModels.count)
+            self.handleTableView()
         }
     }
 }
 
-//struct NotifyView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NotifyView(showNotify: .constant(true), isAnimating: .constant(true))
-//    }
-//}
 
 
 

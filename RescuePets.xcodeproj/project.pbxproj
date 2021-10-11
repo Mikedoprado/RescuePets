@@ -75,6 +75,7 @@
 		D3A6EF36268CFF03000D3636 /* ChatCellInvited.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6EF35268CFF03000D3636 /* ChatCellInvited.swift */; };
 		D3A6EF38268D0866000D3636 /* SignViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A6EF37268D0866000D3636 /* SignViewModel.swift */; };
 		D3ACB6DE269DE17D00826947 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D3ACB6DD269DE17D00826947 /* SDWebImageSwiftUI */; };
+		D3ADB35E27075B9600741CA8 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3ADB35D27075B9600741CA8 /* TabBarView.swift */; };
 		D3B4ABBA26D597640052A620 /* ChatRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B4ABB926D597640052A620 /* ChatRepository.swift */; };
 		D3B4ABBC26D5984D0052A620 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B4ABBB26D5984D0052A620 /* ChatViewModel.swift */; };
 		D3B4ABBE26D598AB0052A620 /* ChatCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B4ABBD26D598AB0052A620 /* ChatCellViewModel.swift */; };
@@ -185,6 +186,7 @@
 		D3A5830726C315950041E2E3 /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		D3A6EF35268CFF03000D3636 /* ChatCellInvited.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellInvited.swift; sourceTree = "<group>"; };
 		D3A6EF37268D0866000D3636 /* SignViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignViewModel.swift; sourceTree = "<group>"; };
+		D3ADB35D27075B9600741CA8 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		D3B4ABB926D597640052A620 /* ChatRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRepository.swift; sourceTree = "<group>"; };
 		D3B4ABBB26D5984D0052A620 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		D3B4ABBD26D598AB0052A620 /* ChatCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellViewModel.swift; sourceTree = "<group>"; };
@@ -298,6 +300,7 @@
 		D332C781267AA6C800F22655 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D3ADB35D27075B9600741CA8 /* TabBarView.swift */,
 				D39C88A7267942DA0087FEA8 /* ContentView.swift */,
 				D332C77F267AA66000F22655 /* HomeMapView.swift */,
 				D30945522683D79D00353B20 /* NotifyView.swift */,
@@ -702,6 +705,7 @@
 				D3F8E87C2695D02E00C3DB7F /* PickerAnimal.swift in Sources */,
 				D3D2D50E26FD1C61005C1F9F /* ListStoriesView.swift in Sources */,
 				D3C23EA226AC767000E46675 /* StoryDataRepository.swift in Sources */,
+				D3ADB35E27075B9600741CA8 /* TabBarView.swift in Sources */,
 				D3299E1126D4439700E025B5 /* Chat.swift in Sources */,
 				D3918F78267D36ED00DC4BA8 /* BackShapeView.swift in Sources */,
 				D3C45BFD2684EA1E00DFA358 /* ChatMessagesView.swift in Sources */,
@@ -849,7 +853,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -907,7 +911,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -929,7 +933,7 @@
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RescuePets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -951,7 +955,7 @@
 				DEVELOPMENT_TEAM = 24Q6J2H875;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RescuePets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

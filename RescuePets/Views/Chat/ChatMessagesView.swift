@@ -91,7 +91,6 @@ struct ChatMessagesView: View {
             self.hideKeyboard()
         }
         .onAppear {
-            print(chatId)
             if self.chatId != ""{
                 self.messageViewModel.chatId = chatId
             }
@@ -120,7 +119,7 @@ extension ChatMessagesView {
         let timestamp = Int(Date().timeIntervalSince1970)
         if let userId = user.id {
             let newMessage = Message( from: userViewModel.userCellViewModel.id, to: userId, text: message, timestamp: timestamp)
-            self.messageViewModel.add(newMessage, chatId: chatId, from: userViewModel.userCellViewModel.id, to: userId, complete: { id in
+            self.messageViewModel.add(newMessage, chatId: chatId, complete: { id in
                 self.chatId = id
             })
         }

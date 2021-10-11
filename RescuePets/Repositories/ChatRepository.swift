@@ -20,37 +20,43 @@ protocol RepositoryChatHelper {
 final class ChatRepository: RepositoryChatHelper, ObservableObject {
     
     @Published var chats : [Chat] = []
-
+    private var user = User()
+    var userViewModel = UserViewModel()
     private var listenerRegistration: ListenerRegistration?
+    private var lastSnapshot : QueryDocumentSnapshot?
     private var cancellables: Set<AnyCancellable> = []
     
     init() {
-        load()
+        
+        userViewModel.userRepository.$user.compactMap {  user in
+            user
+        }
+        .receive(on: DispatchQueue.main)
+        .sink(receiveValue: { [weak self] user in
+            self?.user = user
+            self?.load()
+        })
+        .store(in: &cancellables)
+
     }
     
     func load() {
         if listenerRegistration != nil {
             listenerRegistration?.remove()
         }
-        guard let currentUserId = DBInteract.currentUserId else {return}
+        guard let currentUserId = user.id else {return}
         
-        listenerRegistration = DBInteract
+        let query = DBInteract
             .store
             .collection(DBPath.helpers.path)
             .document(currentUserId)
             .collection(DBPath.chat.path)
-            .addSnapshotListener({ [weak self] snapshot, error in
-                guard let self = self else {return}
-                if error != nil {
-                    print(error?.localizedDescription as Any)
-                }
-                
-                if snapshot != nil && !snapshot!.isEmpty{
-                    self.chats = snapshot!.documents.compactMap({ document in
-                        try? document.data(as: Chat.self)
-                    })
-                }
-        })
+        
+        DBInteract.getData(listener: listenerRegistration, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Chat]?) in
+            guard let newChats = items else {return}
+            self?.chats.append(contentsOf: newChats)
+            self?.lastSnapshot = lastSnapshot
+        }
     }
     
     

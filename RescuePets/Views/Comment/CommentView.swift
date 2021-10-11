@@ -26,7 +26,6 @@ struct CommentView: View {
                 self.showMessage = false
             }
         }
-        
     }
     
     func hideKeyboard() {

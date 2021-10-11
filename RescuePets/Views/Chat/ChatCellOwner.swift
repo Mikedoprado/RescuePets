@@ -34,8 +34,8 @@ struct ChatCellOwner: View {
                     .padding(.all, 15)
                 }
                 .background(
-                    RoundedCornersShape(corners: [.topLeft,.topRight,.bottomRight], radius: 20)
-                        .fill(ThemeColors.whiteGray.color)
+                    RoundedCornersShape(corners: [.topLeft,.topRight,.bottomRight], radius: 15)
+                        .fill(ThemeColors.whiteClear.color)
                 )
                Spacer()
             }

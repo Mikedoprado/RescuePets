@@ -16,7 +16,7 @@ struct HomeMapView: View {
     @State private var isShowPhotoLibrary = false
     @State private var showProfileUser = false
     @State private var showCreateStory : Bool = false
-    @State private var showNotifcationsView = false
+    @State private var showNotifyView = false
     @State var changeViewInNotifyView = false
     @State var inputImage : UIImage?
     @State var newImage : UIImage?
@@ -64,14 +64,14 @@ struct HomeMapView: View {
                         self.hideKeyboard()
                     }
                 
-                if showNotifcationsView {
+                if showNotifyView {
                     NotifyView(
                         storyViewModel: storyViewModel,
-                        showNotify: $showNotifcationsView,
+                        showNotify: $showNotifyView,
                         isAnimating: $animNotify,
                         changeView: changeViewInNotifyView,
                         showTabBar: $showTabBar)
-                        .ignoresSafeArea()
+//                        .ignoresSafeArea()	
                 }
                 
                 if showMessages {
@@ -82,28 +82,28 @@ struct HomeMapView: View {
                     Spacer()
                     TabBar(selectedIndex: $selectedIndex, tabBarItemActive: tabBarItems,
                            actionItem1: {
-                                showNotifcationsView = true
+                                showNotifyView = true
                                 showCreateStory = false
                                 showMessages = false
                                 showProfileUser = false
                            },
                            actionItem2: {
                                 showCreate()
-                                showNotifcationsView = false
+                                showNotifyView = false
                                 showMessages = false
                                 showProfileUser = false
                            },
                            actionItem3: {
                                 showMessages = true
                             showCreateStory = false
-                                showNotifcationsView = false
+                                showNotifyView = false
                                 showProfileUser = false
                            },
                            actionItem4: {
                                 showProfileUser = true
                                 showMessages = false
                                 showCreateStory = false
-                                showNotifcationsView = false
+                                showNotifyView = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     animProfileUser = showProfileUser
                                 }

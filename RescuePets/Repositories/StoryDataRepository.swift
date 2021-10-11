@@ -18,7 +18,7 @@ protocol RepositoryStoryHelper {
 }
 
 final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
-    
+
     @Published var stories : [Story] = []
     @Published var storiesCreated : [Story] = []
     @Published var storiesAccepted : [Story] = []
@@ -29,7 +29,40 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     private var listenerRegistrationStory: ListenerRegistration?
     private var listenerRegistrationStoryAccepted: ListenerRegistration?
     private var listenerRegistrationStoryCreated: ListenerRegistration?
+    
+    private var lastSnapshotStory : QueryDocumentSnapshot?
+    private var lastSnapshotStoryAccepted : QueryDocumentSnapshot?
+    private var lastSnapshotStoryCreated : QueryDocumentSnapshot?
+    
     private var user = User()
+    
+    enum Stories{
+        case general, accepted, created
+    }
+    
+    var kind = Stories.general
+    
+    var listener : ListenerRegistration? {
+        switch kind {
+        case .general:
+            return listenerRegistrationStory
+        case .accepted:
+            return listenerRegistrationStoryAccepted
+        case .created:
+            return listenerRegistrationStoryCreated
+        }
+    }
+    
+    var lastSnapshot : QueryDocumentSnapshot? {
+        switch kind {
+        case .general:
+            return lastSnapshotStory
+        case .accepted:
+            return lastSnapshotStoryAccepted
+        case .created:
+            return lastSnapshotStoryCreated
+        }
+    }
     
     init(){
         
@@ -40,8 +73,7 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         .sink(receiveValue: { [weak self] user in
             self?.user = user
             self?.load()
-            self?.loadAcceptedStories()
-            self?.loadCreatedStories()
+            
         })
         .store(in: &cancellables)
         
@@ -50,89 +82,90 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
     // MARK: load stories of the one location general stories in your city
     
     func load(){
-        
-        if listenerRegistrationStory != nil {
-            listenerRegistrationStory?.remove()
-        }
-        guard let userLocation = user.location else {return}
-        
-        listenerRegistrationStory = DBInteract.store
-            .collection(DBPath.stories.path)
-            .order(by: "timestamp", descending: true)
-            .whereField("city", isEqualTo: userLocation)
-            .addSnapshotListener { [weak self] snapshotStories, err in
-                guard let self = self else {return}
-                if err != nil, snapshotStories == nil {
-                    print(err?.localizedDescription as Any)
-                }
-                if let snapshot = snapshotStories {
-                    
-                    if !snapshot.isEmpty{
-                        self.stories = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Story.self)
-                        })
-                    }
-                }
-            }
+
+        self.loadGeneralStories()
+        self.loadAcceptedStories()
+        self.loadCreatedStories()
+
     }
+    
+    //MARK: Load General Stories
+    
+    func loadGeneralStories(){
+        kind = .general
+        
+        if listener != nil {
+            listener?.remove()
+        }
+        
+        guard let userLocation = user.location else {return}
+       
+        let query : Query
+        
+        if lastSnapshotStory != nil {
+            query = DBInteract.store
+                .collection(DBPath.stories.path)
+                .order(by: DBPath.timestamp.path, descending: true)
+                .whereField(DBPath.city.path, isEqualTo: userLocation)
+                .limit(to: 10)
+                .start(afterDocument: lastSnapshotStory!)
+        }else{
+            query = DBInteract.store
+                .collection(DBPath.stories.path)
+                .order(by: DBPath.timestamp.path, descending: true)
+                .whereField(DBPath.city.path, isEqualTo: userLocation)
+                .limit(to: 10)
+        }
+
+        DBInteract.getData(listener: listener, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Story]?) in
+            guard let stories = items else { return }
+            self?.lastSnapshotStory = lastSnapshot
+            self?.stories.append(contentsOf: stories)
+        }
+    }
+    
     // MARK: load stories created by the currentUser
     func loadCreatedStories(){
-        
-        if listenerRegistrationStoryCreated != nil {
-            listenerRegistrationStoryCreated?.remove()
+        kind = .created
+        if listener != nil {
+            listener?.remove()
         }
         
         guard let userID = user.id else {return}
         
-        listenerRegistrationStoryCreated = DBInteract.store
+        let query = DBInteract.store
             .collection(DBPath.stories.path)
-            .order(by: "timestamp", descending: true)
-            .whereField("userId", isEqualTo: userID)
-            .addSnapshotListener { [weak self] snapshotStories, error in
-                guard let self = self else {return}
-                if error != nil {
-                    print(error?.localizedDescription as Any)
-                }
-                if let snapshot = snapshotStories {
-                    
-                    if !snapshot.isEmpty{
-                        self.storiesCreated = snapshot.documents.compactMap({ document in
-                            try? document.data(as: Story.self)
-                        })
-                    }
-                }
-            }
+            .order(by: DBPath.timestamp.path, descending: true)
+            .whereField(DBPath.userId.path, isEqualTo: userID)
+        
+        DBInteract.getData(listener: listener, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Story]?) in
+            guard let stories = items else { return }
+            self?.lastSnapshotStoryCreated = lastSnapshot
+            self?.storiesCreated.append(contentsOf: stories)
+        }
     }
+    
     // MARK: load stories accepted by the currentUser
     
-    // MARK: update for load stories direct from stories and not saved two times
-    
     func loadAcceptedStories(){
-        
-        if listenerRegistrationStoryAccepted != nil {
-            listenerRegistrationStoryAccepted?.remove()
+        kind = .accepted
+        if listener != nil {
+            listener?.remove()
         }
         
         guard let userID = user.id else {return}
         
-        listenerRegistrationStoryAccepted = DBInteract.store
+        let query = DBInteract.store
             .collection(DBPath.stories.path)
-            .order(by: "timestamp", descending: true)
-            .whereField("userAcceptedStoryID", arrayContains: userID)
-            .addSnapshotListener { [weak self] snapshotStories, error in
-                
-                guard let self = self else {return}
-                if error != nil {
-                    print(error?.localizedDescription as Any)
-                }
-                if let snapshot = snapshotStories {
-                    if !snapshot.isEmpty{
-                        self.storiesAccepted = snapshot.documents.compactMap{ document in
-                            try? document.data(as: Story.self)
-                        }
-                    }
-                }
-            }
+            .order(by: DBPath.timestamp.path, descending: true)
+            .whereField(DBPath.userAcceptedStoryID.path, arrayContains: userID)
+        
+        DBInteract.getData(listener: listener, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Story]?) in
+            guard let stories = items else { return }
+            self?.lastSnapshotStoryAccepted = lastSnapshot
+            self?.storiesAccepted.append(contentsOf: stories)
+        }
+
     }
     
     // MARK: creating a new story
@@ -140,13 +173,13 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         
         guard let userID = user.id else {return}
         let storyId = DBInteract.store.collection(DBPath.stories.path).document().documentID
-        self.sendImageToDatabase(currentUserId: userID, storyId: storyId, imageData: imageData, complete: { arrayImages in
+        DBInteract.sendImageToDatabase(currentUserId: userID, storyId: storyId, imageData: imageData, complete: { arrayImages in
             do {
                 var newStory = story
                 newStory.images = arrayImages
                 try DBInteract.store.collection(DBPath.stories.path).document(storyId).setData(from: newStory)
                 let helpersStories = DBInteract.store.collection(DBPath.helpers.path).document(userID).collection(DBPath.createdStories.path).document(storyId)
-                helpersStories.setData(["timestamp":story.timestamp])
+                helpersStories.setData([DBPath.timestamp.path:story.timestamp])
             }catch{
                 fatalError("the story couldn´t be saved")
             }
@@ -194,36 +227,11 @@ final class StoryDataRepository: RepositoryStoryHelper, ObservableObject {
         if dict.contains(userId) {
             guard let index = dict.firstIndex(of: userId) else {return}
             dict.remove(at: index)
-            DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-
+            DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData([DBPath.userAcceptedStoryID.path : dict as Any])
+            
         }else{
             dict.append(userId)
-            DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData(["userAcceptedStoryID" : dict as Any])
-        }
-    }
-    
-    func sendImageToDatabase(currentUserId: String ,storyId: String, imageData:[Data], complete: @escaping ([String])->()){
-        
-        let ref = DBInteract.storage.reference()
-        
-        let totalRef = ref.child(currentUserId).child(storyId)
-        var imageUrlString : [String] = []
-        
-        for data in imageData {
-            let imagePetId = NSUUID().uuidString
-            let refImageId = totalRef.child(imagePetId)
-            _ = refImageId.putData(data, metadata: nil, completion: { _, error in
-                if error != nil {
-                    print(error?.localizedDescription as Any)
-                }
-                refImageId.downloadURL { url, err in
-                    guard let downloadUrl = url?.absoluteString else {return}
-                    imageUrlString.append(downloadUrl)
-                    if imageUrlString.count == imageData.count{
-                        complete(imageUrlString)
-                    }
-                }
-            })
+            DBInteract.store.collection(DBPath.stories.path).document(storyId).updateData([DBPath.userAcceptedStoryID.path : dict as Any])
         }
     }
     

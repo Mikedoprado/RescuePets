@@ -137,22 +137,32 @@ struct ActiveDetailView: View {
                         
                         
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 0){
-                                ForEach(storyCellViewModel.images, id: \.self) { url in
-                                    GeometryReader{ proxy in
-                                        let scale = getScale(proxy: proxy)
+                            if storyCellViewModel.images.count > 1 {
+                                HStack(spacing: 0){
+                                    ForEach(storyCellViewModel.images, id: \.self) { url in
+                                        GeometryReader{ proxy in
+                                            let scale = getScale(proxy: proxy)
+                                            
+                                            ImagePet(url: url)
+                                                .cornerRadius(10)
+                                                .padding(.top, 30)
+                                                .padding(.horizontal, 30)
+                                                .scaleEffect(CGSize(width: scale, height: scale))
+                                        }
+                                        .frame(width:UIScreen.main.bounds.width / 1.2 ,height: UIScreen.main.bounds.width - 50)
                                         
-                                        ImagePet(url: url)
-                                            .cornerRadius(10)
-                                            .padding(.top, 30)
-                                            .padding(.horizontal, 30)
-                                            .scaleEffect(CGSize(width: scale, height: scale))
                                     }
-                                    .frame(width:UIScreen.main.bounds.width / 1.2 ,height: UIScreen.main.bounds.width - 50)
-                                    
                                 }
+                                .padding(.horizontal, 20)
+                            }else{
+                                AnimatedImage(url: URL(string: storyCellViewModel.images.first ?? ""))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.width - 40)
+                                    .background(ThemeColors.whiteGray.color)
+                                    .cornerRadius(10)
+                                    .padding(.horizontal, 20)
                             }
-                            .padding(.horizontal, 20)
                         }
                         VStack(alignment: .leading, spacing: 20){
                             MapActiveView(city: storyCellViewModel.city, latitude: storyCellViewModel.latitude, longitude: storyCellViewModel.longitude)
@@ -193,11 +203,6 @@ struct ActiveDetailView: View {
     }
 }
 
-//struct ActiveDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ActiveDetailView(storyCellViewModel: StoryCellViewModel(story: Story()), showstory: .constant(true), isAnimating: .constant(true))
-//    }
-//}
 
 struct ImagePet: View {
     var url : String

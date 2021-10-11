@@ -40,8 +40,8 @@ final class MessageViewModel: RepositoryMessageHelper , ObservableObject {
         .store(in: &cancellables)
     }
     
-    func add(_ message: Message, chatId: String?, from: String, to: String, complete: @escaping (String)->()) {
-        self.messageRepository.add(message, chatId: chatId, from: from, to: to, complete: { [weak self] id in
+    func add(_ message: Message, chatId: String?, complete: @escaping (String)->()) {
+        self.messageRepository.add(message, chatId: chatId, complete: { [weak self] id in
             if self?.chatId == ""{
                 self?.chatId = id
             }
