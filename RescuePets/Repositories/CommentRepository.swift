@@ -41,7 +41,7 @@ final class CommentRepository: CommentHelper, ObservableObject {
         
         DBInteract.getData(listener: listenerRegistration, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Comment]?) in
             guard let newComments = items else {return}
-            self?.comments.append(contentsOf: newComments)
+            self?.comments = newComments
             self?.lastSnapshot = lastSnapshot
         }
     }

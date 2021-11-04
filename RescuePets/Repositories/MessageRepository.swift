@@ -56,7 +56,7 @@ final class MessageRepository: RepositoryMessageHelper, ObservableObject {
 
         DBInteract.getData(listener: listenerRegistration, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Message]?) in
             guard let messages = items else {return}
-            self?.messages.append(contentsOf: messages)
+            self?.messages = messages
             self?.lastSnapshot = lastSnapshot
         }
     }

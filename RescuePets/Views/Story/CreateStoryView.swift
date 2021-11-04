@@ -90,27 +90,18 @@ struct CreateStoryView: View {
     func createStory(){
         self.hideKeyboard()
         let timestamp = Int(Date().timeIntervalSince1970)
-        guard
-            let kindOfAnimal = KindOfAnimal.init(rawValue: animal),
-            let latitude = locationManager.location?.coordinate.latitude,
-            let longitude = locationManager.location?.coordinate.longitude
-        else {return}
-        if kindOfStory != "", text != "", animal != "", !dataImages.isEmpty{
-            let newStory = Story(
-                username: userViewModel.userCellViewModel.username,
-                userId: userViewModel.userCellViewModel.id,
-                kindOfStory: kindOfStory,
-                timestamp: timestamp,
-                animal: kindOfAnimal,
-                city: locationManager.city.lowercased(),
-                address: locationManager.address,
-                description: text,
-                latitude: latitude,
-                longitude: longitude,
-                userAcceptedStoryID: []
-            )
-            print("saving story")
-            self.storyViewModel.add(newStory, imageData: dataImages)
+        if publishStory {
+            let newStory = StoryBuilder()
+            newStory
+                .setUser(user: userViewModel.userCellViewModel.user)
+                .setCurrentLocation(locationManager: locationManager)
+                .setAnimal(kindOfAnimal: animal)
+                .setDataImages(data: dataImages)
+                .setDescription(text: text)
+                .setKindOfStory(kindOfStory: kindOfStory)
+                .setTimestamp(timestamp: timestamp)
+
+            self.storyViewModel.add(newStory.build())
         }
         self.reinitValues()
         

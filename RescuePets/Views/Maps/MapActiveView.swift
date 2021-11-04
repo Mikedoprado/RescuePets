@@ -9,8 +9,6 @@
 import SwiftUI
 import MapKit
 
-
-
 struct MapActiveView: View {
     
 //    @ObservedObject var story : StoryCellViewModel

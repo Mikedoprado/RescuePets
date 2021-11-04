@@ -60,51 +60,51 @@ struct NotifyView: View {
     }
     
     var body: some View {
-        ZStack{
-            HStack(spacing: 0){
-                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                    self.showStory(story: story)
-                }, kind: .general, actionLoadMoreStories:{
-                    storyViewModel.storyRepository.loadGeneralStories() 
-                })
-                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                    self.showStory(story: story)
-                }, kind: .accepted, actionLoadMoreStories:{})
-                ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
-                    self.showStory(story: story)
-                }, kind: .created, actionLoadMoreStories:{})
+            ZStack{
+                HStack(spacing: 0){
+//                    ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+//                        self.showStory(story: story)
+//                    }, kind: .general, actionLoadMoreStories:{
+//                        storyViewModel.storyRepository.fetchPagination()
+//                    })
+//                    ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+//                        self.showStory(story: story)
+//                    }, kind: .accepted, actionLoadMoreStories:{})
+//                    ListStoriesView(storyViewModel: storyViewModel, isEnabled: $showDetailsStory, action: { story in
+//                        self.showStory(story: story)
+//                    }, kind: .created, actionLoadMoreStories:{})
 
-            }
-            .offset(x: self.handleOffset(category: selectedCategory))
-            .padding(.bottom, 80)
-            .padding(.top, 120)
-            VStack{
+                }
+                .offset(x: self.handleOffset(category: selectedCategory))
+                .padding(.bottom, 80)
+                .padding(.top, 120)
                 VStack{
-                    HeaderView(title: $selectedCategory, actionDismiss: {
-                    }, color: .white, alignment: .center, closeButtonIsActive: false)
-                        .frame(width: screen.width)
-                    SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
-                        .padding(.bottom, 20)
-                    
+                    VStack{
+                        HeaderView(title: $selectedCategory, actionDismiss: {
+                        }, color: .white, alignment: .center, closeButtonIsActive: false)
+                            .frame(width: screen.width)
+                        SelectorSection(categories: $categories, selectedCategory: $selectedCategory, color: $colorMenu)
+                            .padding(.bottom, 20)
+                        
+                    }
+                    .background(ThemeColors.redSalsa.color)
+                    Spacer()
                 }
-                .background(ThemeColors.redSalsa.color)
-                Spacer()
-            }
-            
-            if showDetailsStory {
-                if storyCellViewModel != nil {
-                    ActiveDetailView(storyCellViewModel: storyCellViewModel!, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
-                        .frame(width: screen.width)
+                
+                if showDetailsStory {
+                    if storyCellViewModel != nil {
+                        ActiveDetailView(storyCellViewModel: storyCellViewModel!, storyViewModel: storyViewModel, showStory: $showDetailsStory, isAnimating: $isAnimatingActiveView, user: userViewModel.userCellViewModel.user, showTabBar: $showTabBar)
+                            .frame(width: screen.width)
+                    }
                 }
             }
-        }
-        .frame(width: screen.width)
-        .background(ThemeColors.redSalsa.color)
-        .ignoresSafeArea()
-        .onAppear {
-            print(self.storyViewModel.storyCellViewModels.count)
-            self.handleTableView()
-        }
+            .frame(width: screen.width)
+            .background(ThemeColors.redSalsa.color)
+            .ignoresSafeArea()
+            .onAppear {
+                print(self.storyViewModel.storyCellViewModels.count)
+                self.handleTableView()
+            }
     }
 }
 

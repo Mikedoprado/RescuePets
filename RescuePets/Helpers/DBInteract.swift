@@ -26,7 +26,7 @@ class DBInteract {
                     print(err?.localizedDescription as Any)
                 }
                 if let snapshot = snapshotStories {
-                    if lastSnapshot != snapshot.documents.last || lastSnapshot == nil{
+                    if lastSnapshot != snapshot.documents.last || lastSnapshot == nil {
                         guard let lastQuery = snapshot.documents.last else { return }
                         
                         if !snapshot.isEmpty{

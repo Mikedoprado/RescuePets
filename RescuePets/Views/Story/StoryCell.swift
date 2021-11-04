@@ -21,72 +21,72 @@ struct StoryCell: View {
     var body: some View {
         VStack(spacing:0) {
             ZStack {
-                RoundedRectangle(cornerRadius: 20)
+                AnimatedImage(url: URL(string: storyCellViewModel.presentImage))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .foregroundColor(ThemeColors.whiteClear.color)
-                    .shadow(color: ThemeColors.redSalsaDark.color, radius: 20, x: 0.0, y: 0.0)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .onTapGesture {
                         self.actionShowActive()
                     }
 
-                VStack(spacing:0) {
-                    HStack {
-                        Image("pin\(storyCellViewModel.kindOfAnimal)Active" )
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(ThemeColors.redSalsa.color)
-                            .clipShape(Circle())
-                        VStack(alignment: .leading) {
-                            Text(storyCellViewModel.kindOfStory)
-                                .modifier(FontModifier(weight: .bold, size: .paragraph, color: .redSalsa))
-                            Text(storyCellViewModel.username.capitalized)
-                                .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
-                            
+                VStack{
+                    VStack{
+                        HStack(spacing: 5){
+                            Spacer()
+                            CounterHelpers(storyCellViewModel: storyCellViewModel, color: ThemeColors.white.color)
                         }
+                        .padding(.horizontal, 20)
                         Spacer()
-                        Text(storyCellViewModel.timestamp)
-                            .modifier(FontModifier(weight: .bold, size: .caption, color: .halfGray))
-                        
                     }
-                    .padding(.vertical, 20)
-                    .padding(.horizontal, 30)
+                    .padding(.top, 30)
+                    
+                    Spacer()
+                    
+                    VStack(spacing:0) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text(storyCellViewModel.kindOfStory)
+                                    .modifier(FontModifier(weight: .bold, size: .subtitle, color: .redSalsa))
+                                HStack(spacing: 10){
+                                    Image("pin\(storyCellViewModel.kindOfAnimal)Active" )
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(ThemeColors.redSalsa.color)
+                                        .clipShape(Circle())
+                                    VStack(alignment: .leading,spacing: 0){
+                                        Text(storyCellViewModel.username.capitalized)
+                                            .modifier(FontModifier(weight: .regular, size: .caption, color: .gray))
+                                        Text(storyCellViewModel.timestamp)
+                                            .modifier(FontModifier(weight: .bold, size: .caption, color: .halfGray))
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            Spacer()
+                            if userViewModel.userCellViewModel.user.id != storyCellViewModel.userId && storyCellViewModel.numHelpers <= 50 {
+                                
+                                Image(!storyCellViewModel.acceptedStory ? "storyAdd" : "storyAcept")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 25, height: 25)
+                                    .onTapGesture {
+                                        self.actionHelp()
+                                    }
+                            }
+                        }
+                        .padding(.all, 20)
+                    }
+                    .background(ThemeColors.white.color)
+                    .cornerRadius(20)
+                    .padding(.bottom, 20)
+                    .padding(.horizontal, 20)
                     .onTapGesture {
                         self.actionShowActive()
                     }
-                   
-                    AnimatedImage(url: URL(string: storyCellViewModel.presentImage))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 250)
-                        .foregroundColor(ThemeColors.whiteClear.color)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .padding(.horizontal, 30)
-                        .onTapGesture {
-                            self.actionShowActive()
-                        }
-                        
-                    HStack(spacing: 5){
-                        CounterHelpers(storyCellViewModel: storyCellViewModel, color: ThemeColors.white.color)
-                        Spacer()
-                        if userViewModel.userCellViewModel.user.id != storyCellViewModel.userId && storyCellViewModel.numHelpers <= 50 {
-                            Button(action: self.actionHelp
-                            , label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .frame(width: 150, height: 40)
-                                        .foregroundColor((storyCellViewModel.acceptedStory == "I want to help") ? ThemeColors.redSalsa.color : ThemeColors.whiteClear.color)
-                                    Text(storyCellViewModel.acceptedStory)
-                                        .modifier(FontModifier(weight: .bold, size: .titleCaption, color: (storyCellViewModel.acceptedStory == textButton) ? ThemeColors.white : ThemeColors.redSalsa))
-                                        
-                                }
-                            })
-                                .animation(.spring(), value: (storyCellViewModel.acceptedStory == "I want to help"))
-                        }
-                    }
-                    .padding(.horizontal, 30)
-                    .padding(.vertical, 20)
-                    
                 }
+                
             }
             
         }

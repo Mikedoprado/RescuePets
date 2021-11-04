@@ -71,8 +71,8 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         .store(in: &cancellables)
     }
     
-    func add(_ story: Story, imageData: [Data]) {
-        storyRepository.add(story, imageData: imageData)
+    func add(_ story: Story) {
+        storyRepository.add(story)
     }
     
     func remove(_ story: Story) {
@@ -82,14 +82,8 @@ final class StoryViewModel: RepositoryStoryHelper, ObservableObject {
         }
     }
     
-    func update(_ story: Story, user: User) {
-        if let index = storyCellViewModelsAccepted.firstIndex(where: {$0.id == story.id}){
-            if let indexStoryAccepted = storyCellViewModelsAccepted[index].userAcceptedStoryID.firstIndex(where: {$0 == user.id}){
-                storyCellViewModelsAccepted[index].userAcceptedStoryID.remove(at: indexStoryAccepted)
-                storyCellViewModelsAccepted.remove(at: index)
-            }
-        }
-        storyRepository.update(story, user: user)
+    func update(_ storyCellViewModel: StoryCellViewModel){
+        storyRepository.update(storyCellViewModel)
     }
     
     deinit{

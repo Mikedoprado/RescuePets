@@ -12,7 +12,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
     @Published var story: Story
     var timestamp : String = ""
     
-    @Published var acceptedStory = ""
+    @Published var acceptedStory = false
     var id : String = ""
     var kindOfAnimal = ""
     var kindOfStory = ""
@@ -47,23 +47,19 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $story.sink{ [weak self] story in
-            self?.userAcceptedStoryID = story.userAcceptedStoryID ?? []
+            self?.userAcceptedStoryID = story.userAcceptedStoryID
         }
         .store(in: &cancellables)
         
-        $story.sink{ [weak self] story in
-            if !(story.userAcceptedStoryID?.isEmpty ?? true) {
-                if let currentUserId = DBInteract.currentUserId {
-                    self?.acceptedStory = (story.userAcceptedStoryID?.contains(currentUserId))! ? "I'm helping" : "I want to help"
-                }
-            }else{
-                self?.acceptedStory = "I want to help"
-            } 
+        $story
+            .sink{ [weak self] story in
+                guard let currentUserId = DBInteract.currentUserId else {return}
+                self?.acceptedStory = (story.userAcceptedStoryID.contains(currentUserId)) ? true : false
         }
         .store(in: &cancellables)
 
         $story.map{ story in
-            story.animal.animal
+            story.animal
         }
         .weakAssign(to: \.kindOfAnimal, on: self)
         .store(in: &cancellables)
@@ -129,7 +125,7 @@ final class StoryCellViewModel: ObservableObject, Identifiable {
         .store(in: &cancellables)
         
         $story.map{ story in
-            story.userAcceptedStoryID?.count ?? 0
+            story.userAcceptedStoryID.count
         }
         .weakAssign(to: \.numHelpers, on: self)
         .store(in: &cancellables)

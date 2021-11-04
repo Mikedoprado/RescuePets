@@ -10,8 +10,8 @@ import SwiftUI
 struct StoryCellView: View {
     
     @ObservedObject var storyCellViewModel : StoryCellViewModel
-    @ObservedObject var storyViewModel : StoryViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
+//    @ObservedObject var storyViewModel : StoryViewModel
+//    @EnvironmentObject var userViewModel: UserViewModel
     
     
     

@@ -54,7 +54,7 @@ final class ChatRepository: RepositoryChatHelper, ObservableObject {
         
         DBInteract.getData(listener: listenerRegistration, query: query, lastSnapshot: lastSnapshot) { [weak self] (lastSnapshot, items: [Chat]?) in
             guard let newChats = items else {return}
-            self?.chats.append(contentsOf: newChats)
+            self?.chats = newChats
             self?.lastSnapshot = lastSnapshot
         }
     }
